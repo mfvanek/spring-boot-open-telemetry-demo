@@ -1,0 +1,9 @@
+server:
+  port: 8080
+opentracing:
+  jaeger:
+    service-name: mfvanekSpringDemoApp
+    enabled: true
+    udp-sender:
+      host: localhost
+      port: 6831
