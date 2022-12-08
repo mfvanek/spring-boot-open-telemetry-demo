@@ -12,12 +12,12 @@ import java.net.URISyntaxException;
 @RestController
 public class RedirectController {
 
-  // http://localhost:8080/redirect
-  @GetMapping(path = "/redirect")
-  public ResponseEntity<Object> redirectToGoogle() throws URISyntaxException {
-    URI google = new URI("https://www.google.com");
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setLocation(google);
-    return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
-  }
+    // http://localhost:8080/redirect
+    @GetMapping(path = "/redirect")
+    public ResponseEntity<Object> redirectToGoogle() throws URISyntaxException {
+        URI google = new URI("https://www.google.com");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(google);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+    }
 }

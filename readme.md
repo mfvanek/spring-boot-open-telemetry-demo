@@ -5,6 +5,12 @@ Open the Jaeger UI on [http://localhost:16686](http://localhost:16686)
 ## Local run
 Just run app from IDE and open [http://localhost:8080](http://localhost:8080)
 
+### Swagger
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+### Actuator
+[Prometheus metrics](http://localhost:8080/actuator/prometheus)
+
 ## Run in Docker
 
 ### How to build
