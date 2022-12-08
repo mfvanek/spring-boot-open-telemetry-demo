@@ -1,16 +1,27 @@
 server:
-  port: 8080
+    port: 8080
 
 opentracing:
-  jaeger:
-    service-name: mfvanekSpringDemoApp
-    enabled: true
-    udp-sender:
-      host: localhost
-      port: 6831
+    jaeger:
+        service-name: mfvanekSpringDemoApp
+        enabled: true
+        udp-sender:
+            host: localhost
+            port: 6831
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+
+---
+
+opentracing:
+    jaeger:
+        http-sender:
+            url: http://localhost:14268/api/traces
+spring:
+    config:
+        activate:
+            on-profile: docker
