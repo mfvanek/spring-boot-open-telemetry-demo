@@ -1,5 +1,5 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.5_10-alpine
+FROM bellsoft/liberica-openjdk-alpine:17.0.5
 LABEL maintainer=ivvakhrushev
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+ARG JAR_FILE
+COPY ${JAR_FILE} /app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
