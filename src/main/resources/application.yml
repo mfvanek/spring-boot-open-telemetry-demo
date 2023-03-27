@@ -1,27 +1,68 @@
 server:
     port: 8080
+    # See also https://docs.spring.io/spring-boot/docs/2.7.9/reference/html/application-properties.html#appendix.application-properties.server
+    tomcat:
+        accept-count: 10
+        max-connections: 400
+        threads:
+            max: 10
+            min-spare: 5 # actuator port uses the same configuration
 
-opentracing:
-    jaeger:
-        service-name: mfvanekSpringDemoApp
-        enabled: true
-        udp-sender:
-            host: localhost
-            port: 6831
+spring:
+    application.name: spring-docker-demo
+    sleuth:
+        otel:
+            exporter.otlp.endpoint: http://localhost:4317
+            config.trace-id-ratio-based: 1.0
 
 management:
+    server:
+        port: 8090
     endpoints:
+        enabled-by-default: false
         web:
-            exposure:
-                include: "*"
+            exposure.include: '*'
+            cors:
+                allowed-methods: '*'
+                allowed-origins: '*'
+                allowed-headers: '*'
+    endpoint:
+        health:
+            enabled: true
+            probes.enabled: true
+            group:
+                readiness:
+                    include: readinessState,db
+                    additional-path: server:/readyz # In order to collect probes from application main port
+                    # show-components: always
+        prometheus:
+            enabled: true
+        liquibase:
+            enabled: true
+        info:
+            enabled: true
+        threaddump:
+            enabled: true
+        heapdump:
+            enabled: true
+    metrics:
+        distribution:
+            percentiles-histogram:
+                "[http.server.requests]": true
+        export:
+            prometheus.enabled: true
+    health:
+        livenessstate:
+            enabled: true
+        readinessstate:
+            enabled: true
+
+springdoc:
+    show-actuator: true
+    use-management-port: true
 
 ---
 
-opentracing:
-    jaeger:
-        http-sender:
-            url: http://localhost:14268/api/traces
 spring:
-    config:
-        activate:
-            on-profile: docker
+    sleuth.otel.exporter.otlp.endpoint: http://collector:4317
+    config.activate.on-profile: docker
