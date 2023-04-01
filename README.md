@@ -30,8 +30,8 @@ Just run app from IDE and open [http://localhost:8080](http://localhost:8080)
 ## Run in Docker
 
 ### How to build
-`docker build --build-arg JAR_FILE=build/libs/spring.docker.demo-0.0.3.jar -t io.github.mfvanek/spring_test .`
+`./gradlew dockerBuildImage`
 
 ### How to run
-`docker run --rm --name springDemoApp --env SPRING_PROFILES_ACTIVE=docker -p 8080:8080 io.github.mfvanek/spring_test`  
+`docker run --rm --name springDemoApp --env SPRING_PROFILES_ACTIVE=docker -p 8080:8080 -p 8090:8090 spring.docker.demo:latest`  
 And open [http://localhost:8080](http://localhost:8080)
