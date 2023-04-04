@@ -23,7 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.10.5'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
     implementation('org.springframework.cloud:spring-cloud-starter-sleuth') {
         exclude group: 'org.springframework.cloud', module: 'spring-cloud-sleuth-brave'
     }
