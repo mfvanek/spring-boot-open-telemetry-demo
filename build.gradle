@@ -28,7 +28,7 @@ dependencies {
         exclude group: 'org.springframework.cloud', module: 'spring-cloud-sleuth-brave'
     }
     implementation 'org.springframework.cloud:spring-cloud-sleuth-otel-autoconfigure'
-    implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.24.0'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.25.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
