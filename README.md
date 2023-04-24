@@ -1,5 +1,5 @@
 ## How to run Jaeger server
-```bash
+```shell
 docker run -d --name jaeger \
   -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
   -e COLLECTOR_OTLP_ENABLED=true \
@@ -28,10 +28,19 @@ Just run app from IDE and open [http://localhost:8080](http://localhost:8080)
 [Health](http://localhost:8090/actuator/health)
 
 ## Run in Docker
-
 ### How to build
-`./gradlew dockerBuildImage`
+```shell
+./gradlew dockerBuildImage
+```
 
-### How to run
-`docker run --rm --name springDemoApp --env SPRING_PROFILES_ACTIVE=docker -p 8080:8080 -p 8090:8090 spring.docker.demo:latest`  
+### Docker Compose
+#### Start
+```shell
+docker-compose --project-name="spring-docker-demo" up -d
+```
 And open [http://localhost:8080](http://localhost:8080)
+
+#### Stop
+```shell
+docker-compose --project-name="spring-docker-demo" down
+```

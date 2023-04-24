@@ -14,6 +14,9 @@ spring:
         otel:
             exporter.otlp.endpoint: http://localhost:4317
             config.trace-id-ratio-based: 1.0
+            log:
+                slf4j.enabled: true
+                exporter.enabled: true
 
 management:
     server:
@@ -64,5 +67,5 @@ springdoc:
 ---
 
 spring:
-    sleuth.otel.exporter.otlp.endpoint: http://collector:4317
+    sleuth.otel.exporter.otlp.endpoint: http://jaeger:4317
     config.activate.on-profile: docker
