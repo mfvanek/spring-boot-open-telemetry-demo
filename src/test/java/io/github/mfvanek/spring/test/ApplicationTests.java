@@ -1,12 +1,9 @@
 package io.github.mfvanek.spring.test;
 
+import io.github.mfvanek.spring.test.support.TestBase;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@ActiveProfiles("test")
-class ApplicationTests {
+class ApplicationTests extends TestBase {
 
     @Test
     void contextLoads() {

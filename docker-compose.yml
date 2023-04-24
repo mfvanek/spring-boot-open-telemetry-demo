@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+    jaeger:
+        container_name: jaeger_all_in_one
+        image: jaegertracing/all-in-one:1.43
+        ports:
+            - "16686:16686"
+            - "14268:14268"
+            - "14269:14269"
+        environment:
+            - COLLECTOR_OTLP_ENABLED=true
+            - LOG_LEVEL=debug
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    cpus: '2'
+                    memory: 4G
+        networks:
+            - jaeger-example
+
+    spring-docker-demo:
+        container_name: spring_docker_demo
+        image: spring.docker.demo:latest
+        environment:
+            - SPRING_PROFILES_ACTIVE=docker
+        ports:
+            - "8080:8080"
+            - "8090:8090"
+        restart: unless-stopped
+        depends_on:
+            jaeger:
+                condition: service_started
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 512M
+        networks:
+            - jaeger-example
+
+networks:
+    jaeger-example:

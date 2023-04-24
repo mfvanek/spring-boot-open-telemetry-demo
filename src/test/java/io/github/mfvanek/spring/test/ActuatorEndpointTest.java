@@ -7,32 +7,26 @@
 
 package io.github.mfvanek.spring.test;
 
+import io.github.mfvanek.spring.test.support.TestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalManagementPort;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import javax.annotation.Nonnull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-class ActuatorEndpointTest {
+class ActuatorEndpointTest extends TestBase {
 
     @LocalServerPort
     private int port;
     @LocalManagementPort
     private int actuatorPort;
-    @Autowired
-    private WebTestClient webTestClient;
 
     private WebTestClient actuatorClient;
 
