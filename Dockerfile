@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine:17.0.5
+FROM eclipse-temurin:17.0.7_7-jre-focal
 LABEL maintainer=ivvakhrushev
 ARG JAR_FILE
 COPY ${JAR_FILE} /app.jar
