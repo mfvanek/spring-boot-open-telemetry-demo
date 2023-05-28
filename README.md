@@ -1,3 +1,5 @@
+# Spring Boot Open Telemetry Demo
+
 ## How to run Jaeger server
 ```shell
 docker run -d --name jaeger \
@@ -16,6 +18,11 @@ docker run -d --name jaeger \
   jaegertracing/all-in-one:1.43
 ```
 Open the Jaeger UI on [http://localhost:16686](http://localhost:16686)
+
+### How to stop Jaeger server
+```shell
+docker rm -f jaeger
+```
 
 ## Local run
 Just run app from IDE and open [http://localhost:8080](http://localhost:8080)

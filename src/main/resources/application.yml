@@ -28,7 +28,7 @@ management:
             probes.enabled: true
             group:
                 readiness:
-                    include: readinessState,db
+                    include: readinessState
                     additional-path: server:/readyz # In order to collect probes from application main port
                     # show-components: always
         prometheus:
@@ -58,8 +58,10 @@ management:
         enabled: true
         sampling:
             probability: 1.0
-        # TODO replace
-        zipkin.tracing.endpoint: http://localhost:9411/api/v2/spans
+    otlp:
+        metrics:
+            export:
+                url: http://localhost:14250
 
 springdoc:
     show-actuator: true
@@ -67,11 +69,9 @@ springdoc:
 
 logging:
     pattern:
-        level: %5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]
+        level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 ---
 
-# TODO remove!
-spring:
-    sleuth.otel.exporter.otlp.endpoint: http://jaeger:4317
-    config.activate.on-profile: docker
+spring.config.activate.on-profile: docker
+management.otlp.metrics.export.url: http://jaeger:14250

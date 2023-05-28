@@ -9,7 +9,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
 class TimeControllerTest extends TestBase {
@@ -27,6 +27,6 @@ class TimeControllerTest extends TestBase {
         assertThat(result)
                 .isBefore(LocalDateTime.now());
         assertThat(output.getAll())
-                .contains("Called method getNow. TraceId = ");
+                .containsPattern("Called method getNow. TraceId = .+$");
     }
 }
