@@ -10,13 +10,6 @@ server:
 
 spring:
     application.name: spring-docker-demo
-    sleuth:
-        otel:
-            exporter.otlp.endpoint: http://localhost:4317
-            config.trace-id-ratio-based: 1.0
-            log:
-                slf4j.enabled: true
-                exporter.enabled: true
 
 management:
     server:
@@ -35,7 +28,7 @@ management:
             probes.enabled: true
             group:
                 readiness:
-                    include: readinessState,db
+                    include: readinessState
                     additional-path: server:/readyz # In order to collect probes from application main port
                     # show-components: always
         prometheus:
@@ -52,20 +45,33 @@ management:
         distribution:
             percentiles-histogram:
                 "[http.server.requests]": true
-        export:
-            prometheus.enabled: true
     health:
         livenessstate:
             enabled: true
         readinessstate:
             enabled: true
+    prometheus:
+        metrics:
+            export:
+                enabled: true
+    tracing:
+        enabled: true
+        sampling:
+            probability: 1.0
+    otlp:
+        metrics:
+            export:
+                url: http://localhost:14250
 
 springdoc:
     show-actuator: true
     use-management-port: true
 
+logging:
+    pattern:
+        level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
 ---
 
-spring:
-    sleuth.otel.exporter.otlp.endpoint: http://jaeger:4317
-    config.activate.on-profile: docker
+spring.config.activate.on-profile: docker
+management.otlp.metrics.export.url: http://jaeger:14250
