@@ -1,9 +1,9 @@
 plugins {
-    id "org.springframework.boot" version "3.1.0"
-    id "io.spring.dependency-management" version "1.1.0"
-    id "com.bmuschko.docker-java-application" version "9.3.1"
-    id "java"
-    id "io.freefair.lombok" version "8.0.1"
+    id("java")
+    id("org.springframework.boot") version "3.1.0"
+    id("io.spring.dependency-management") version "1.1.0"
+    id("com.bmuschko.docker-java-application") version "9.3.1"
+    id("io.freefair.lombok") version "8.0.1"
     id("com.google.osdetector") version "1.7.3"
 }
 
@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
     implementation(enforcedPlatform("io.micrometer:micrometer-tracing-bom:1.1.1"))
-    implementation "io.micrometer:micrometer-tracing-bridge-otel"
+    implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation(enforcedPlatform("io.opentelemetry:opentelemetry-bom:1.26.0"))
     implementation("io.opentelemetry:opentelemetry-exporter-jaeger")
 
@@ -46,15 +46,17 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
 }
 
-test {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+    }
 }
 
 docker {
     javaApplication {
-        baseImage = "eclipse-temurin:17.0.7_7-jre-focal"
-        maintainer = "Ivan Vakhrushev"
-        images = ["${project.name}:${project.version}", "${project.name}:latest"]
+        baseImage.set("eclipse-temurin:17.0.7_7-jre-focal")
+        maintainer.set("Ivan Vakhrushev")
+        images.set(listOf("${project.name}:${project.version}", "${project.name}:latest"))
     }
 }
 
