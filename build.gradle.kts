@@ -42,7 +42,7 @@ dependencies {
     testImplementation(enforcedPlatform("org.junit:junit-bom:5.9.3"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation(enforcedPlatform("org.testcontainers:testcontainers-bom:1.18.1"))
+    testImplementation(enforcedPlatform("org.testcontainers:testcontainers-bom:1.18.3"))
     testImplementation("org.testcontainers:junit-jupiter")
 }
 
