@@ -28,7 +28,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
-    implementation(enforcedPlatform("io.micrometer:micrometer-tracing-bom:1.1.1"))
+    implementation(enforcedPlatform("io.micrometer:micrometer-tracing-bom:1.1.2"))
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation(enforcedPlatform("io.opentelemetry:opentelemetry-bom:1.26.0"))
     implementation("io.opentelemetry:opentelemetry-exporter-jaeger")
