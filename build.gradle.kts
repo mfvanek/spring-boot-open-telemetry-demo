@@ -30,7 +30,7 @@ dependencies {
 
     implementation(enforcedPlatform("io.micrometer:micrometer-tracing-bom:1.1.2"))
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
-    implementation(enforcedPlatform("io.opentelemetry:opentelemetry-bom:1.26.0"))
+    implementation(enforcedPlatform("io.opentelemetry:opentelemetry-bom:1.28.0"))
     implementation("io.opentelemetry:opentelemetry-exporter-jaeger")
 
     // https://github.com/netty/netty/issues/11020
