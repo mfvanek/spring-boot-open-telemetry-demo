@@ -24,7 +24,7 @@ dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation(enforcedPlatform("io.micrometer:micrometer-bom:1.11.1"))
+    implementation(enforcedPlatform("io.micrometer:micrometer-bom:1.11.2"))
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
