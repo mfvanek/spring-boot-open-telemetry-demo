@@ -31,7 +31,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
-    implementation("io.opentelemetry:opentelemetry-exporter-jaeger")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 
     // https://github.com/netty/netty/issues/11020
     if (osdetector.arch == "aarch_64") {
@@ -49,7 +49,7 @@ dependencyManagement {
     imports {
         mavenBom("io.micrometer:micrometer-bom:1.11.2")
         mavenBom("io.micrometer:micrometer-tracing-bom:1.1.3")
-        mavenBom("io.opentelemetry:opentelemetry-bom:1.26.0")
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.28.0")
         mavenBom("org.junit:junit-bom:5.9.3")
     }
 }
