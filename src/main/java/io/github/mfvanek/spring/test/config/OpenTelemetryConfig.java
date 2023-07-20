@@ -1,6 +1,6 @@
 package io.github.mfvanek.spring.test.config;
 
-import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter;
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
 public class OpenTelemetryConfig {
 
     @Bean
-    JaegerGrpcSpanExporter otelJaegerGrpcSpanExporter(
+    OtlpGrpcSpanExporter otelJaegerGrpcSpanExporter(
             @Value("${management.otlp.metrics.export.url}") final @Nonnull String endpoint) {
-        return JaegerGrpcSpanExporter.builder()
+        return OtlpGrpcSpanExporter.builder()
                 .setEndpoint(endpoint)
                 .build();
     }
