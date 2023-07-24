@@ -35,7 +35,7 @@ dependencies {
 
     // https://github.com/netty/netty/issues/11020
     if (osdetector.arch == "aarch_64") {
-        testImplementation("io.netty:netty-all:4.1.94.Final")
+        testImplementation("io.netty:netty-all:4.1.95.Final")
     }
 
     testImplementation("org.assertj:assertj-core:3.24.2")
