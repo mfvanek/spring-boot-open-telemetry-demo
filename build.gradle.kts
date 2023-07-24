@@ -2,7 +2,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.1.1"
+    id("org.springframework.boot") version "3.1.2"
     id("io.spring.dependency-management") version "1.1.2"
     id("com.bmuschko.docker-java-application") version "9.3.1"
     id("io.freefair.lombok") version "8.1.0"
@@ -35,7 +35,7 @@ dependencies {
 
     // https://github.com/netty/netty/issues/11020
     if (osdetector.arch == "aarch_64") {
-        testImplementation("io.netty:netty-all:4.1.94.Final")
+        testImplementation("io.netty:netty-all:4.1.96.Final")
     }
 
     testImplementation("org.assertj:assertj-core:3.24.2")
@@ -50,7 +50,7 @@ dependencyManagement {
         mavenBom("io.micrometer:micrometer-bom:1.11.2")
         mavenBom("io.micrometer:micrometer-tracing-bom:1.1.3")
         mavenBom("io.opentelemetry:opentelemetry-bom:1.28.0")
-        mavenBom("org.junit:junit-bom:5.9.3")
+        mavenBom("org.junit:junit-bom:5.10.0")
     }
 }
 
