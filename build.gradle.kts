@@ -3,9 +3,9 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     id("java")
     id("org.springframework.boot") version "3.1.2"
-    id("io.spring.dependency-management") version "1.1.2"
+    id("io.spring.dependency-management") version "1.1.3"
     id("com.bmuschko.docker-java-application") version "9.3.2"
-    id("io.freefair.lombok") version "8.1.0"
+    id("io.freefair.lombok") version "8.2.2"
     id("com.google.osdetector") version "1.7.3"
     id("com.github.ben-manes.versions") version "0.47.0"
 }
@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
@@ -49,7 +49,7 @@ dependencyManagement {
     imports {
         mavenBom("io.micrometer:micrometer-bom:1.11.2")
         mavenBom("io.micrometer:micrometer-tracing-bom:1.1.3")
-        mavenBom("io.opentelemetry:opentelemetry-bom:1.28.0")
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.29.0")
         mavenBom("org.junit:junit-bom:5.10.0")
     }
 }
