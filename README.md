@@ -1,5 +1,7 @@
 # Spring Boot Open Telemetry Demo
 
+[![Java CI](https://github.com/mfvanek/spring-docker-demo/actions/workflows/tests.yml/badge.svg)](https://github.com/mfvanek/spring-docker-demo/actions/workflows/tests.yml)
+
 ## How to run Jaeger server
 ```shell
 docker run -d --name jaeger \
