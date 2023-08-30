@@ -41,7 +41,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
+    testImplementation(platform("org.testcontainers:testcontainers-bom:1.19.0"))
     testImplementation("org.testcontainers:junit-jupiter")
 }
 
