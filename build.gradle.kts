@@ -7,7 +7,7 @@ plugins {
     id("com.bmuschko.docker-java-application") version "9.3.4"
     id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
-    id("com.github.ben-manes.versions") version "0.48.0"
+    id("com.github.ben-manes.versions") version "0.49.0"
 }
 
 group = "io.github.mfvanek"
