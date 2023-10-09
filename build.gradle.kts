@@ -5,7 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.1.4"
     id("io.spring.dependency-management") version "1.1.3"
     id("com.bmuschko.docker-java-application") version "9.3.4"
-    id("io.freefair.lombok") version "8.3"
+    id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
     id("com.github.ben-manes.versions") version "0.48.0"
 }
