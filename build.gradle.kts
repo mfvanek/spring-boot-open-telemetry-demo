@@ -50,7 +50,7 @@ dependencyManagement {
         mavenBom("io.micrometer:micrometer-bom:1.11.5")
         mavenBom("io.micrometer:micrometer-tracing-bom:1.1.6")
         mavenBom("io.opentelemetry:opentelemetry-bom:1.31.0")
-        mavenBom("org.junit:junit-bom:5.10.0")
+        mavenBom("org.junit:junit-bom:5.10.1")
     }
 }
 
