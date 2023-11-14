@@ -3,7 +3,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     id("java")
     id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
+    id("io.spring.dependency-management") version "1.1.4"
     id("com.bmuschko.docker-java-application") version "9.3.6"
     id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
