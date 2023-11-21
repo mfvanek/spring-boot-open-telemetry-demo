@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
 
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
@@ -38,23 +38,25 @@ dependencies {
         testImplementation("io.netty:netty-all:4.1.101.Final")
     }
 
-    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.assertj:assertj-core")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation(platform("org.testcontainers:testcontainers-bom:1.19.2"))
     testImplementation("org.testcontainers:junit-jupiter")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("io.micrometer:micrometer-bom:1.12.0")
-        mavenBom("io.micrometer:micrometer-tracing-bom:1.1.6")
-        mavenBom("io.opentelemetry:opentelemetry-bom:1.32.0")
+        mavenBom("org.springdoc:springdoc-openapi:2.2.0")
+        mavenBom("org.testcontainers:testcontainers-bom:1.19.2")
         mavenBom("org.junit:junit-bom:5.10.1")
     }
 }
 
 tasks {
+    wrapper {
+        gradleVersion = "8.4"
+    }
+
     test {
         useJUnitPlatform()
     }
