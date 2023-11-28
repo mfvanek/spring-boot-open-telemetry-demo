@@ -47,7 +47,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springdoc:springdoc-openapi:2.2.0")
-        mavenBom("org.testcontainers:testcontainers-bom:1.19.2")
+        mavenBom("org.testcontainers:testcontainers-bom:1.19.3")
         mavenBom("org.junit:junit-bom:5.10.1")
     }
 }
