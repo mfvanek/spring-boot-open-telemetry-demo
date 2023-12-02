@@ -2,20 +2,24 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.1.5"
+    id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.4"
-    id("com.bmuschko.docker-java-application") version "9.3.7"
+    id("com.bmuschko.docker-java-application") version "9.4.0"
     id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
     id("com.github.ben-manes.versions") version "0.50.0"
 }
 
 group = "io.github.mfvanek"
-version = "0.0.7"
+version = "0.0.8"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-parameters")
 }
 
 repositories {
@@ -47,6 +51,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springdoc:springdoc-openapi:2.2.0")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.2.0") // because of springdoc-openapi
         mavenBom("org.testcontainers:testcontainers-bom:1.19.3")
         mavenBom("org.junit:junit-bom:5.10.1")
     }
@@ -54,7 +59,7 @@ dependencyManagement {
 
 tasks {
     wrapper {
-        gradleVersion = "8.4"
+        gradleVersion = "8.5"
     }
 
     test {
