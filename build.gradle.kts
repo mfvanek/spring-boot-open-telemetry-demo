@@ -50,7 +50,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springdoc:springdoc-openapi:2.2.0")
+        mavenBom("org.springdoc:springdoc-openapi:2.3.0")
         mavenBom("org.springframework.boot:spring-boot-dependencies:3.2.0") // because of springdoc-openapi
         mavenBom("org.testcontainers:testcontainers-bom:1.19.3")
         mavenBom("org.junit:junit-bom:5.10.1")
