@@ -1,17 +1,19 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.2.0"
+    id("org.springframework.boot") version "3.2.1"
     id("io.spring.dependency-management") version "1.1.4"
     id("com.bmuschko.docker-java-application") version "9.4.0"
     id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
     id("com.github.ben-manes.versions") version "0.50.0"
+    id("net.ltgt.errorprone") version "3.1.0"
 }
 
 group = "io.github.mfvanek"
-version = "0.0.8"
+version = "0.0.9"
 
 java {
     toolchain {
@@ -20,6 +22,10 @@ java {
 }
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
+    options.errorprone {
+        disableWarningsInGeneratedCode.set(true)
+        disable("Slf4jLoggerShouldBeNonStatic")
+    }
 }
 
 repositories {
@@ -46,6 +52,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("org.testcontainers:junit-jupiter")
+
+    errorprone("com.google.errorprone:error_prone_core:2.24.0")
+    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.21")
 }
 
 dependencyManagement {
