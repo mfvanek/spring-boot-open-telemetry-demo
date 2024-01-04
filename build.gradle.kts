@@ -4,7 +4,6 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     id("java")
     id("org.springframework.boot") version "3.2.1"
-    id("io.spring.dependency-management") version "1.1.4"
     id("com.bmuschko.docker-java-application") version "9.4.0"
     id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
@@ -13,7 +12,7 @@ plugins {
 }
 
 group = "io.github.mfvanek"
-version = "0.0.9"
+version = "0.1.0"
 
 java {
     toolchain {
@@ -34,6 +33,12 @@ repositories {
 }
 
 dependencies {
+    implementation(platform("org.springdoc:springdoc-openapi:2.3.0"))
+    implementation(platform("org.assertj:assertj-bom:3.25.1"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.1"))
+    implementation(platform("org.testcontainers:testcontainers-bom:1.19.3"))
+    implementation(platform("org.junit:junit-bom:5.10.1"))
+
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -53,17 +58,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("org.testcontainers:junit-jupiter")
 
-    errorprone("com.google.errorprone:error_prone_core:2.24.0")
-    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.21")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springdoc:springdoc-openapi:2.3.0")
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.2.1") // because of springdoc-openapi
-        mavenBom("org.testcontainers:testcontainers-bom:1.19.3")
-        mavenBom("org.junit:junit-bom:5.10.1")
-    }
+    errorprone("com.google.errorprone:error_prone_core:2.24.1")
+    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.22")
 }
 
 tasks {
