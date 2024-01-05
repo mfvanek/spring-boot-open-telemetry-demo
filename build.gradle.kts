@@ -3,7 +3,7 @@ import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.2.1"
+    id("org.springframework.boot")
     id("com.bmuschko.docker-java-application") version "9.4.0"
     id("io.freefair.lombok") version "8.4"
     id("com.google.osdetector") version "1.7.3"
@@ -35,7 +35,8 @@ repositories {
 dependencies {
     implementation(platform("org.springdoc:springdoc-openapi:2.3.0"))
     implementation(platform("org.assertj:assertj-bom:3.25.1"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.1"))
+    implementation(platform("io.github.mfvanek:internal-spring-boot-3-bom:0.1.1"))
+    //implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.1"))
     implementation(platform("org.testcontainers:testcontainers-bom:1.19.3"))
     implementation(platform("org.junit:junit-bom:5.10.1"))
 
