@@ -9,7 +9,7 @@ import org.testcontainers.utility.DockerImageName;
 
 public class JaegerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-    private static final DockerImageName IMAGE = DockerImageName.parse("jaegertracing/all-in-one:1.43");
+    private static final DockerImageName IMAGE = DockerImageName.parse("jaegertracing/all-in-one:1.53");
     private static final Network NETWORK = Network.newNetwork();
     private static final GenericContainer<?> JAEGER = new GenericContainer<>(IMAGE)
             .withNetwork(NETWORK)
