@@ -3,6 +3,7 @@
 [![Java CI](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml/badge.svg)](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml)
 
 ## How to run Jaeger server
+
 ```shell
 docker run -d --name jaeger \
   -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
@@ -19,37 +20,56 @@ docker run -d --name jaeger \
   -p 9411:9411 \
   jaegertracing/all-in-one:1.43
 ```
+
 Open the Jaeger UI on [http://localhost:16686](http://localhost:16686)
 
 ### How to stop Jaeger server
+
 ```shell
 docker rm -f jaeger
 ```
 
 ## Local run
+
 Just run app from IDE and open [http://localhost:8080](http://localhost:8080)
 
 ### Swagger
+
 [Swagger UI](http://localhost:8090/actuator/swagger-ui)
 
 ### Actuator
+
 [Prometheus metrics](http://localhost:8090/actuator/prometheus)
 [Health](http://localhost:8090/actuator/health)
 
 ## Run in Docker
+
 ### How to build
+
 ```shell
 ./gradlew dockerBuildImage
 ```
 
 ### Docker Compose
+
 #### Start
+
 ```shell
-docker-compose --project-name="spring-boot-open-telemetry-demo" up -d
+docker-compose --file docker/docker-compose-full.yml  --project-name="spring-boot-open-telemetry-demo" up -d
 ```
+
 And open [http://localhost:8080](http://localhost:8080)
 
+#### Jaeger UI
+
+[http://localhost:16686](http://localhost:16686)
+
+#### Kafka UI
+
+[http://localhost:18080](http://localhost:18080)
+
 #### Stop
+
 ```shell
 docker-compose --project-name="spring-boot-open-telemetry-demo" down
 ```
