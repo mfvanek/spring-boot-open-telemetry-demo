@@ -9,7 +9,7 @@ server:
             min-spare: 5 # actuator port uses the same configuration
 
 spring:
-    application.name: spring-docker-demo
+    application.name: spring-boot-3-demo-app
 
 management:
     server:

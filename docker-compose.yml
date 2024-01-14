@@ -19,9 +19,9 @@ services:
         networks:
             - jaeger-example
 
-    spring-docker-demo:
-        container_name: spring_docker_demo
-        image: spring.docker.demo:latest
+    spring-boot-3-demo-app:
+        container_name: spring_boot_3_demo_app
+        image: spring-boot-3-demo-app:latest
         environment:
             - SPRING_PROFILES_ACTIVE=docker
         ports:
