@@ -6,11 +6,9 @@ plugins {
 }
 
 dependencies {
+    implementation(platform(project(":common-internal-bom")))
     implementation(platform("org.springdoc:springdoc-openapi:2.3.0"))
-    implementation(platform("org.assertj:assertj-bom:3.25.1"))
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.1"))
-    implementation(platform("org.testcontainers:testcontainers-bom:1.19.3"))
-    implementation(platform("org.junit:junit-bom:5.10.1"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
