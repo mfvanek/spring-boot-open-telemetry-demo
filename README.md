@@ -1,6 +1,6 @@
 # Spring Boot Open Telemetry Demo
 
-[![Java CI](https://github.com/mfvanek/spring-docker-demo/actions/workflows/tests.yml/badge.svg)](https://github.com/mfvanek/spring-docker-demo/actions/workflows/tests.yml)
+[![Java CI](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml/badge.svg)](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml)
 
 ## How to run Jaeger server
 ```shell
@@ -45,11 +45,11 @@ Just run app from IDE and open [http://localhost:8080](http://localhost:8080)
 ### Docker Compose
 #### Start
 ```shell
-docker-compose --project-name="spring-docker-demo" up -d
+docker-compose --project-name="spring-boot-open-telemetry-demo" up -d
 ```
 And open [http://localhost:8080](http://localhost:8080)
 
 #### Stop
 ```shell
-docker-compose --project-name="spring-docker-demo" down
+docker-compose --project-name="spring-boot-open-telemetry-demo" down
 ```
