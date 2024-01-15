@@ -35,6 +35,7 @@ public class TimeController {
         log.info("Called method getNow. TraceId = {}", traceId);
         final LocalDateTime now = LocalDateTime.now(clock);
         kafkaSendingService.sendNotification("Current time = " + now)
+                .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
                 .get();
         return now;
     }

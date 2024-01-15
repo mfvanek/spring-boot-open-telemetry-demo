@@ -21,9 +21,15 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
     private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(IMAGE_NAME)
             .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
             .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_SASL_ENABLED_MECHANISMS", "PLAIN")
-            .withEnv("KAFKA_SASL_JAAS_CONFIG", plainJaas(Map.of()))
+            .withEnv("KAFKA_SASL_JAAS_CONFIG", plainJaas())
             .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_PLAIN_SASL_JAAS_CONFIG", plainJaas(Map.of(KAFKA_USER_NAME, KAFKA_USER_PASSWORD)));
 
+    @Nonnull
+    public static String plainJaas() {
+        return plainJaas(Map.of());
+    }
+
+    @Nonnull
     private static String plainJaas(@Nonnull final Map<String, String> additionalUsers) {
         final String users = additionalUsers.entrySet()
                 .stream()
@@ -48,5 +54,10 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
                 "demo.kafka.opentelemetry.username=" + KAFKA_USER_NAME,
                 "demo.kafka.opentelemetry.password=" + KAFKA_USER_PASSWORD
         ).applyTo(applicationContext.getEnvironment());
+    }
+
+    @Nonnull
+    public static String getBootstrapSevers() {
+        return KAFKA_CONTAINER.getBootstrapServers();
     }
 }
