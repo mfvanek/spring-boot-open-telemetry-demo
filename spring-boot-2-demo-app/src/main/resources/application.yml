@@ -40,6 +40,10 @@ spring:
             log:
                 slf4j.enabled: true
                 exporter.enabled: true
+        trace-id128: true
+        supports-join: false
+        web:
+            additional-skip-pattern: .*/readyz
 
 management:
     server:

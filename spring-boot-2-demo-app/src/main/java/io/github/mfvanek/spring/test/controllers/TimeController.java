@@ -34,7 +34,8 @@ public class TimeController {
                 .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
         final LocalDateTime now = LocalDateTime.now(clock);
-        kafkaSendingService.sendNotification("Current time = " + now);
+        kafkaSendingService.sendNotification("Current time = " + now)
+                .get();
         return now;
     }
 }
