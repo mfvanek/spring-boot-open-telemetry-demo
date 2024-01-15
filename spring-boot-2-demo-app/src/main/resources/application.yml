@@ -8,8 +8,27 @@ server:
             max: 10
             min-spare: 5 # actuator port uses the same configuration
 
+demo:
+    kafka:
+        opentelemetry:
+            username: sb-ot-demo-user
+            password: pwdForSbOtDemoApp
+
 spring:
     application.name: spring-boot-2-demo-app
+    kafka:
+        template:
+            default-topic: open.telemetry.queue
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+        client-id: open.telemetry.client
+        bootstrap-servers: localhost:9092
+        security:
+            protocol: SASL_PLAINTEXT
+        properties:
+            sasl:
+                mechanism: PLAIN
+                jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${demo.kafka.opentelemetry.username}" password="${demo.kafka.opentelemetry.password}";
     sleuth:
         propagation:
             type:
