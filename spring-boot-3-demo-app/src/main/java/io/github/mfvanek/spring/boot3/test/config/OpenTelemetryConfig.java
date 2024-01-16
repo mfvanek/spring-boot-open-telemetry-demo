@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.config;
+package io.github.mfvanek.spring.boot3.test.config;
 
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import org.springframework.beans.factory.annotation.Value;

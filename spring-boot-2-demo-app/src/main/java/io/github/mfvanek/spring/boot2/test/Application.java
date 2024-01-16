@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test;
+package io.github.mfvanek.spring.boot2.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

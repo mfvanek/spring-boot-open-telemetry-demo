@@ -1,6 +1,6 @@
-package io.github.mfvanek.spring.test;
+package io.github.mfvanek.spring.boot2.test;
 
-import io.github.mfvanek.spring.test.support.TestBase;
+import io.github.mfvanek.spring.boot2.test.support.TestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

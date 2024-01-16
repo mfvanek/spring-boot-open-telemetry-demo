@@ -1,6 +1,6 @@
-package io.github.mfvanek.spring.test.controllers;
+package io.github.mfvanek.spring.boot3.test.controllers;
 
-import io.github.mfvanek.spring.test.support.TestBase;
+import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.system.CapturedOutput;

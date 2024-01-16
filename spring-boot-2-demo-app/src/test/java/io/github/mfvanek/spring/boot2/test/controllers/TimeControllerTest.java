@@ -1,7 +1,7 @@
 package io.github.mfvanek.spring.test.controllers;
 
-import io.github.mfvanek.spring.test.support.KafkaConsumerUtils;
-import io.github.mfvanek.spring.test.support.TestBase;
+import io.github.mfvanek.spring.boot2.test.support.KafkaConsumerUtils;
+import io.github.mfvanek.spring.boot2.test.support.TestBase;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;

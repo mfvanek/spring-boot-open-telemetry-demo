@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.controllers;
+package io.github.mfvanek.spring.boot3.test.controllers;
 
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.TraceContext;

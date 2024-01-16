@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.controllers;
+package io.github.mfvanek.spring.boot3.test.controllers;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

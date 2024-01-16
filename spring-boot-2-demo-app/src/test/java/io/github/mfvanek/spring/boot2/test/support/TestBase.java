@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.support;
+package io.github.mfvanek.spring.boot2.test.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;

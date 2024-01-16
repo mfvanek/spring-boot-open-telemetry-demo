@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.support;
+package io.github.mfvanek.spring.boot3.test.support;
 
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;

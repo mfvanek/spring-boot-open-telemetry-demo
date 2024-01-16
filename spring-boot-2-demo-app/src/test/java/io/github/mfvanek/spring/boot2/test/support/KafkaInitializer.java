@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.support;
+package io.github.mfvanek.spring.boot2.test.support;
 
 import org.apache.kafka.common.security.plain.PlainLoginModule;
 import org.springframework.boot.test.util.TestPropertyValues;
