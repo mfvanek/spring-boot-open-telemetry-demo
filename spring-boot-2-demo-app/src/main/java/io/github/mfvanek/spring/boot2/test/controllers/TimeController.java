@@ -1,9 +1,9 @@
-package io.github.mfvanek.spring.test.controllers;
+package io.github.mfvanek.spring.boot2.test.controllers;
 
 import java.time.Clock;
 import java.util.Optional;
 
-import io.github.mfvanek.spring.test.service.KafkaSendingService;
+import io.github.mfvanek.spring.boot2.test.service.KafkaSendingService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

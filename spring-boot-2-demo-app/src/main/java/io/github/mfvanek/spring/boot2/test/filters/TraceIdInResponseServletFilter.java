@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.filters;
+package io.github.mfvanek.spring.boot2.test.filters;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.sleuth.Span;

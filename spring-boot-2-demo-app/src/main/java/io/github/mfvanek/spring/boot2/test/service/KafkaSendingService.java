@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.service;
+package io.github.mfvanek.spring.boot2.test.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

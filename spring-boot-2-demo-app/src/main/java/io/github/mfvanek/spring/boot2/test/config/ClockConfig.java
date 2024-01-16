@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.config;
+package io.github.mfvanek.spring.boot2.test.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

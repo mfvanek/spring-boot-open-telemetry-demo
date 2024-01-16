@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.test.controllers;
+package io.github.mfvanek.spring.boot2.test.controllers;
 
 import io.github.mfvanek.spring.boot2.test.support.KafkaConsumerUtils;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
@@ -26,7 +26,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static io.github.mfvanek.spring.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
+import static io.github.mfvanek.spring.boot2.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
@@ -65,7 +65,7 @@ class TimeControllerTest extends TestBase {
                 .expectHeader().exists(TRACE_ID_HEADER_NAME)
                 .expectBody(LocalDateTime.class)
                 .returnResult();
-        final String traceId = result.getRequestHeaders().getFirst(TRACE_ID_HEADER_NAME);
+        final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId).isNotBlank();
         assertThat(result.getResponseBody())
                 .isBefore(LocalDateTime.now(clock));
@@ -89,6 +89,6 @@ class TimeControllerTest extends TestBase {
                 .toList();
         assertThat(headerValues)
                 .hasSameSizeAs(headerNames)
-                .satisfiesExactlyInAnyOrder(h -> assertThat(h).contains(traceId));
+                .allSatisfy(h -> assertThat(h).contains(traceId));
     }
 }
