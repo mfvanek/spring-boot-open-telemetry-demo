@@ -98,4 +98,5 @@ logging:
 
 spring:
     sleuth.otel.exporter.otlp.endpoint: http://jaeger:4317
+    kafka.bootstrap-servers: kafka1:29092
     config.activate.on-profile: docker

@@ -24,7 +24,7 @@ public class TimeController {
     private final Clock clock;
     private final KafkaSendingService kafkaSendingService;
 
-    // http://localhost:8080/current-time
+    // http://localhost:8090/current-time
     @SneakyThrows
     @GetMapping(path = "/current-time")
     public LocalDateTime getNow() {
