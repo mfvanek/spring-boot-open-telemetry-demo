@@ -21,7 +21,7 @@ public class TimeController {
     // http://localhost:8080/current-time
     @GetMapping(path = "/current-time")
     public LocalDateTime getNow() {
-        log.info("tracer {}", tracer);
+        log.trace("tracer {}", tracer);
         final var traceId = Optional.ofNullable(tracer.currentSpan())
                 .map(Span::context)
                 .map(TraceContext::traceId)

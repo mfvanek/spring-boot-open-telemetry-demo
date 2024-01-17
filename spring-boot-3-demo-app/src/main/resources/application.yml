@@ -60,17 +60,13 @@ management:
     otlp:
         metrics:
             export:
-                url: http://localhost:14250
+                url: http://localhost:4317
 
 springdoc:
     show-actuator: true
     use-management-port: true
 
-logging:
-    pattern:
-        level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-
 ---
 
 spring.config.activate.on-profile: docker
-management.otlp.metrics.export.url: http://jaeger:14250
+management.otlp.metrics.export.url: http://jaeger:4317

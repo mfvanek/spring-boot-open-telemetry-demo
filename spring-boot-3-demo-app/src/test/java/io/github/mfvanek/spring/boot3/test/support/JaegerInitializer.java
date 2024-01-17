@@ -13,7 +13,7 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
     private static final Network NETWORK = Network.newNetwork();
     private static final GenericContainer<?> JAEGER = new GenericContainer<>(IMAGE)
             .withNetwork(NETWORK)
-            .withExposedPorts(14250);
+            .withExposedPorts(4317);
 
     @Override
     public void initialize(final ConfigurableApplicationContext context) {
