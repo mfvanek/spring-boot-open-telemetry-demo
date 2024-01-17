@@ -55,7 +55,7 @@ tasks {
                 limit {
                     counter = "INSTRUCTION"
                     value = "COVEREDRATIO"
-                    minimum = "0.0".toBigDecimal()
+                    minimum = "0.58".toBigDecimal()
                 }
             }
             rule {

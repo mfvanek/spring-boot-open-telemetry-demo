@@ -13,7 +13,7 @@ spring:
 
 management:
     server:
-        port: 8090
+        port: 8085
     endpoints:
         enabled-by-default: false
         web:
@@ -30,7 +30,6 @@ management:
                 readiness:
                     include: readinessState
                     additional-path: server:/readyz # In order to collect probes from application main port
-                    # show-components: always
         prometheus:
             enabled: true
         liquibase:
@@ -61,17 +60,13 @@ management:
     otlp:
         metrics:
             export:
-                url: http://localhost:14250
+                url: http://localhost:4317
 
 springdoc:
     show-actuator: true
     use-management-port: true
 
-logging:
-    pattern:
-        level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-
 ---
 
 spring.config.activate.on-profile: docker
-management.otlp.metrics.export.url: http://jaeger:14250
+management.otlp.metrics.export.url: http://jaeger:4317

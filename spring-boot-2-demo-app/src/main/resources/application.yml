@@ -1,0 +1,98 @@
+server:
+    port: 8090
+    # See also https://docs.spring.io/spring-boot/docs/2.7.9/reference/html/application-properties.html#appendix.application-properties.server
+    tomcat:
+        accept-count: 10
+        max-connections: 400
+        threads:
+            max: 10
+            min-spare: 5 # actuator port uses the same configuration
+
+demo:
+    kafka:
+        opentelemetry:
+            username: sb-ot-demo-user
+            password: pwdForSbOtDemoApp
+
+spring:
+    application.name: spring-boot-2-demo-app
+    kafka:
+        template:
+            default-topic: open.telemetry.queue
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+        client-id: open.telemetry.client
+        bootstrap-servers: localhost:9092
+        security:
+            protocol: SASL_PLAINTEXT
+        properties:
+            sasl:
+                mechanism: PLAIN
+                jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${demo.kafka.opentelemetry.username}" password="${demo.kafka.opentelemetry.password}";
+    sleuth:
+        propagation:
+            type:
+                - W3C
+                - B3
+        otel:
+            exporter.otlp.endpoint: http://localhost:4317
+            config.trace-id-ratio-based: 1.0
+            log:
+                slf4j.enabled: true
+                exporter.enabled: true
+        trace-id128: true
+        supports-join: false
+        web:
+            additional-skip-pattern: .*/readyz
+
+management:
+    server:
+        port: 8091
+    endpoints:
+        enabled-by-default: false
+        web:
+            exposure.include: '*'
+            cors:
+                allowed-methods: '*'
+                allowed-origins: '*'
+                allowed-headers: '*'
+    endpoint:
+        health:
+            enabled: true
+            probes.enabled: true
+            group:
+                readiness:
+                    include: readinessState
+                    additional-path: server:/readyz # In order to collect probes from application main port
+        prometheus:
+            enabled: true
+        liquibase:
+            enabled: true
+        info:
+            enabled: true
+        threaddump:
+            enabled: true
+        heapdump:
+            enabled: true
+    metrics:
+        distribution:
+            percentiles-histogram:
+                "[http.server.requests]": true
+        export:
+            prometheus.enabled: true
+    health:
+        livenessstate:
+            enabled: true
+        readinessstate:
+            enabled: true
+
+springdoc:
+    show-actuator: true
+    use-management-port: true
+
+---
+
+spring:
+    sleuth.otel.exporter.otlp.endpoint: http://jaeger:4317
+    kafka.bootstrap-servers: kafka1:29092
+    config.activate.on-profile: docker
