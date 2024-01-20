@@ -1,6 +1,7 @@
 # Spring Boot Open Telemetry Demo
 
 [![Java CI](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml/badge.svg)](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/mfvanek/spring-boot-open-telemetry-demo/graph/badge.svg?token=NUWI02T68G)](https://codecov.io/gh/mfvanek/spring-boot-open-telemetry-demo)
 
 ## Local run from IDEA
 
