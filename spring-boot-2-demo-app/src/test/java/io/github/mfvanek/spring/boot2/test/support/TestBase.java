@@ -9,7 +9,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @AutoConfigureWebTestClient(timeout = "PT10S")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = {KafkaInitializer.class})
+@ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class})
 @ActiveProfiles("test")
 public abstract class TestBase {
 
