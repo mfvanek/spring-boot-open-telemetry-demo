@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class TimeController {
 
     private final Tracer tracer;
+    private final Clock clock;
 
     // http://localhost:8080/current-time
     @GetMapping(path = "/current-time")
@@ -27,6 +29,6 @@ public class TimeController {
                 .map(TraceContext::traceId)
                 .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        return LocalDateTime.now();
+        return LocalDateTime.now(clock);
     }
 }
