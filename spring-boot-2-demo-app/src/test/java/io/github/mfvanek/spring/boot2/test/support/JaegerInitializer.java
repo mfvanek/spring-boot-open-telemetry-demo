@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.boot3.test.support;
+package io.github.mfvanek.spring.boot2.test.support;
 
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
@@ -19,7 +19,7 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
 
         final String jaegerUrl = "http://localhost:" + JAEGER.getFirstMappedPort();
         TestPropertyValues.of(
-                "management.otlp.metrics.export.url=" + jaegerUrl
+                "spring.sleuth.otel.exporter.otlp.endpoint=" + jaegerUrl
         ).applyTo(context.getEnvironment());
     }
 }
