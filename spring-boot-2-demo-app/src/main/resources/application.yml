@@ -18,7 +18,7 @@ spring:
     application.name: spring-boot-2-demo-app
     kafka:
         template:
-            default-topic: open.telemetry.queue
+            default-topic: open.telemetry.sb2.queue
         producer:
             key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
         client-id: open.telemetry.client

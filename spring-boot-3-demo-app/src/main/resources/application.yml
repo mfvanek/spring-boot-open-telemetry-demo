@@ -8,8 +8,28 @@ server:
             max: 10
             min-spare: 5 # actuator port uses the same configuration
 
+demo:
+    kafka:
+        opentelemetry:
+            username: sb-ot-demo-user
+            password: pwdForSbOtDemoApp
+
 spring:
     application.name: spring-boot-3-demo-app
+    kafka:
+        template:
+            default-topic: open.telemetry.sb3.queue
+            observation-enabled: true # Important!!!
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+        client-id: open.telemetry.client
+        bootstrap-servers: localhost:9092
+        security:
+            protocol: SASL_PLAINTEXT
+        properties:
+            sasl:
+                mechanism: PLAIN
+                jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${demo.kafka.opentelemetry.username}" password="${demo.kafka.opentelemetry.password}";
 
 management:
     server:
@@ -55,6 +75,10 @@ management:
                 enabled: true
     tracing:
         enabled: true
+        propagation:
+            type:
+                - b3
+                - w3c
         sampling:
             probability: 1.0
     otlp:
@@ -68,5 +92,7 @@ springdoc:
 
 ---
 
-spring.config.activate.on-profile: docker
+spring:
+    config.activate.on-profile: docker
+    kafka.bootstrap-servers: kafka1:29092
 management.otlp.metrics.export.url: http://jaeger:4317

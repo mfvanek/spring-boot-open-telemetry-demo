@@ -9,7 +9,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @AutoConfigureObservability
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = JaegerInitializer.class)
+@ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class})
 @ActiveProfiles("test")
 public abstract class TestBase {
 
