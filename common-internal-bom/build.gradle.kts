@@ -10,6 +10,6 @@ javaPlatform {
 
 dependencies {
     api(platform("org.assertj:assertj-bom:3.25.3"))
-    api(platform("org.testcontainers:testcontainers-bom:1.19.6"))
+    api(platform("org.testcontainers:testcontainers-bom:1.19.7"))
     api(platform("org.junit:junit-bom:5.10.2"))
 }
