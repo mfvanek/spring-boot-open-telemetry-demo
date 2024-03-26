@@ -1,7 +1,7 @@
 plugins {
     id("sb-ot-demo.java-conventions")
     id("sb-ot-demo.docker")
-    id("org.springframework.boot") version "3.2.2"
+    id("org.springframework.boot") version "3.2.4"
     id("io.freefair.lombok")
 }
 
