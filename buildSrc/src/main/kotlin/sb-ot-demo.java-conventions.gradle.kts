@@ -20,8 +20,8 @@ dependencies {
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
-    errorprone("com.google.errorprone:error_prone_core:2.24.1")
-    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.22")
+    errorprone("com.google.errorprone:error_prone_core:2.26.1")
+    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.23")
 }
 
 java {
@@ -31,7 +31,7 @@ java {
 }
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.12"
 }
 
 tasks {
