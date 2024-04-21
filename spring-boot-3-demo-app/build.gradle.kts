@@ -1,14 +1,14 @@
 plugins {
     id("sb-ot-demo.java-conventions")
     id("sb-ot-demo.docker")
-    id("org.springframework.boot") version "3.2.2"
+    id("org.springframework.boot") version "3.2.5"
     id("io.freefair.lombok")
 }
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
     implementation(platform("org.springdoc:springdoc-openapi:2.3.0"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.2"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.5"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
