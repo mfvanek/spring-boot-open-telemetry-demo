@@ -6,6 +6,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings("resource")
 public class JaegerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
@@ -19,7 +21,12 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
 
         final String jaegerUrl = "http://localhost:" + JAEGER.getFirstMappedPort();
         TestPropertyValues.of(
-                "management.otlp.metrics.export.url=" + jaegerUrl
+                "management.otlp.tracing.endpoint=" + jaegerUrl
         ).applyTo(context.getEnvironment());
+    }
+
+    @Nonnull
+    public static Integer getFirstMappedPort() {
+        return JAEGER.getFirstMappedPort();
     }
 }
