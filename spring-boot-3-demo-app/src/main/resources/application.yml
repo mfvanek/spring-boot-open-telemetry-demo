@@ -71,9 +71,9 @@ management:
             slo:
                 http.server.requests: 1s
     health:
-        livenessstate:
+        livenessState:
             enabled: true
-        readinessstate:
+        readinessState:
             enabled: true
     prometheus:
         metrics:
@@ -88,9 +88,10 @@ management:
         sampling:
             probability: 1.0
     otlp:
-        metrics:
-            export:
-                url: http://localhost:4317
+        tracing:
+            endpoint: http://localhost:4317
+            compression: none
+            timeout: 5s
 
 springdoc:
     show-actuator: true
@@ -101,4 +102,4 @@ springdoc:
 spring:
     config.activate.on-profile: docker
     kafka.bootstrap-servers: kafka1:29092
-management.otlp.metrics.export.url: http://jaeger:4317
+management.otlp.tracing.endpoint: http://jaeger:4317
