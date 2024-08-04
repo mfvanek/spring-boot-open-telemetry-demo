@@ -17,11 +17,23 @@ demo:
 
 spring:
     application.name: spring-boot-2-demo-app
+    datasource:
+        username: otel_demo_user
+        password: otel_demo_password
+        # socketTimeout should be greater than the longest sql query
+        url: jdbc:postgresql://localhost:6432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
+    liquibase:
+        change-log: classpath:/db/changelog/db.changelog-master.yaml
     kafka:
         template:
             default-topic: open.telemetry.sb2.queue
         producer:
             key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+        listener:
+            ack-mode: manual_immediate
+        consumer:
+            auto-offset-reset: earliest
+            group-id: ${spring.kafka.template.default-topic}-group
         client-id: open.telemetry.client
         bootstrap-servers: localhost:9092
         security:
@@ -45,6 +57,12 @@ spring:
         supports-join: false
         web:
             additional-skip-pattern: .*/readyz
+        jdbc:
+            datasource-proxy:
+                query:
+                    enable-logging: true
+                    log-level: INFO
+            includes: QUERY
 
 management:
     server:
@@ -63,7 +81,7 @@ management:
             probes.enabled: true
             group:
                 readiness:
-                    include: readinessState
+                    include: readinessState, db
                     additional-path: server:/readyz # In order to collect probes from application main port
         prometheus:
             enabled: true
@@ -102,4 +120,5 @@ springdoc:
 spring:
     sleuth.otel.exporter.otlp.endpoint: http://jaeger:4317
     kafka.bootstrap-servers: kafka1:29092
+    datasource.url: jdbc:postgresql://postgres:5432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
     config.activate.on-profile: docker
