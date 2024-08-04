@@ -16,6 +16,13 @@ demo:
 
 spring:
     application.name: spring-boot-3-demo-app
+    datasource:
+        username: otel_demo_user
+        password: otel_demo_password
+        # socketTimeout should be greater than the longest sql query
+        url: jdbc:postgresql://localhost:6432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
+    liquibase:
+        change-log: classpath:/db/changelog/db.changelog-master.yaml
     kafka:
         template:
             default-topic: open.telemetry.sb3.queue
@@ -54,7 +61,7 @@ management:
             probes.enabled: true
             group:
                 readiness:
-                    include: readinessState
+                    include: readinessState, db
                     additional-path: server:/readyz # In order to collect probes from application main port
         prometheus:
             enabled: true
@@ -103,9 +110,18 @@ springdoc:
     show-actuator: true
     use-management-port: true
 
+jdbc:
+    datasource-proxy:
+        include-parameter-values: true
+        query:
+            enable-logging: true
+            log-level: INFO
+    includes: QUERY
+
 ---
 
 spring:
     config.activate.on-profile: docker
     kafka.bootstrap-servers: kafka1:29092
+    datasource.url: jdbc:postgresql://postgres:5432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
 management.otlp.tracing.endpoint: http://jaeger:4317

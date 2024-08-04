@@ -20,8 +20,17 @@ dependencies {
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.postgresql:postgresql")
+    implementation("com.zaxxer:HikariCP")
+    implementation(project(":db-migrations"))
+    implementation("org.liquibase:liquibase-core")
+    implementation("com.github.blagerweij:liquibase-sessionlock")
+    implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:1.0.5")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+    testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:kafka")
     testImplementation("org.springframework.kafka:spring-kafka-test")
 }

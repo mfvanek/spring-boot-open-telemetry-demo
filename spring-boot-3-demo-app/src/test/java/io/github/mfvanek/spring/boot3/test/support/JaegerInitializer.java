@@ -13,7 +13,7 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
 
     private static final DockerImageName IMAGE = DockerImageName.parse("jaegertracing/all-in-one:1.53");
     private static final GenericContainer<?> JAEGER = new GenericContainer<>(IMAGE)
-            .withExposedPorts(4317);
+        .withExposedPorts(4317);
 
     @Override
     public void initialize(final ConfigurableApplicationContext context) {
@@ -21,7 +21,7 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
 
         final String jaegerUrl = "http://localhost:" + JAEGER.getFirstMappedPort();
         TestPropertyValues.of(
-                "management.otlp.tracing.endpoint=" + jaegerUrl
+            "management.otlp.tracing.endpoint=" + jaegerUrl
         ).applyTo(context.getEnvironment());
     }
 
