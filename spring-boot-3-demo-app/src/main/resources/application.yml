@@ -22,6 +22,12 @@ spring:
             observation-enabled: true # Important!!!
         producer:
             key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+        listener:
+            observation-enabled: true # Important!!!
+            ack-mode: manual_immediate
+        consumer:
+            auto-offset-reset: earliest
+            group-id: ${spring.kafka.template.default-topic}-group
         client-id: open.telemetry.client
         bootstrap-servers: localhost:9092
         security:
