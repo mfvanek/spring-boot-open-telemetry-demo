@@ -7,6 +7,7 @@ server:
         threads:
             max: 10
             min-spare: 5 # actuator port uses the same configuration
+    shutdown: graceful
 
 demo:
     kafka:
@@ -124,4 +125,5 @@ spring:
     config.activate.on-profile: docker
     kafka.bootstrap-servers: kafka1:29092
     datasource.url: jdbc:postgresql://postgres:5432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
+
 management.otlp.tracing.endpoint: http://jaeger:4317

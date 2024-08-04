@@ -97,6 +97,8 @@ services:
             - otel_demo_db_data:/var/lib/postgresql/data
         ports:
             - "6432:5432"
+        networks:
+            - jaeger-example
 
 networks:
     jaeger-example:
