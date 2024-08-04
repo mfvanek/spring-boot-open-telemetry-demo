@@ -17,5 +17,6 @@ dependencies {
     constraints {
         api("org.liquibase:liquibase-core:4.28.0")
         api("com.github.blagerweij:liquibase-sessionlock:1.6.9")
+        api("org.awaitility:awaitility:4.2.1")
     }
 }
