@@ -24,10 +24,22 @@ dependencies {
     }
     implementation("org.springframework.cloud:spring-cloud-sleuth-otel-autoconfigure")
 
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.postgresql:postgresql")
+    implementation("com.zaxxer:HikariCP")
+    implementation(project(":db-migrations"))
+    implementation("org.liquibase:liquibase-core")
+    implementation("com.github.blagerweij:liquibase-sessionlock")
+    implementation("net.ttddyy:datasource-proxy:1.9") {
+        because("https://github.com/jdbc-observations/datasource-proxy/issues/111")
+    }
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+    testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:kafka")
     testImplementation("org.springframework.kafka:spring-kafka-test")
+    testImplementation("org.awaitility:awaitility")
 }
 
 springBoot {

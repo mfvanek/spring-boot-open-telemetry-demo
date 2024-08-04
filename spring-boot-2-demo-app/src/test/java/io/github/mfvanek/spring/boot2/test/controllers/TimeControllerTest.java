@@ -5,8 +5,10 @@ import io.github.mfvanek.spring.boot2.test.support.TestBase;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,13 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,6 +46,8 @@ class TimeControllerTest extends TestBase {
     private KafkaProperties kafkaProperties;
     @Autowired
     private Clock clock;
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
     @BeforeAll
     void setUpKafkaConsumer() {
@@ -52,6 +60,11 @@ class TimeControllerTest extends TestBase {
             container.stop();
             container = null;
         }
+    }
+
+    @BeforeEach
+    void cleanUpDatabase() {
+        jdbcTemplate.getJdbcTemplate().execute("truncate table otel_demo.storage");
     }
 
     @SneakyThrows
@@ -90,5 +103,22 @@ class TimeControllerTest extends TestBase {
         assertThat(headerValues)
                 .hasSameSizeAs(headerNames)
                 .allSatisfy(h -> assertThat(h).contains(traceId));
+
+        Awaitility
+            .await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(500L))
+            .until(() -> countRecordsInTable() >= 1L);
+        assertThat(output.getAll())
+            .contains("Received record: " + received.value() + " with traceId " + traceId);
+        final String messageFromDb = jdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
+            Map.of("traceId", traceId), String.class);
+        assertThat(messageFromDb)
+            .isEqualTo(received.value());
+    }
+
+    private long countRecordsInTable() {
+        final Long queryResult = jdbcTemplate.getJdbcTemplate().queryForObject("select count(*) from otel_demo.storage", Long.class);
+        return Objects.requireNonNullElse(queryResult, 0L);
     }
 }

@@ -84,5 +84,24 @@ services:
         networks:
             - jaeger-example
 
+    postgres:
+        container_name: postgres
+        image: postgres:16.2
+        shm_size: "2gb"
+        environment:
+            POSTGRES_DB: "otel_demo_db"
+            POSTGRES_USER: "otel_demo_user"
+            POSTGRES_PASSWORD: "otel_demo_password"
+            PGDATA: "/var/lib/postgresql/data/pgdata"
+        volumes:
+            - otel_demo_db_data:/var/lib/postgresql/data
+        ports:
+            - "6432:5432"
+        networks:
+            - jaeger-example
+
 networks:
     jaeger-example:
+
+volumes:
+    otel_demo_db_data:
