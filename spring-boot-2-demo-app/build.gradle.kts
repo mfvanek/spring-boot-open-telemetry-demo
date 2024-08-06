@@ -30,7 +30,7 @@ dependencies {
     implementation(project(":db-migrations"))
     implementation("org.liquibase:liquibase-core")
     implementation("com.github.blagerweij:liquibase-sessionlock")
-    implementation("net.ttddyy:datasource-proxy:1.9") {
+    implementation("net.ttddyy:datasource-proxy:1.10") {
         because("https://github.com/jdbc-observations/datasource-proxy/issues/111")
     }
 
