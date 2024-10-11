@@ -27,29 +27,31 @@ class ApplicationTests extends TestBase {
     @Test
     void contextLoads() {
         assertThat(applicationContext.containsBean("otlpMeterRegistry"))
-                .isFalse();
+            .isFalse();
         assertThat(applicationContext.getBean(ObservationRegistry.class))
-                .isNotNull()
-                .isInstanceOf(ObservationRegistry.class);
+            .isNotNull()
+            .isInstanceOf(ObservationRegistry.class);
         assertThat(applicationContext.getBean(Tracer.class))
-                .isNotNull()
-                .isInstanceOf(OtelTracer.class)
-                .satisfies(t -> assertThat(t.currentSpan())
-                        .isNotEqualTo(Span.NOOP));
+            .isNotNull()
+            .isInstanceOf(OtelTracer.class)
+            .satisfies(t -> assertThat(t.currentSpan())
+                .isNotEqualTo(Span.NOOP));
         assertThat(applicationContext.getBean("otelJaegerGrpcSpanExporter"))
-                .isNotNull()
-                .isInstanceOf(OtlpGrpcSpanExporter.class)
-                .hasToString(String.format(Locale.ROOT, "OtlpGrpcSpanExporter{exporterName=otlp, type=span, " +
-                        "endpoint=http://localhost:%d, " +
-                        "endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, timeoutNanos=5000000000, " +
-                        "connectTimeoutNanos=10000000000, compressorEncoding=null, " +
-                        "headers=Headers{User-Agent=OBFUSCATED}}", JaegerInitializer.getFirstMappedPort()));
+            .isNotNull()
+            .isInstanceOf(OtlpGrpcSpanExporter.class)
+            .hasToString(String.format(Locale.ROOT, "OtlpGrpcSpanExporter{exporterName=otlp, type=span, " +
+                "endpoint=http://localhost:%d, " +
+                "endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, timeoutNanos=5000000000, " +
+                "connectTimeoutNanos=10000000000, compressorEncoding=null, " +
+                "headers=Headers{User-Agent=OBFUSCATED}}", JaegerInitializer.getFirstMappedPort()));
     }
+
     @Test
     void jdbcQueryTimeoutFromProperties() {
         assertThat(jdbcTemplate.getQueryTimeout())
             .isEqualTo(1);
     }
+
     @Test
     @DisplayName("Throws exception when query exceeds timeout")
     void exceptionWithLongQuery() {
@@ -64,4 +66,3 @@ class ApplicationTests extends TestBase {
         assertThatNoException().isThrownBy(() -> jdbcTemplate.execute("select pg_sleep(0.9);"));
     }
 }
-

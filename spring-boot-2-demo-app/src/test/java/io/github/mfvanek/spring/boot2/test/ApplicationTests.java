@@ -14,11 +14,13 @@ class ApplicationTests extends TestBase {
     @Test
     void contextLoads() {
     }
+
     @Test
     void jdbcQueryTimeoutFromProperties() {
         assertThat(jdbcTemplate.getQueryTimeout())
             .isEqualTo(1);
     }
+
     @Test
     @DisplayName("Throws exception when query exceeds timeout")
     void exceptionWithLongQuery() {
@@ -33,4 +35,3 @@ class ApplicationTests extends TestBase {
         assertThatNoException().isThrownBy(() -> jdbcTemplate.execute("select pg_sleep(0.9);"));
     }
 }
-
