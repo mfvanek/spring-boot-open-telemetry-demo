@@ -30,7 +30,7 @@ class ApplicationTests extends TestBase {
     @Test
     @DisplayName("Does not throw exception when query does not exceed timeout")
     void exceptionNotThrownWithNotLongQuery() {
-        assertThatNoException().isThrownBy(() -> jdbcTemplate.execute("select pg_sleep(1);"));
+        assertThatNoException().isThrownBy(() -> jdbcTemplate.execute("select pg_sleep(0.9);"));
     }
 }
 

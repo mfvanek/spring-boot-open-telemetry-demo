@@ -1,0 +1,4 @@
+spring:
+    jdbc:
+        template:
+            query-timeout: 1 # 1 second
