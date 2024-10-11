@@ -63,6 +63,8 @@ spring:
                     enable-logging: true
                     log-level: INFO
             includes: QUERY
+            template:
+                query-timeout: 1 # 1 second
 
 management:
     server:

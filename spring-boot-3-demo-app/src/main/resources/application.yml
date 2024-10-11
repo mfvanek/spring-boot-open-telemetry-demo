@@ -117,6 +117,7 @@ jdbc:
         query:
             enable-logging: true
             log-level: INFO
+            query-timeout: 1 # 1 second
     includes: QUERY
 
 ---
