@@ -47,7 +47,7 @@ class TimeControllerTest extends TestBase {
     @Autowired
     private Clock clock;
     @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @BeforeAll
     void setUpKafkaConsumer() {
@@ -64,7 +64,7 @@ class TimeControllerTest extends TestBase {
 
     @BeforeEach
     void cleanUpDatabase() {
-        jdbcTemplate.getJdbcTemplate().execute("truncate table otel_demo.storage");
+        jdbcTemplate.execute("truncate table otel_demo.storage");
     }
 
     @SneakyThrows
@@ -111,14 +111,14 @@ class TimeControllerTest extends TestBase {
             .until(() -> countRecordsInTable() >= 1L);
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId);
-        final String messageFromDb = jdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
+        final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
         assertThat(messageFromDb)
             .isEqualTo(received.value());
     }
 
     private long countRecordsInTable() {
-        final Long queryResult = jdbcTemplate.getJdbcTemplate().queryForObject("select count(*) from otel_demo.storage", Long.class);
+        final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
         return Objects.requireNonNullElse(queryResult, 0L);
     }
 }

@@ -16,7 +16,7 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
     private static final String KAFKA_USER_NAME = "sb-ot-demo-user";
     private static final String KAFKA_USER_PASSWORD = "pwdForSbOtDemoApp";
 
-    private static final DockerImageName IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.5.3");
+    private static final DockerImageName IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.7.1");
 
     private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(IMAGE_NAME)
             .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")

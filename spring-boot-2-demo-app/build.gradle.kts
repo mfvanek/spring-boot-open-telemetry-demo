@@ -42,6 +42,7 @@ dependencies {
     testImplementation("org.testcontainers:kafka")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility")
+    testImplementation("io.github.mfvanek:pg-index-health-test-starter")
 }
 
 springBoot {
