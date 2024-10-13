@@ -20,8 +20,8 @@ dependencies {
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
-    errorprone("com.google.errorprone:error_prone_core:2.26.1")
-    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.23")
+    errorprone("com.google.errorprone:error_prone_core:2.33.0")
+    errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.28")
 }
 
 java {
