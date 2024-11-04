@@ -25,33 +25,35 @@ class IndexesMaintenanceTest extends TestBase {
     void checkPostgresVersion() {
         final String pgVersion = jdbcTemplate.queryForObject("select version();", String.class);
         assertThat(pgVersion)
-            .startsWith("PostgreSQL 16.4");
+                .startsWith("PostgreSQL 16.4");
     }
 
     @Test
     void databaseStructureCheckForPublicSchema() {
         assertThat(checks)
-            .hasSameSizeAs(Diagnostic.values());
+                .hasSameSizeAs(Diagnostic.values());
 
-        checks.forEach(check -> {
-            switch (check.getDiagnostic()) {
-                case TABLES_WITHOUT_PRIMARY_KEY, TABLES_WITHOUT_DESCRIPTION -> assertThat(check.check())
-                    .asInstanceOf(list(Table.class))
-                    .hasSize(1)
-                    .containsExactly(Table.of("databasechangelog", 0L));
+        checks.stream()
+                .filter(DatabaseCheckOnHost::isStatic)
+                .forEach(check -> {
+                    switch (check.getDiagnostic()) {
+                        case TABLES_WITHOUT_PRIMARY_KEY, TABLES_WITHOUT_DESCRIPTION -> assertThat(check.check())
+                                .asInstanceOf(list(Table.class))
+                                .hasSize(1)
+                                .containsExactly(Table.of("databasechangelog", 0L));
 
-                case COLUMNS_WITHOUT_DESCRIPTION -> assertThat(check.check())
-                    .asInstanceOf(list(Column.class))
-                    .hasSize(14)
-                    .allSatisfy(column -> assertThat(column.getTableName()).isEqualTo("databasechangelog"));
+                        case COLUMNS_WITHOUT_DESCRIPTION -> assertThat(check.check())
+                                .asInstanceOf(list(Column.class))
+                                .hasSize(14)
+                                .allSatisfy(column -> assertThat(column.getTableName()).isEqualTo("databasechangelog"));
 
-                case TABLES_WITH_MISSING_INDEXES -> assertThat(check.check())
-                    .hasSizeLessThanOrEqualTo(1); // TODO skip runtime checks after https://github.com/mfvanek/pg-index-health/issues/456
+                        case TABLES_WITH_MISSING_INDEXES -> assertThat(check.check())
+                                .hasSizeLessThanOrEqualTo(1); // TODO skip runtime checks after https://github.com/mfvanek/pg-index-health/issues/456
 
-                default -> assertThat(check.check())
-                    .as(check.getDiagnostic().name())
-                    .isEmpty();
-            }
-        });
+                        default -> assertThat(check.check())
+                                .as(check.getDiagnostic().name())
+                                .isEmpty();
+                    }
+                });
     }
 }
