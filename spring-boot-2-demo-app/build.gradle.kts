@@ -21,7 +21,8 @@ dependencies {
 
     implementation("org.springframework.kafka:spring-kafka")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
-    implementation("org.springframework.cloud:spring-cloud-starter-sleuth") {
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:3.1.11") {
+        because("The version is higher than in BOM")
         exclude(group = "org.springframework.cloud", module = "spring-cloud-sleuth-brave")
     }
     implementation("org.springframework.cloud:spring-cloud-sleuth-otel-autoconfigure")

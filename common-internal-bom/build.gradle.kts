@@ -12,7 +12,7 @@ dependencies {
     api(platform("org.assertj:assertj-bom:3.26.3"))
     api(platform("org.testcontainers:testcontainers-bom:1.20.3"))
     api(platform("org.junit:junit-bom:5.11.3"))
-    api(platform("io.github.mfvanek:pg-index-health-bom:0.13.1"))
+    api(platform("io.github.mfvanek:pg-index-health-bom:0.13.2"))
 
     constraints {
         api("org.liquibase:liquibase-core:4.29.2")
