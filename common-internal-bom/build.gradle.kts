@@ -15,7 +15,7 @@ dependencies {
     api(platform("io.github.mfvanek:pg-index-health-bom:0.13.2"))
 
     constraints {
-        api("org.liquibase:liquibase-core:4.29.2")
+        api("org.liquibase:liquibase-core:4.30.0")
         api("com.github.blagerweij:liquibase-sessionlock:1.6.9")
         api("org.awaitility:awaitility:4.2.2")
     }
