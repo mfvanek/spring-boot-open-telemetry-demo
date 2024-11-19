@@ -30,11 +30,11 @@ public class KafkaReadingService {
         final String traceId = currentSpan != null ? currentSpan.context().traceId() : "";
         log.info("Received record: {} with traceId {}", message.value(), traceId);
         jdbcTemplate.update("insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",
-                Map.ofEntries(
-                        Map.entry("msg", message.value()),
-                        Map.entry("traceId", traceId),
-                        Map.entry("createdAt", LocalDateTime.now(clock))
-                )
+            Map.ofEntries(
+                Map.entry("msg", message.value()),
+                Map.entry("traceId", traceId),
+                Map.entry("createdAt", LocalDateTime.now(clock))
+            )
         );
         ack.acknowledge();
     }

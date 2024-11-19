@@ -7,9 +7,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 
 public class KafkaInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
