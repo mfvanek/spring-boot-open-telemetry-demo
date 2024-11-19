@@ -71,38 +71,38 @@ class TimeControllerTest extends TestBase {
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
         final var result = webTestClient.get()
-                .uri(uriBuilder -> uriBuilder.path("current-time")
-                        .build())
-                .exchange()
-                .expectStatus().isOk()
-                .expectHeader().exists(TRACE_ID_HEADER_NAME)
-                .expectBody(LocalDateTime.class)
-                .returnResult();
+            .uri(uriBuilder -> uriBuilder.path("current-time")
+                .build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().exists(TRACE_ID_HEADER_NAME)
+            .expectBody(LocalDateTime.class)
+            .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId).isNotBlank();
         assertThat(result.getResponseBody())
-                .isBefore(LocalDateTime.now(clock));
+            .isBefore(LocalDateTime.now(clock));
         assertThat(output.getAll())
-                .contains("Called method getNow. TraceId = " + traceId)
-                .contains("Awaiting acknowledgement from Kafka");
+            .contains("Called method getNow. TraceId = " + traceId)
+            .contains("Awaiting acknowledgement from Kafka");
 
         final var received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
         assertThat(received.value()).startsWith("Current time = ");
         final Header[] headers = received.headers().toArray();
         final var headerNames = Arrays.stream(headers)
-                .map(Header::key)
-                .toList();
+            .map(Header::key)
+            .toList();
         assertThat(headerNames)
-                .hasSize(2)
-                .containsExactlyInAnyOrder("traceparent", "b3");
+            .hasSize(2)
+            .containsExactlyInAnyOrder("traceparent", "b3");
         final var headerValues = Arrays.stream(headers)
-                .map(Header::value)
-                .map(v -> new String(v, StandardCharsets.UTF_8))
-                .toList();
+            .map(Header::value)
+            .map(v -> new String(v, StandardCharsets.UTF_8))
+            .toList();
         assertThat(headerValues)
-                .hasSameSizeAs(headerNames)
-                .allSatisfy(h -> assertThat(h).contains(traceId));
+            .hasSameSizeAs(headerNames)
+            .allSatisfy(h -> assertThat(h).contains(traceId));
 
         Awaitility
             .await()
