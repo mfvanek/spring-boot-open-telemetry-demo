@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Nonnull;
 import java.util.Locale;
+import javax.annotation.Nonnull;
 
 @AutoConfigureBefore(OtlpAutoConfiguration.class)
 @Configuration(proxyBeanMethods = false)
@@ -21,9 +21,9 @@ class OpenTelemetryConfig {
     @ConditionalOnMissingBean(OtlpGrpcSpanExporter.class)
     OtlpGrpcSpanExporter otelJaegerGrpcSpanExporter(@Nonnull final OtlpProperties otlpProperties) {
         OtlpGrpcSpanExporterBuilder builder = OtlpGrpcSpanExporter.builder()
-                .setEndpoint(otlpProperties.getEndpoint())
-                .setTimeout(otlpProperties.getTimeout())
-                .setCompression(String.valueOf(otlpProperties.getCompression()).toLowerCase(Locale.ROOT));
+            .setEndpoint(otlpProperties.getEndpoint())
+            .setTimeout(otlpProperties.getTimeout())
+            .setCompression(String.valueOf(otlpProperties.getCompression()).toLowerCase(Locale.ROOT));
         otlpProperties.getHeaders().forEach(builder::addHeader);
         return builder.build();
     }

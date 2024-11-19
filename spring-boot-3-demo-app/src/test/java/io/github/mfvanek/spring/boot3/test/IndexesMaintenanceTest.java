@@ -4,14 +4,13 @@ import io.github.mfvanek.pg.common.maintenance.DatabaseCheckOnHost;
 import io.github.mfvanek.pg.common.maintenance.Diagnostic;
 import io.github.mfvanek.pg.model.DbObject;
 import io.github.mfvanek.pg.model.PgContext;
-import io.github.mfvanek.pg.model.table.TableNameAware;
+import io.github.mfvanek.pg.model.predicates.SkipLiquibaseTablesPredicate;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,17 +34,9 @@ class IndexesMaintenanceTest extends TestBase {
 
         checks.stream()
             .filter(DatabaseCheckOnHost::isStatic)
-            .forEach(check -> {
-                final Predicate<DbObject> skipLiquibaseTables = dbObject -> {
-                    if (dbObject instanceof TableNameAware t) {
-                        return !t.getTableName().equalsIgnoreCase("databasechangelog");
-                    }
-                    return true;
-                };
-                final List<? extends DbObject> objects = check.check(PgContext.ofPublic(), skipLiquibaseTables);
-                assertThat(objects)
+            .forEach(check ->
+                assertThat(check.check(PgContext.ofPublic(), SkipLiquibaseTablesPredicate.ofPublic()))
                     .as(check.getDiagnostic().name())
-                    .isEmpty();
-            });
+                    .isEmpty());
     }
 }

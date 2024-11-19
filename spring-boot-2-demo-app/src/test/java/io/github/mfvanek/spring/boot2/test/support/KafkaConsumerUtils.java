@@ -13,17 +13,17 @@ import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import javax.annotation.Nonnull;
 
 @UtilityClass
 public class KafkaConsumerUtils {
 
     public KafkaMessageListenerContainer<UUID, String> setUpKafkaConsumer(
-            @Nonnull final KafkaProperties kafkaProperties,
-            @Nonnull final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords) {
+        @Nonnull final KafkaProperties kafkaProperties,
+        @Nonnull final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords) {
         final var containerProperties = new ContainerProperties(kafkaProperties.getTemplate().getDefaultTopic());
         final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false");
         consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");

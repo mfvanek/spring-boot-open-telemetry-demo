@@ -1,8 +1,5 @@
 package io.github.mfvanek.spring.boot2.test.controllers;
 
-import java.time.Clock;
-import java.util.Optional;
-
 import io.github.mfvanek.spring.boot2.test.service.KafkaSendingService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,7 +10,9 @@ import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -29,14 +28,14 @@ public class TimeController {
     @GetMapping(path = "/current-time")
     public LocalDateTime getNow() {
         final var traceId = Optional.ofNullable(tracer.currentSpan())
-                .map(Span::context)
-                .map(TraceContext::traceId)
-                .orElse(null);
+            .map(Span::context)
+            .map(TraceContext::traceId)
+            .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
         final LocalDateTime now = LocalDateTime.now(clock);
         kafkaSendingService.sendNotification("Current time = " + now)
-                .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
-                .get();
+            .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
+            .get();
         return now;
     }
 }
