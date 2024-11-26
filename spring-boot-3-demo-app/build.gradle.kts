@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
-    implementation(platform("org.springdoc:springdoc-openapi:2.6.0"))
+    implementation(platform("org.springdoc:springdoc-openapi:2.7.0"))
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.3.4"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
