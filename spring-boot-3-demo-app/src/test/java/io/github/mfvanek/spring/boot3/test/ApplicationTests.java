@@ -43,7 +43,7 @@ class ApplicationTests extends TestBase {
                 "endpoint=http://localhost:%d, " +
                 "endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, timeoutNanos=5000000000, " +
                 "connectTimeoutNanos=10000000000, compressorEncoding=null, " +
-                "headers=Headers{User-Agent=OBFUSCATED}}", JaegerInitializer.getFirstMappedPort()));
+                "headers=Headers{User-Agent=OBFUSCATED}, memoryMode=IMMUTABLE_DATA}", JaegerInitializer.getFirstMappedPort()));
     }
 
     @Test

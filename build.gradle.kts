@@ -9,7 +9,7 @@ description = "Experiments with Java"
 
 allprojects {
     group = "io.github.mfvanek"
-    version = "0.2.2"
+    version = "0.3.0"
 
     repositories {
         mavenLocal()
@@ -19,7 +19,7 @@ allprojects {
 
 tasks {
     wrapper {
-        gradleVersion = "8.11"
+        gradleVersion = "8.11.1"
     }
 }
 
