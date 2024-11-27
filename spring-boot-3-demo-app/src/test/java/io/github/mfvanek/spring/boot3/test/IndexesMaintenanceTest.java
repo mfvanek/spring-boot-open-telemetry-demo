@@ -1,9 +1,9 @@
 package io.github.mfvanek.spring.boot3.test;
 
-import io.github.mfvanek.pg.common.maintenance.DatabaseCheckOnHost;
-import io.github.mfvanek.pg.common.maintenance.Diagnostic;
-import io.github.mfvanek.pg.model.DbObject;
-import io.github.mfvanek.pg.model.PgContext;
+import io.github.mfvanek.pg.core.checks.common.DatabaseCheckOnHost;
+import io.github.mfvanek.pg.core.checks.common.Diagnostic;
+import io.github.mfvanek.pg.model.context.PgContext;
+import io.github.mfvanek.pg.model.dbobject.DbObject;
 import io.github.mfvanek.pg.model.predicates.SkipLiquibaseTablesPredicate;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import org.junit.jupiter.api.DisplayName;
