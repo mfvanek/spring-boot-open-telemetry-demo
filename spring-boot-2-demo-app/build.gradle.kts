@@ -45,6 +45,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility")
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
+    testImplementation ("com.github.tomakehurst:wiremock:3.0.1")
 }
 
 springBoot {

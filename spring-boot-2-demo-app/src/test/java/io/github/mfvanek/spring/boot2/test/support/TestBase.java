@@ -17,4 +17,5 @@ public abstract class TestBase {
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+
 }

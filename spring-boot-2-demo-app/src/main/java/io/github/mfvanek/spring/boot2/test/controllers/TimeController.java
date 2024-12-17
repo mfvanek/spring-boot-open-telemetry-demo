@@ -40,4 +40,19 @@ public class TimeController {
             .get();
         return now;
     }
+
+    @SneakyThrows
+    @GetMapping(path = "/current-time-worldtimeapi")
+    public LocalDateTime getZonedTime() {
+        final var traceId = Optional.ofNullable(tracer.currentSpan())
+            .map(Span::context)
+            .map(TraceContext::traceId)
+            .orElse(null);
+        log.info("Called method getZonedTime. TraceId = {}", traceId);
+        final LocalDateTime now = publicApiService.getZonedTime();
+        kafkaSendingService.sendNotification("Current time = " + now)
+            .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
+            .get();
+        return now;
+    }
 }
