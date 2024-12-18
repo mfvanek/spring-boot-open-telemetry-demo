@@ -34,22 +34,8 @@ public class TimeController {
             .map(TraceContext::traceId)
             .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        final LocalDateTime now = LocalDateTime.now(clock);
-        kafkaSendingService.sendNotification("Current time = " + now)
-            .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
-            .get();
-        return now;
-    }
-
-    @SneakyThrows
-    @GetMapping(path = "/current-time-worldtimeapi")
-    public LocalDateTime getZonedTime() {
-        final var traceId = Optional.ofNullable(tracer.currentSpan())
-            .map(Span::context)
-            .map(TraceContext::traceId)
-            .orElse(null);
-        log.info("Called method getZonedTime. TraceId = {}", traceId);
-        final LocalDateTime now = publicApiService.getZonedTime();
+        final LocalDateTime nowFromRemote = publicApiService.getZonedTime();
+        final LocalDateTime now = nowFromRemote == null ? LocalDateTime.now(clock) : nowFromRemote;
         kafkaSendingService.sendNotification("Current time = " + now)
             .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
             .get();

@@ -3,6 +3,7 @@ package io.github.mfvanek.spring.boot2.test.controllers;
 import io.github.mfvanek.spring.boot2.test.support.KafkaConsumerUtils;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.awaitility.Awaitility;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -37,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureWebTestClient(timeout = "10000")
 class TimeControllerTest extends TestBase {
 
     private KafkaMessageListenerContainer<UUID, String> container;
