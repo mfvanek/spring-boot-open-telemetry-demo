@@ -38,6 +38,7 @@ dependencies {
         because("https://github.com/jdbc-observations/datasource-proxy/issues/111")
     }
 
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("org.testcontainers:postgresql")
@@ -45,7 +46,6 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility")
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
-    testImplementation ("com.github.tomakehurst:wiremock:3.0.1")
 }
 
 springBoot {

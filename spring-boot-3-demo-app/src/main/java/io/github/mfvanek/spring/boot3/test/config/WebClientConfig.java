@@ -1,4 +1,4 @@
-package io.github.mfvanek.spring.boot2.test.config;
+package io.github.mfvanek.spring.boot3.test.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
