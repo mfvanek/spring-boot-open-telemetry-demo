@@ -63,7 +63,7 @@ public class PublicApiServiceTest extends TestBase {
             answer = null;
         }
         final LocalDateTime result = answer;
-        wireMockServer.verify(1, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        wireMockServer.verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
         assertAll(
             () -> {
                 assertThat(result).isNotNull();
