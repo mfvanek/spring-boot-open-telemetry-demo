@@ -1,16 +1,17 @@
-package io.github.mfvanek.spring.boot2.test.dto;
+package io.github.mfvanek.spring.boot2.test.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
-import java.time.LocalDateTime;
-
 @Jacksonized
 @Builder
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 public class CurrentTime {
-    final LocalDateTime datetime;
+    public final ParsedDateTime datetime;
 }
