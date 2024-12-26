@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @AutoConfigureWireMock
 @ActiveProfiles("test")
@@ -39,7 +40,7 @@ public class PublicApiServiceTest extends TestBase {
     PublicApiService publicApiService;
 
     @Test
-    void printTimeZoneSuccessfully() throws JsonProcessingException {
+    void getZonedTimeSuccessfully() {
         final String zoneNames = TimeZone.getDefault().getID();
         final ObjectMapper mapper = new ObjectMapper();
         final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault());
@@ -50,15 +51,50 @@ public class PublicApiServiceTest extends TestBase {
             localDateTimeNow.getHour(),
             localDateTimeNow.getMinute());
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
-        wireMockServer.stubFor(get(urlPathMatching("/" + zoneNames))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(mapper.writeValueAsString(currentTime))
-            ));
-        var result = publicApiService.getZonedTime();
-
-        wireMockServer.verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
-        assertThat(result.truncatedTo(ChronoUnit.MINUTES)).isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
+        LocalDateTime answer;
+        try {
+            wireMockServer.stubFor(get(urlPathMatching("/" + zoneNames))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withBody(mapper.writeValueAsString(currentTime))
+                ));
+            answer = publicApiService.getZonedTime();
+        } catch (JsonProcessingException e) {
+            answer = null;
+        }
+        final LocalDateTime result = answer;
+        wireMockServer.verify(1, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        assertAll(
+            () -> {
+                assertThat(result).isNotNull();
+                assertThat(result.truncatedTo(ChronoUnit.MINUTES)).isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
+            }
+        );
     }
-
+    @Test
+    void retriesThreeTimesToGetZonedTime() {
+        final String zoneNames = TimeZone.getDefault().getID();
+        final ObjectMapper mapper = new ObjectMapper();
+        LocalDateTime answer;
+        JsonProcessingException jsonProcessingException = null;
+        final RuntimeException exception = new RuntimeException("Retries exhausted");
+        try {
+            wireMockServer.stubFor(get(urlPathMatching("/" + zoneNames))
+                .willReturn(aResponse()
+                    .withStatus(500)
+                    .withBody(mapper.writeValueAsString(exception))
+                ));
+            answer = publicApiService.getZonedTime();
+        } catch (JsonProcessingException e) {
+            jsonProcessingException = e;
+            answer = null;
+        }
+        final LocalDateTime result = answer;
+        final JsonProcessingException parsingExceptionResult = jsonProcessingException;
+        wireMockServer.verify(1 + 3, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        assertAll(
+            () -> assertThat(result).isNull(),
+            () -> assertThat(parsingExceptionResult).isNull()
+        );
+    }
 }
