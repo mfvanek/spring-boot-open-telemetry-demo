@@ -1,6 +1,7 @@
 package io.github.mfvanek.spring.boot3.test.controllers;
 
 import io.github.mfvanek.spring.boot3.test.service.KafkaSendingService;
+import io.github.mfvanek.spring.boot3.test.service.PublicApiService;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.Tracer;
@@ -22,6 +23,7 @@ public class TimeController {
     private final Tracer tracer;
     private final Clock clock;
     private final KafkaSendingService kafkaSendingService;
+    private final PublicApiService publicApiService;
 
     // http://localhost:8080/current-time
     @SneakyThrows
@@ -33,7 +35,8 @@ public class TimeController {
             .map(TraceContext::traceId)
             .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        final LocalDateTime now = LocalDateTime.now(clock);
+        final LocalDateTime nowFromRemote = publicApiService.getZonedTime();
+        final LocalDateTime now = nowFromRemote == null ? LocalDateTime.now(clock) : nowFromRemote;
         kafkaSendingService.sendNotification("Current time = " + now)
             .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
             .get();

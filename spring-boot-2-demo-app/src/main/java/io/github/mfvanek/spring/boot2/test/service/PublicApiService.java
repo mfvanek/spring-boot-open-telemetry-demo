@@ -37,8 +37,11 @@ public class PublicApiService {
         try {
             final ParsedDateTime result = getZonedTimeFromWorldTimeApi().getDatetime();
             answer = LocalDateTime.of(result.year, result.monthValue, result.dayOfMonth, result.hour, result.minute);
-        } catch (RuntimeException | JsonProcessingException e) {
-            log.warn("Failed to get time from remote", e);
+        } catch (RuntimeException e ) {
+            log.warn("Failed to get response ", e);
+            answer = null;
+        } catch (JsonProcessingException e) {
+            log.warn("Failed to convert response ", e);
             answer = null;
         }
         return answer;

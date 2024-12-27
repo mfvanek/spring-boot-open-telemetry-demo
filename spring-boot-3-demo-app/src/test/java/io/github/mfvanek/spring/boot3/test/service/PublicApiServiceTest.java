@@ -4,8 +4,14 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
+
+import javax.annotation.Nonnull;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +30,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@WireMockTest(httpPort = 8081)
+@ExtendWith(OutputCaptureExtension.class)
+@WireMockTest(httpPort = 8080)
 @ActiveProfiles("test")
 public class PublicApiServiceTest extends TestBase {
 
@@ -32,7 +39,7 @@ public class PublicApiServiceTest extends TestBase {
     PublicApiService publicApiService;
 
     @Test
-    void printTimeZoneSuccessfully() {
+    void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
         final ObjectMapper mapper = new ObjectMapper();
         final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault());
@@ -60,11 +67,16 @@ public class PublicApiServiceTest extends TestBase {
             () -> {
                 assertThat(result).isNotNull();
                 assertThat(result.truncatedTo(ChronoUnit.MINUTES)).isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
-            }
+            },
+            () -> assertThat(output).doesNotContain(
+                "Retrying request to ",
+                "Retries exhausted",
+                "Failed to convert response ")
         );
     }
+
     @Test
-    void retriesThreeTimesToGetZonedTime() {
+    void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
         final ObjectMapper mapper = new ObjectMapper();
         LocalDateTime answer;
@@ -86,7 +98,12 @@ public class PublicApiServiceTest extends TestBase {
         verify(1 + 3, getRequestedFor(urlPathMatching("/" + zoneNames)));
         assertAll(
             () -> assertThat(result).isNull(),
-            () -> assertThat(parsingExceptionResult).isNull()
+            () -> assertThat(parsingExceptionResult).isNull(),
+            () -> assertThat(output).contains(
+                "Retrying request to ",
+                "Retries exhausted"
+            ),
+            () -> assertThat(output).doesNotContain("Failed to convert response ")
         );
     }
 }
