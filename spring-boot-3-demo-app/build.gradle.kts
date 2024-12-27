@@ -1,14 +1,14 @@
 plugins {
     id("sb-ot-demo.java-conventions")
     id("sb-ot-demo.docker")
-    id("org.springframework.boot") version "3.3.4"
+    alias(libs.plugins.spring.boot.v3)
     id("io.freefair.lombok")
 }
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
     implementation(platform("org.springdoc:springdoc-openapi:2.6.0"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.3.4"))
+    implementation(platform(libs.spring.boot.v3.dependencies))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
