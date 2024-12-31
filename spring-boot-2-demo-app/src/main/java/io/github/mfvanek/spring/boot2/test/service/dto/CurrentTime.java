@@ -13,5 +13,5 @@ import lombok.extern.jackson.Jacksonized;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 public class CurrentTime {
-    public final ParsedDateTime datetime;
+    private final ParsedDateTime datetime;
 }

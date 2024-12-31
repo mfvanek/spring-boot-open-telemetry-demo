@@ -13,9 +13,9 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 public class ParsedDateTime {
 
-    public final int year;
-    public final int monthValue;
-    public final int dayOfMonth;
-    public final int hour;
-    public final int minute;
+    private final int year;
+    private final int monthValue;
+    private final int dayOfMonth;
+    private final int hour;
+    private final int minute;
 }

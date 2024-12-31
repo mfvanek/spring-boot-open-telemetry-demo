@@ -1,25 +1,22 @@
 package io.github.mfvanek.spring.boot3.test.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
-
-import javax.annotation.Nonnull;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.TimeZone;
+import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -32,16 +29,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
 @WireMockTest(httpPort = 8080)
-@ActiveProfiles("test")
 public class PublicApiServiceTest extends TestBase {
 
     @Autowired
-    PublicApiService publicApiService;
+    private PublicApiService publicApiService;
+    @Autowired
+    private ObjectMapper mapper;
 
     @Test
     void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
-        final ObjectMapper mapper = new ObjectMapper();
         final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault());
         final ParsedDateTime parsedDateTime = new ParsedDateTime(
             localDateTimeNow.getYear(),
@@ -78,7 +75,6 @@ public class PublicApiServiceTest extends TestBase {
     @Test
     void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
-        final ObjectMapper mapper = new ObjectMapper();
         LocalDateTime answer;
         JsonProcessingException jsonProcessingException = null;
         final RuntimeException exception = new RuntimeException("Retries exhausted");

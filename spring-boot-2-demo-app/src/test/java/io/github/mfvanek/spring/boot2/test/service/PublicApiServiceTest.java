@@ -1,5 +1,7 @@
 package io.github.mfvanek.spring.boot2.test.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
@@ -24,8 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.TimeZone;
 
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -35,8 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
-@AutoConfigureWireMock
-@ActiveProfiles("test")
 public class PublicApiServiceTest extends TestBase {
 
     @Autowired
@@ -45,10 +43,12 @@ public class PublicApiServiceTest extends TestBase {
     @Autowired
     PublicApiService publicApiService;
 
+    @Autowired
+    ObjectMapper mapper;
+
     @Test
     void getZonedTimeSuccessfully(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
-        final ObjectMapper mapper = new ObjectMapper();
         final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault());
         final ParsedDateTime parsedDateTime = new ParsedDateTime(
             localDateTimeNow.getYear(),
@@ -85,7 +85,6 @@ public class PublicApiServiceTest extends TestBase {
     @Test
     void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
-        final ObjectMapper mapper = new ObjectMapper();
         LocalDateTime answer;
         JsonProcessingException jsonProcessingException = null;
         final RuntimeException exception = new RuntimeException("Retries exhausted");

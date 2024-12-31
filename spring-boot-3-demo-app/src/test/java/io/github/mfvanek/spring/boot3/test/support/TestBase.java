@@ -1,5 +1,6 @@
 package io.github.mfvanek.spring.boot3.test.support;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,6 @@ public abstract class TestBase {
 
     @Autowired
     protected WebTestClient webTestClient;
-
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 }
