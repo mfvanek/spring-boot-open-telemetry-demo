@@ -1,6 +1,7 @@
 package io.github.mfvanek.spring.boot2.test.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot2.test.support.KafkaConsumerUtils;
@@ -46,18 +47,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@WireMockTest(httpPort = 9999)
 class TimeControllerTest extends TestBase {
 
-    private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new LinkedBlockingQueue<>();
-    @Autowired
-    ObjectMapper mapper;
     private KafkaMessageListenerContainer<UUID, String> container;
+    private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new LinkedBlockingQueue<>();
+
     @Autowired
     private KafkaProperties kafkaProperties;
     @Autowired
     private Clock clock;
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
+    ObjectMapper mapper;
 
     @BeforeAll
     void setUpKafkaConsumer() {
