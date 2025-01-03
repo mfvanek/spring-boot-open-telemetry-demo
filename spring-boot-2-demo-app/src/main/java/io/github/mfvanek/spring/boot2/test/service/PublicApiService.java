@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -24,19 +25,21 @@ import java.util.TimeZone;
 @RequiredArgsConstructor
 @Getter
 public class PublicApiService {
+
     @Value("${app.retries}")
     private String retries;
     private final ObjectMapper mapper;
     private final WebClient webClient;
 
+    @Nullable
     public LocalDateTime getZonedTime() {
         try {
             final ParsedDateTime result = getZonedTimeFromWorldTimeApi().getDatetime();
             return LocalDateTime.of(result.getYear(), result.getMonthValue(), result.getDayOfMonth(), result.getHour(), result.getMinute());
         } catch (RuntimeException e) {
-            log.warn("Failed to get response ", e);
+            log.warn("Failed to get response", e);
         } catch (JsonProcessingException e) {
-            log.warn("Failed to convert response ", e);
+            log.warn("Failed to convert response", e);
         }
         return null;
     }

@@ -2,43 +2,32 @@ package io.github.mfvanek.spring.boot2.test.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
-
-import java.time.LocalDateTime;
-
-import java.time.ZoneId;
-
-import java.time.temporal.ChronoUnit;
-
-import javax.annotation.Nonnull;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.TimeZone;
-
+import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
 public class PublicApiServiceTest extends TestBase {
-
-    @Autowired
-    WireMockServer wireMockServer;
 
     @Autowired
     PublicApiService publicApiService;
@@ -59,7 +48,7 @@ public class PublicApiServiceTest extends TestBase {
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
         LocalDateTime answer;
         try {
-            wireMockServer.stubFor(get(urlPathMatching("/" + zoneNames))
+            stubFor(get(urlPathMatching("/" + zoneNames))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withBody(mapper.writeValueAsString(currentTime))
@@ -69,7 +58,7 @@ public class PublicApiServiceTest extends TestBase {
             answer = null;
         }
         final LocalDateTime result = answer;
-        wireMockServer.verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
         assertAll(
             () -> {
                 assertThat(result).isNotNull();
@@ -89,7 +78,7 @@ public class PublicApiServiceTest extends TestBase {
         JsonProcessingException jsonProcessingException = null;
         final RuntimeException exception = new RuntimeException("Retries exhausted");
         try {
-            wireMockServer.stubFor(get(urlPathMatching("/" + zoneNames))
+            stubFor(get(urlPathMatching("/" + zoneNames))
                 .willReturn(aResponse()
                     .withStatus(500)
                     .withBody(mapper.writeValueAsString(exception))
@@ -101,7 +90,7 @@ public class PublicApiServiceTest extends TestBase {
         }
         final LocalDateTime result = answer;
         final JsonProcessingException parsingExceptionResult = jsonProcessingException;
-        wireMockServer.verify(1 + 3, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(1 + 3, getRequestedFor(urlPathMatching("/" + zoneNames)));
         assertAll(
             () -> assertThat(result).isNull(),
             () -> assertThat(parsingExceptionResult).isNull(),

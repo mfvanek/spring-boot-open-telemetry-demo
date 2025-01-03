@@ -2,7 +2,6 @@ package io.github.mfvanek.spring.boot3.test.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
@@ -28,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
-@WireMockTest(httpPort = 8080)
 public class PublicApiServiceTest extends TestBase {
 
     @Autowired

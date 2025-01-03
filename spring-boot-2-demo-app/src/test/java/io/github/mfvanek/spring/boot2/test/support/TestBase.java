@@ -10,7 +10,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class})
-@AutoConfigureWireMock
+@AutoConfigureWireMock(port = 9999)
 @ActiveProfiles("test")
 public abstract class TestBase {
 

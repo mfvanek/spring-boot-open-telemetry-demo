@@ -48,17 +48,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TimeControllerTest extends TestBase {
 
-    private KafkaMessageListenerContainer<UUID, String> container;
     private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new LinkedBlockingQueue<>();
-
+    @Autowired
+    ObjectMapper mapper;
+    private KafkaMessageListenerContainer<UUID, String> container;
     @Autowired
     private KafkaProperties kafkaProperties;
     @Autowired
     private Clock clock;
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    @Autowired
-    ObjectMapper mapper;
 
     @BeforeAll
     void setUpKafkaConsumer() {
