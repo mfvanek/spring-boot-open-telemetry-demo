@@ -3,6 +3,7 @@ plugins {
     id("sb-ot-demo.docker")
     alias(libs.plugins.spring.boot.v3)
     id("io.freefair.lombok")
+    id("io.spring.dependency-management") version "1.1.3"
 }
 
 dependencies {
@@ -11,6 +12,7 @@ dependencies {
     implementation(platform(libs.spring.boot.v3.dependencies))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
@@ -35,8 +37,13 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility")
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
-
+dependencyManagement {
+    imports {
+        mavenBom ("org.springframework.cloud:spring-cloud-dependencies:2023.0.4")
+    }
+}
 springBoot {
     buildInfo()
 }

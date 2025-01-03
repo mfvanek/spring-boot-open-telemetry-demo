@@ -1,0 +1,4 @@
+app:
+    external-base-url: "http://localhost:9999/"
+
+wiremock.server.port: 9999
