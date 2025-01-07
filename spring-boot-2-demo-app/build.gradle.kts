@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
-    implementation(platform("org.springdoc:springdoc-openapi:1.7.0")) {
+    implementation(platform("org.springdoc:springdoc-openapi:2.8.1")) {
         because("version 1.8.0 brings incompatible logging library")
     }
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
