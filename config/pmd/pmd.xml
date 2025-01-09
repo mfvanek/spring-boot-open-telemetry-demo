@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<ruleset name="Custom ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>PMD configuration</description>
+
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="UnitTestContainsTooManyAsserts"/>
+        <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
+        <exclude name="GuardLogStatement"/>
+        <exclude name="CheckResultSet"/> <!-- false positive. broken since v.7.0.0 -->
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml/AbstractClassWithoutAbstractMethod">
+        <properties>
+            <property name="violationSuppressXPath" value=".[@SimpleName = 'DatabaseAwareTestBase'] | .[@SimpleName = 'LogsAwareTestBase'] | .[@SimpleName = 'BasePgIndexHealthDemoSpringBootTest']"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml/LooseCoupling">
+        <properties>
+            <property name="allowedTypes" value="org.springframework.http.HttpHeaders" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="OnlyOneReturn"/>
+        <exclude name="AtLeastOneConstructor"/>
+        <exclude name="CommentDefaultAccessModifier"/>
+        <exclude name="LongVariable"/>
+        <exclude name="CallSuperInConstructor"/>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+        <properties>
+            <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]*"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml/ShortMethodName">
+        <properties>
+            <property name="minimum" value="2"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml/LinguisticNaming">
+        <properties>
+            <property name="checkSetters" value="false"/>
+            <property name="violationSuppressXPath"
+                      value=".[pmd-java:hasAnnotation('org.junit.jupiter.api.Test')] | .[pmd-java:hasAnnotation('org.junit.jupiter.params.ParameterizedTest')]"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+        <properties>
+            <property name="exclusions" value="serialVersionUID|logger"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LoosePackageCoupling"/>
+        <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="UseUtilityClass"/>
+        <exclude name="ExcessiveImports"/>
+        <exclude name="CouplingBetweenObjects"/>
+    </rule>
+
+    <rule ref="category/java/design.xml/TooManyFields">
+        <properties>
+            <property name="maxfields" value="20"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentRequired"/>
+        <exclude name="CommentSize"/>
+    </rule>
+
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="UseConcurrentHashMap"/>
+        <exclude name="DoNotUseThreads"/> <!-- false positive. broken since v.7.0.0 -->
+    </rule>
+
+    <rule ref="category/java/performance.xml"/>
+
+    <rule ref="category/java/security.xml"/>
+
+    <rule ref="category/java/errorprone.xml"/>
+</ruleset>
