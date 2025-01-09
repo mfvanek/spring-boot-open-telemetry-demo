@@ -7,6 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -33,16 +34,16 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
     private static String plainJaas(@Nonnull final Map<String, String> additionalUsers) {
         final String users = additionalUsers.entrySet()
             .stream()
-            .map(e -> "user_%s=\"%s\"".formatted(e.getKey(), e.getValue()))
+            .map(e -> String.format(Locale.ROOT, "user_%s=\"%s\"", e.getKey(), e.getValue()))
             .collect(Collectors.joining(" "));
         final StringBuilder builder = new StringBuilder()
             .append(PlainLoginModule.class.getName())
-            .append(" required username=\"%s\" password=\"%s\"".formatted(KAFKA_USER_NAME, KAFKA_USER_PASSWORD));
+            .append(String.format(Locale.ROOT, " required username=\"%s\" password=\"%s\"", KAFKA_USER_NAME, KAFKA_USER_PASSWORD));
         if (!users.isBlank()) {
-            builder.append(" ")
+            builder.append(' ')
                 .append(users);
         }
-        return builder.append(";")
+        return builder.append(';')
             .toString();
     }
 

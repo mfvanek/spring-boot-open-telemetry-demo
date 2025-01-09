@@ -3,6 +3,7 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     id("java")
     id("jacoco")
+    id("pmd")
     id("net.ltgt.errorprone")
     id("com.google.osdetector")
 }
@@ -34,6 +35,13 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
+pmd {
+    toolVersion = "7.9.0"
+    isConsoleOutput = true
+    ruleSetFiles = files("${rootDir}/config/pmd/pmd.xml")
+    ruleSets = listOf()
+}
+
 tasks {
     withType<JavaCompile>().configureEach {
         options.compilerArgs.add("-parameters")
@@ -46,6 +54,7 @@ tasks {
 
     test {
         useJUnitPlatform()
+        dependsOn(pmdMain, pmdTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
     }
 

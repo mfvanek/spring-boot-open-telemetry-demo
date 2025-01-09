@@ -1,5 +1,6 @@
 plugins {
     id("sb-ot-demo.java-conventions")
+    id("sb-ot-demo.forbidden-apis")
     id("sb-ot-demo.docker")
     alias(libs.plugins.spring.boot.v3)
     id("io.freefair.lombok")

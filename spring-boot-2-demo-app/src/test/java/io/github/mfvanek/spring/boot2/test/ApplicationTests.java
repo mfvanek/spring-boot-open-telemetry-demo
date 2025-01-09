@@ -3,6 +3,10 @@ package io.github.mfvanek.spring.boot2.test;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Tracer;
+import org.springframework.cloud.sleuth.otel.bridge.OtelTracer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,8 +15,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ApplicationTests extends TestBase {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Test
     void contextLoads() {
+        assertThat(applicationContext.getBean(Tracer.class))
+            .isNotNull()
+            .isInstanceOf(OtelTracer.class);
     }
 
     @Test

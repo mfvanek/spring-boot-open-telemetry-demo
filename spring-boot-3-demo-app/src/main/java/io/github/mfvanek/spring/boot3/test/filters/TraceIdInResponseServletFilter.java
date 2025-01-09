@@ -26,7 +26,7 @@ public class TraceIdInResponseServletFilter implements Filter {
         throws IOException, ServletException {
         final Span currentSpan = tracer.currentSpan();
         if (currentSpan != null) {
-            HttpServletResponse resp = (HttpServletResponse) response;
+            final HttpServletResponse resp = (HttpServletResponse) response;
             resp.addHeader(TRACE_ID_HEADER_NAME, currentSpan.context().traceId());
         }
         chain.doFilter(request, response);
