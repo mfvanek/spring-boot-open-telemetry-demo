@@ -54,16 +54,37 @@ tasks {
         violationRules {
             rule {
                 limit {
+                    counter = "CLASS"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "METHOD"
+                    value = "MISSEDCOUNT"
+                    maximum = "3.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "LINE"
+                    value = "MISSEDCOUNT"
+                    maximum = "8.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
                     counter = "INSTRUCTION"
                     value = "COVEREDRATIO"
-                    minimum = "0.58".toBigDecimal()
+                    minimum = "0.82".toBigDecimal()
                 }
             }
             rule {
                 limit {
                     counter = "BRANCH"
                     value = "COVEREDRATIO"
-                    minimum = "0.0".toBigDecimal()
+                    minimum = "0.50".toBigDecimal()
                 }
             }
         }
