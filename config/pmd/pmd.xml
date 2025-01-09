@@ -9,18 +9,17 @@
         <exclude name="UnitTestContainsTooManyAsserts"/>
         <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
         <exclude name="GuardLogStatement"/>
-        <exclude name="CheckResultSet"/> <!-- false positive. broken since v.7.0.0 -->
     </rule>
 
     <rule ref="category/java/bestpractices.xml/AbstractClassWithoutAbstractMethod">
         <properties>
-            <property name="violationSuppressXPath" value=".[@SimpleName = 'DatabaseAwareTestBase'] | .[@SimpleName = 'LogsAwareTestBase'] | .[@SimpleName = 'BasePgIndexHealthDemoSpringBootTest']"/>
+            <property name="violationSuppressXPath" value=".[@SimpleName = 'TestBase']"/>
         </properties>
     </rule>
 
     <rule ref="category/java/bestpractices.xml/LooseCoupling">
         <properties>
-            <property name="allowedTypes" value="org.springframework.http.HttpHeaders" />
+            <property name="allowedTypes" value="org.springframework.http.HttpHeaders"/>
         </properties>
     </rule>
 
@@ -30,6 +29,7 @@
         <exclude name="CommentDefaultAccessModifier"/>
         <exclude name="LongVariable"/>
         <exclude name="CallSuperInConstructor"/>
+        <exclude name="MethodArgumentCouldBeFinal"/> <!-- AvoidReassigningParameters is enough -->
     </rule>
 
     <rule ref="category/java/codestyle.xml/ClassNamingConventions">
@@ -58,6 +58,13 @@
         </properties>
     </rule>
 
+    <rule ref="category/java/codestyle.xml/UseExplicitTypes">
+        <properties>
+            <property name="allowLiterals" value="true"/>
+            <property name="allowCtors" value="true"/>
+        </properties>
+    </rule>
+
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
@@ -65,6 +72,12 @@
         <exclude name="UseUtilityClass"/>
         <exclude name="ExcessiveImports"/>
         <exclude name="CouplingBetweenObjects"/>
+    </rule>
+
+    <rule ref="category/java/design.xml/AbstractClassWithoutAnyMethod">
+        <properties>
+            <property name="violationSuppressXPath" value=".[@SimpleName = 'TestBase']"/>
+        </properties>
     </rule>
 
     <rule ref="category/java/design.xml/TooManyFields">
@@ -87,5 +100,7 @@
 
     <rule ref="category/java/security.xml"/>
 
-    <rule ref="category/java/errorprone.xml"/>
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="NullAssignment"/> <!-- false positive in tests -->
+    </rule>
 </ruleset>

@@ -40,10 +40,10 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
             .append(PlainLoginModule.class.getName())
             .append(String.format(Locale.ROOT, " required username=\"%s\" password=\"%s\"", KAFKA_USER_NAME, KAFKA_USER_PASSWORD));
         if (!users.isBlank()) {
-            builder.append(" ")
+            builder.append(' ')
                 .append(users);
         }
-        return builder.append(";")
+        return builder.append(';')
             .toString();
     }
 

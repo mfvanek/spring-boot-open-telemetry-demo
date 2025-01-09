@@ -18,12 +18,14 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -70,7 +72,7 @@ class TimeControllerTest extends TestBase {
     @SneakyThrows
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
-        final var result = webTestClient.get()
+        final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
                 .build())
             .exchange()
@@ -86,17 +88,17 @@ class TimeControllerTest extends TestBase {
             .contains("Called method getNow. TraceId = " + traceId)
             .contains("Awaiting acknowledgement from Kafka");
 
-        final var received = consumerRecords.poll(10, TimeUnit.SECONDS);
+        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
         assertThat(received.value()).startsWith("Current time = ");
         final Header[] headers = received.headers().toArray();
-        final var headerNames = Arrays.stream(headers)
+        final List<String> headerNames = Arrays.stream(headers)
             .map(Header::key)
             .toList();
         assertThat(headerNames)
             .hasSize(2)
             .containsExactlyInAnyOrder("traceparent", "b3");
-        final var headerValues = Arrays.stream(headers)
+        final List<String> headerValues = Arrays.stream(headers)
             .map(Header::value)
             .map(v -> new String(v, StandardCharsets.UTF_8))
             .toList();

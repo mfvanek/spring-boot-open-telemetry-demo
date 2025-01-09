@@ -20,7 +20,7 @@ class OpenTelemetryConfig {
     @Bean
     @ConditionalOnMissingBean(OtlpGrpcSpanExporter.class)
     OtlpGrpcSpanExporter otelJaegerGrpcSpanExporter(@Nonnull final OtlpProperties otlpProperties) {
-        OtlpGrpcSpanExporterBuilder builder = OtlpGrpcSpanExporter.builder()
+        final OtlpGrpcSpanExporterBuilder builder = OtlpGrpcSpanExporter.builder()
             .setEndpoint(otlpProperties.getEndpoint())
             .setTimeout(otlpProperties.getTimeout())
             .setCompression(String.valueOf(otlpProperties.getCompression()).toLowerCase(Locale.ROOT));
