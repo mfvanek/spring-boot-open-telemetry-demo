@@ -8,7 +8,6 @@
 package io.github.mfvanek.spring.boot2.test.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -25,12 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -61,10 +59,6 @@ class TimeControllerTest extends TestBase {
 
     @Autowired
     private KafkaProperties kafkaProperties;
-    @Autowired
-    private Clock clock;
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @BeforeAll
     void setUpKafkaConsumer() {

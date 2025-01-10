@@ -7,7 +7,6 @@
 
 package io.github.mfvanek.spring.boot2.test.service;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
@@ -22,10 +21,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-import javax.annotation.Nullable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
+import javax.annotation.Nullable;
 
 @Slf4j
 @Service

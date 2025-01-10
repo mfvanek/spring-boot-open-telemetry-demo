@@ -12,9 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.time.Clock;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class})
@@ -27,5 +30,9 @@ public abstract class TestBase {
     @Autowired
     protected JdbcTemplate jdbcTemplate;
     @Autowired
+    protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
     protected ObjectMapper objectMapper;
+    @Autowired
+    protected Clock clock;
 }
