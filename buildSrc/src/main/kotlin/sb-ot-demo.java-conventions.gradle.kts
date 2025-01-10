@@ -1,9 +1,17 @@
+/*
+ * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     id("java")
     id("jacoco")
     id("pmd")
+    id("checkstyle")
     id("net.ltgt.errorprone")
     id("com.google.osdetector")
 }
@@ -35,6 +43,14 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
+checkstyle {
+    toolVersion = "10.21.1"
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = false
+    maxWarnings = 0
+    maxErrors = 0
+}
+
 pmd {
     toolVersion = "7.9.0"
     isConsoleOutput = true
@@ -54,7 +70,7 @@ tasks {
 
     test {
         useJUnitPlatform()
-        dependsOn(pmdMain, pmdTest)
+        dependsOn(checkstyleMain, checkstyleTest, pmdMain, pmdTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
         maxParallelForks = 1
     }

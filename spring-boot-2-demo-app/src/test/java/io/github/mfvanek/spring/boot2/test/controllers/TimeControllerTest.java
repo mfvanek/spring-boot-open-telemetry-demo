@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 package io.github.mfvanek.spring.boot2.test.controllers;
 
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
@@ -18,12 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -54,10 +59,6 @@ class TimeControllerTest extends TestBase {
 
     @Autowired
     private KafkaProperties kafkaProperties;
-    @Autowired
-    private Clock clock;
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @BeforeAll
     void setUpKafkaConsumer() {
