@@ -23,7 +23,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
 class PublicApiServiceTest extends TestBase {
@@ -32,69 +31,44 @@ class PublicApiServiceTest extends TestBase {
     private PublicApiService publicApiService;
 
     @Test
-    void getZonedTimeSuccessfully(@Nonnull final CapturedOutput output) {
+    void getZonedTimeSuccessfully(@Nonnull final CapturedOutput output) throws JsonProcessingException {
         final String zoneNames = TimeZone.getDefault().getID();
         final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault());
-        final ParsedDateTime parsedDateTime = new ParsedDateTime(
-            localDateTimeNow.getYear(),
-            localDateTimeNow.getMonthValue(),
-            localDateTimeNow.getDayOfMonth(),
-            localDateTimeNow.getHour(),
-            localDateTimeNow.getMinute());
+        final ParsedDateTime parsedDateTime = ParsedDateTime.from(localDateTimeNow);
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
-        LocalDateTime answer;
-        try {
-            stubFor(get(urlPathMatching("/" + zoneNames))
-                .willReturn(aResponse()
-                    .withStatus(200)
-                    .withBody(objectMapper.writeValueAsString(currentTime))
-                ));
-            answer = publicApiService.getZonedTime();
-        } catch (JsonProcessingException e) {
-            answer = null;
-        }
-        final LocalDateTime result = answer;
+        stubFor(get(urlPathMatching("/" + zoneNames))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withBody(objectMapper.writeValueAsString(currentTime))
+            ));
+
+        final LocalDateTime result = publicApiService.getZonedTime();
         verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
-        assertAll(
-            () -> {
-                assertThat(result).isNotNull();
-                assertThat(result.truncatedTo(ChronoUnit.MINUTES)).isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
-            },
-            () -> assertThat(output).doesNotContain(
-                "Retrying request to ",
-                "Retries exhausted",
-                "Failed to convert response ")
-        );
+
+        assertThat(result).isNotNull();
+        assertThat(result.truncatedTo(ChronoUnit.MINUTES))
+            .isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
+        assertThat(output).doesNotContain(
+            "Retrying request to ",
+            "Retries exhausted",
+            "Failed to convert response ");
     }
 
     @Test
-    void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) {
+    void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) throws JsonProcessingException {
         final String zoneNames = TimeZone.getDefault().getID();
-        LocalDateTime answer;
-        JsonProcessingException jsonProcessingException = null;
         final RuntimeException exception = new RuntimeException("Retries exhausted");
-        try {
-            stubFor(get(urlPathMatching("/" + zoneNames))
-                .willReturn(aResponse()
-                    .withStatus(500)
-                    .withBody(objectMapper.writeValueAsString(exception))
-                ));
-            answer = publicApiService.getZonedTime();
-        } catch (JsonProcessingException e) {
-            jsonProcessingException = e;
-            answer = null;
-        }
-        final LocalDateTime result = answer;
-        final JsonProcessingException parsingExceptionResult = jsonProcessingException;
+        stubFor(get(urlPathMatching("/" + zoneNames))
+            .willReturn(aResponse()
+                .withStatus(500)
+                .withBody(objectMapper.writeValueAsString(exception))
+            ));
+
+        final LocalDateTime result = publicApiService.getZonedTime();
         verify(1 + 3, getRequestedFor(urlPathMatching("/" + zoneNames)));
-        assertAll(
-            () -> assertThat(result).isNull(),
-            () -> assertThat(parsingExceptionResult).isNull(),
-            () -> assertThat(output).contains(
-                "Retrying request to ",
-                "Retries exhausted"
-            ),
-            () -> assertThat(output).doesNotContain("Failed to convert response ")
-        );
+
+        assertThat(result).isNull();
+        assertThat(output).contains("Retrying request to ", "Retries exhausted");
+        assertThat(output).doesNotContain("Failed to convert response ");
     }
 }

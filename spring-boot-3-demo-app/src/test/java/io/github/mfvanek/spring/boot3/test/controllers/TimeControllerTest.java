@@ -81,13 +81,7 @@ class TimeControllerTest extends TestBase {
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
-        final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault()).minusDays(1);
-        final ParsedDateTime parsedDateTime = new ParsedDateTime(
-            localDateTimeNow.getYear(),
-            localDateTimeNow.getMonthValue(),
-            localDateTimeNow.getDayOfMonth(),
-            localDateTimeNow.getHour(),
-            localDateTimeNow.getMinute());
+        final ParsedDateTime parsedDateTime = ParsedDateTime.from(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
         stubFor(get(urlPathMatching("/" + zoneNames))
             .willReturn(aResponse()

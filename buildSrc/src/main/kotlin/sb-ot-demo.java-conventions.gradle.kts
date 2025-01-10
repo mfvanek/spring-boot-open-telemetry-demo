@@ -56,6 +56,7 @@ tasks {
         useJUnitPlatform()
         dependsOn(pmdMain, pmdTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
+        maxParallelForks = 1
     }
 
     jacocoTestCoverageVerification {

@@ -35,7 +35,7 @@ public class PublicApiService {
     public LocalDateTime getZonedTime() {
         try {
             final ParsedDateTime result = getZonedTimeFromWorldTimeApi().getDatetime();
-            return LocalDateTime.of(result.getYear(), result.getMonthValue(), result.getDayOfMonth(), result.getHour(), result.getMinute());
+            return result.toLocalDateTime();
         } catch (RuntimeException e) {
             log.warn("Failed to get response", e);
         } catch (JsonProcessingException e) {
