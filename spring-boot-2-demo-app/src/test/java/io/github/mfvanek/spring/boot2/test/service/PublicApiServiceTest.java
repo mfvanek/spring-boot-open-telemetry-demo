@@ -1,9 +1,6 @@
 package io.github.mfvanek.spring.boot2.test.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
@@ -12,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -30,14 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
-@WireMockTest(httpPort = 9999)
-public class PublicApiServiceTest extends TestBase {
+class PublicApiServiceTest extends TestBase {
 
     @Autowired
-    PublicApiService publicApiService;
-
-    @Autowired
-    ObjectMapper mapper;
+    private PublicApiService publicApiService;
 
     @Test
     void getZonedTimeSuccessfully(@Nonnull final CapturedOutput output) {
@@ -55,7 +47,7 @@ public class PublicApiServiceTest extends TestBase {
             stubFor(get(urlPathMatching("/" + zoneNames))
                 .willReturn(aResponse()
                     .withStatus(200)
-                    .withBody(mapper.writeValueAsString(currentTime))
+                    .withBody(objectMapper.writeValueAsString(currentTime))
                 ));
             answer = publicApiService.getZonedTime();
         } catch (JsonProcessingException e) {
@@ -85,7 +77,7 @@ public class PublicApiServiceTest extends TestBase {
             stubFor(get(urlPathMatching("/" + zoneNames))
                 .willReturn(aResponse()
                     .withStatus(500)
-                    .withBody(mapper.writeValueAsString(exception))
+                    .withBody(objectMapper.writeValueAsString(exception))
                 ));
             answer = publicApiService.getZonedTime();
         } catch (JsonProcessingException e) {

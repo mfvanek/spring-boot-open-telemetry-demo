@@ -1,5 +1,6 @@
 package io.github.mfvanek.spring.boot3.test.support;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,4 +21,6 @@ public abstract class TestBase {
     protected WebTestClient webTestClient;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+    @Autowired
+    protected ObjectMapper objectMapper;
 }

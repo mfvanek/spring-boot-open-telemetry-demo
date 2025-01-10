@@ -1,6 +1,5 @@
 package io.github.mfvanek.spring.boot3.test.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.KafkaConsumerUtils;
@@ -21,6 +20,7 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -57,8 +58,6 @@ class TimeControllerTest extends TestBase {
     private Clock clock;
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    @Autowired
-    private ObjectMapper mapper;
 
     @BeforeAll
     void setUpKafkaConsumer() {
@@ -93,9 +92,9 @@ class TimeControllerTest extends TestBase {
         stubFor(get(urlPathMatching("/" + zoneNames))
             .willReturn(aResponse()
                 .withStatus(200)
-                .withBody(mapper.writeValueAsString(currentTime))
+                .withBody(objectMapper.writeValueAsString(currentTime))
             ));
-        final var result = webTestClient.get()
+        final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
                 .build())
             .exchange()
@@ -111,17 +110,17 @@ class TimeControllerTest extends TestBase {
             .contains("Called method getNow. TraceId = " + traceId)
             .contains("Awaiting acknowledgement from Kafka");
 
-        final var received = consumerRecords.poll(10, TimeUnit.SECONDS);
+        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
         assertThat(received.value()).startsWith("Current time = ");
         final Header[] headers = received.headers().toArray();
-        final var headerNames = Arrays.stream(headers)
+        final List<String> headerNames = Arrays.stream(headers)
             .map(Header::key)
             .toList();
         assertThat(headerNames)
             .hasSize(2)
             .containsExactlyInAnyOrder("traceparent", "b3");
-        final var headerValues = Arrays.stream(headers)
+        final List<String> headerValues = Arrays.stream(headers)
             .map(Header::value)
             .map(v -> new String(v, StandardCharsets.UTF_8))
             .toList();

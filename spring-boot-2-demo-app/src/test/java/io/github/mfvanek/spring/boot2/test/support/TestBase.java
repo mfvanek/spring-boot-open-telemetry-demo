@@ -1,6 +1,6 @@
 package io.github.mfvanek.spring.boot2.test.support;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -19,4 +19,6 @@ public abstract class TestBase {
     protected WebTestClient webTestClient;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+    @Autowired
+    protected ObjectMapper objectMapper;
 }

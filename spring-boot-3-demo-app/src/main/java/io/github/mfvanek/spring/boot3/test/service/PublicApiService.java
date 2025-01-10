@@ -45,7 +45,7 @@ public class PublicApiService {
 
     private CurrentTime getZonedTimeFromWorldTimeApi() throws JsonProcessingException {
         final String zoneNames = TimeZone.getDefault().getID();
-        Mono<String> response = webClient.get()
+        final Mono<String> response = webClient.get()
             .uri(String.join("/", zoneNames))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()

@@ -3,6 +3,7 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     id("java")
     id("jacoco")
+    id("pmd")
     id("net.ltgt.errorprone")
     id("com.google.osdetector")
 }
@@ -34,6 +35,13 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
+pmd {
+    toolVersion = "7.9.0"
+    isConsoleOutput = true
+    ruleSetFiles = files("${rootDir}/config/pmd/pmd.xml")
+    ruleSets = listOf()
+}
+
 tasks {
     withType<JavaCompile>().configureEach {
         options.compilerArgs.add("-parameters")
@@ -46,6 +54,7 @@ tasks {
 
     test {
         useJUnitPlatform()
+        dependsOn(pmdMain, pmdTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
     }
 
@@ -54,16 +63,37 @@ tasks {
         violationRules {
             rule {
                 limit {
+                    counter = "CLASS"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "METHOD"
+                    value = "MISSEDCOUNT"
+                    maximum = "3.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "LINE"
+                    value = "MISSEDCOUNT"
+                    maximum = "10.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
                     counter = "INSTRUCTION"
                     value = "COVEREDRATIO"
-                    minimum = "0.58".toBigDecimal()
+                    minimum = "0.82".toBigDecimal()
                 }
             }
             rule {
                 limit {
                     counter = "BRANCH"
                     value = "COVEREDRATIO"
-                    minimum = "0.0".toBigDecimal()
+                    minimum = "0.50".toBigDecimal()
                 }
             }
         }

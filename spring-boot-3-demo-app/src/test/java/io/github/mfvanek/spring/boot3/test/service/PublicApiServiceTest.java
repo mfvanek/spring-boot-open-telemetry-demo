@@ -1,7 +1,6 @@
 package io.github.mfvanek.spring.boot3.test.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
@@ -27,12 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(OutputCaptureExtension.class)
-public class PublicApiServiceTest extends TestBase {
+class PublicApiServiceTest extends TestBase {
 
     @Autowired
     private PublicApiService publicApiService;
-    @Autowired
-    private ObjectMapper mapper;
 
     @Test
     void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
@@ -50,7 +47,7 @@ public class PublicApiServiceTest extends TestBase {
             stubFor(get(urlPathMatching("/" + zoneNames))
                 .willReturn(aResponse()
                     .withStatus(200)
-                    .withBody(mapper.writeValueAsString(currentTime))
+                    .withBody(objectMapper.writeValueAsString(currentTime))
                 ));
             answer = publicApiService.getZonedTime();
         } catch (JsonProcessingException e) {
@@ -80,7 +77,7 @@ public class PublicApiServiceTest extends TestBase {
             stubFor(get(urlPathMatching("/" + zoneNames))
                 .willReturn(aResponse()
                     .withStatus(500)
-                    .withBody(mapper.writeValueAsString(exception))
+                    .withBody(objectMapper.writeValueAsString(exception))
                 ));
             answer = publicApiService.getZonedTime();
         } catch (JsonProcessingException e) {
