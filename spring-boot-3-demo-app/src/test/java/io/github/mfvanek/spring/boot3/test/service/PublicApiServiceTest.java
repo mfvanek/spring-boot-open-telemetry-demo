@@ -65,7 +65,7 @@ class PublicApiServiceTest extends TestBase {
             ));
 
         final LocalDateTime result = publicApiService.getZonedTime();
-        verify(1 + 3, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
 
         assertThat(result).isNull();
         assertThat(output).contains("Retrying request to ", "Retries exhausted");

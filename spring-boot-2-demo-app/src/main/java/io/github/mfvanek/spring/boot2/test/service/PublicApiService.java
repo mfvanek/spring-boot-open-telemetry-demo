@@ -5,12 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
+import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -23,11 +23,11 @@ import java.util.TimeZone;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Getter
 public class PublicApiService {
 
     @Value("${app.retries}")
-    private String retries;
+    private int retries;
+
     private final ObjectMapper mapper;
     private final WebClient webClient;
 
@@ -36,7 +36,7 @@ public class PublicApiService {
         try {
             final ParsedDateTime result = getZonedTimeFromWorldTimeApi().getDatetime();
             return result.toLocalDateTime();
-        } catch (RuntimeException e) {
+        } catch (ExhaustedRetryException e) {
             log.warn("Failed to get response", e);
         } catch (JsonProcessingException e) {
             log.warn("Failed to convert response", e);
@@ -51,12 +51,12 @@ public class PublicApiService {
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(String.class)
-            .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(2))
+            .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
                 .doBeforeRetry(retrySignal -> log.info("Retrying request to {}, attempt {}/{} due to error:",
                     webClient.options().uri(String.join("", zoneNames)), retries, retrySignal.totalRetries() + 1, retrySignal.failure()))
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                     log.error("Request to {} failed after {} attempts.", webClient.options().uri(String.join("", zoneNames)), retrySignal.totalRetries() + 1);
-                    return new RuntimeException("Retries exhausted", retrySignal.failure());
+                    return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
                 })
             );
         return mapper.readValue(response.block(), CurrentTime.class);
