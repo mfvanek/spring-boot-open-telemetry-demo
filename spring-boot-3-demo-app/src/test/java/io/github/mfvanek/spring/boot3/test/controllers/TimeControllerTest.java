@@ -58,7 +58,7 @@ class TimeControllerTest extends TestBase {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @BeforeAll
     void setUpKafkaConsumer() {
