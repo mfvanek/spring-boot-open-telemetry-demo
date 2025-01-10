@@ -65,6 +65,12 @@
         </properties>
     </rule>
 
+    <rule ref="category/java/codestyle.xml/TooManyStaticImports">
+        <properties>
+            <property name="maximumStaticImports" value="8" />
+        </properties>
+    </rule>
+
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>

@@ -1,5 +1,7 @@
 package io.github.mfvanek.spring.boot3.test.controllers;
 
+import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
+import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.KafkaConsumerUtils;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import lombok.SneakyThrows;
@@ -24,16 +26,22 @@ import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static io.github.mfvanek.spring.boot3.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,6 +80,14 @@ class TimeControllerTest extends TestBase {
     @SneakyThrows
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
+        final String zoneNames = TimeZone.getDefault().getID();
+        final ParsedDateTime parsedDateTime = ParsedDateTime.from(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+        final CurrentTime currentTime = new CurrentTime(parsedDateTime);
+        stubFor(get(urlPathMatching("/" + zoneNames))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withBody(objectMapper.writeValueAsString(currentTime))
+            ));
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
                 .build())

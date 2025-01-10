@@ -10,8 +10,10 @@ dependencies {
     implementation(platform(project(":common-internal-bom")))
     implementation(platform("org.springdoc:springdoc-openapi:2.6.0"))
     implementation(platform(libs.spring.boot.v3.dependencies))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2023.0.4"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
@@ -36,6 +38,7 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.awaitility:awaitility")
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
 
 springBoot {

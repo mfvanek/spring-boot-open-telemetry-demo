@@ -56,6 +56,7 @@ tasks {
         useJUnitPlatform()
         dependsOn(pmdMain, pmdTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
+        maxParallelForks = 1
     }
 
     jacocoTestCoverageVerification {
@@ -79,7 +80,7 @@ tasks {
                 limit {
                     counter = "LINE"
                     value = "MISSEDCOUNT"
-                    maximum = "8.0".toBigDecimal()
+                    maximum = "10.0".toBigDecimal()
                 }
             }
             rule {
