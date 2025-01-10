@@ -53,7 +53,7 @@
         <module name="ExplicitInitialization"/>
         <!-- <module name="FinalClass"/> invalid -->
         <module name="FinalLocalVariable"/>
-        <module name="FinalParameters"/>
+        <!-- <module name="FinalParameters"/> disabled here. Controlled by PMD.AvoidReassigningParameters -->
         <!-- <module name="HiddenField"/> invalid -->
         <!-- <module name="HideUtilityClassConstructor"/> invalid -->
         <module name="IllegalCatch"/>
