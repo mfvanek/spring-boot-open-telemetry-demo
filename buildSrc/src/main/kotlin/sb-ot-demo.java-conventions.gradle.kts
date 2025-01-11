@@ -5,6 +5,9 @@
  * Licensed under the Apache License 2.0
  */
 
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
+import com.github.spotbugs.snom.SpotBugsTask
 import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
@@ -12,6 +15,7 @@ plugins {
     id("jacoco")
     id("pmd")
     id("checkstyle")
+    id("com.github.spotbugs")
     id("net.ltgt.errorprone")
     id("com.google.osdetector")
 }
@@ -31,6 +35,10 @@ dependencies {
 
     errorprone("com.google.errorprone:error_prone_core:2.36.0")
     errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.28")
+
+    spotbugsPlugins("jp.skypencil.findbugs.slf4j:bug-pattern:1.5.0")
+    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0")
+    spotbugsPlugins("com.mebigfatguy.sb-contrib:sb-contrib:7.6.9")
 }
 
 java {
@@ -58,6 +66,20 @@ pmd {
     ruleSets = listOf()
 }
 
+spotbugs {
+    showProgress.set(true)
+    effort.set(Effort.MAX)
+    reportLevel.set(Confidence.LOW)
+    excludeFilter.set(file("${rootDir}/config/spotbugs/exclude.xml"))
+}
+
+tasks.withType<SpotBugsTask>().configureEach {
+    reports {
+        create("xml") { enabled = true }
+        create("html") { enabled = true }
+    }
+}
+
 tasks {
     withType<JavaCompile>().configureEach {
         options.compilerArgs.add("-parameters")
@@ -70,7 +92,7 @@ tasks {
 
     test {
         useJUnitPlatform()
-        dependsOn(checkstyleMain, checkstyleTest, pmdMain, pmdTest)
+        dependsOn(checkstyleMain, checkstyleTest, pmdMain, pmdTest, spotbugsMain, spotbugsTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
         maxParallelForks = 1
     }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2,SLF4J_LOGGER_SHOULD_BE_NON_STATIC,IMC_IMMATURE_CLASS_NO_TOSTRING"/>
+    </Match>
+    <Match>
+        <Bug pattern="SPRING_ENDPOINT,CRLF_INJECTION_LOGS,HTTP_RESPONSE_SPLITTING"/>
+    </Match>
+    <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE,UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+        <Class name="~.*Test"/>
+    </Match>
+</FindBugsFilter>
