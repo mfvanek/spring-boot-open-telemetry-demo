@@ -29,7 +29,7 @@ public class KafkaSendingService {
     private final KafkaTemplate<UUID, String> kafkaTemplate;
 
     public CompletableFuture<SendResult<UUID, String>> sendNotification(@Nonnull final String message) {
-        try (var ignored = MDC.putCloseable("tenant.name", tenantName)) {
+        try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
             log.info("Sending message \"{}\" to Kafka", message);
             return kafkaTemplate.sendDefault(UUID.randomUUID(), message).completable();
         }

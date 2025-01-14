@@ -60,7 +60,7 @@ public class PublicApiService {
             .bodyToMono(String.class)
             .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
                 .doBeforeRetry(retrySignal -> {
-                    try (var ignored = MDC.putCloseable("timezone", zoneNames)) {
+                    try (MDC.MDCCloseable ignored = MDC.putCloseable("timezone", zoneNames)) {
                         log.info("Retrying request to {}, attempt {}/{} due to error:",
                             webClient.options().uri(String.join("", zoneNames)), retries, retrySignal.totalRetries() + 1, retrySignal.failure());
                     }

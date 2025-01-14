@@ -140,4 +140,35 @@ class TimeControllerTest extends TestBase {
         final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
         return Objects.requireNonNullElse(queryResult, 0L);
     }
+
+    @SneakyThrows
+    @Test
+    void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
+        final String zoneNames = TimeZone.getDefault().getID();
+        final ParsedDateTime parsedDateTime = ParsedDateTime.from(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
+        final CurrentTime currentTime = new CurrentTime(parsedDateTime);
+        stubFor(get(urlPathMatching("/" + zoneNames))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withBody(objectMapper.writeValueAsString(currentTime))
+            ));
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder.path("current-time")
+                .build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().exists(TRACE_ID_HEADER_NAME)
+            .expectBody(LocalDateTime.class)
+            .returnResult();
+        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
+        assertThat(received).isNotNull();
+
+        Awaitility
+            .await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(500L))
+            .until(() -> countRecordsInTable() >= 1L);
+        assertThat(output.getAll())
+            .contains("\"tenant.name\":\"ru-a1-private\"");
+    }
 }

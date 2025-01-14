@@ -39,7 +39,7 @@ public class KafkaReadingService {
     public void listen(ConsumerRecord<UUID, String> message, Acknowledgment ack) {
         final Span currentSpan = tracer.currentSpan();
         final String traceId = currentSpan != null ? currentSpan.context().traceId() : "";
-        try (var ignored = MDC.putCloseable("tenant.name", tenantName)) {
+        try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
             log.info("Received record: {} with traceId {}", message.value(), traceId);
         }
         jdbcTemplate.update("insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",
