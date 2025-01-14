@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
-    implementation(platform("org.springdoc:springdoc-openapi:2.6.0"))
+    implementation(platform("org.springdoc:springdoc-openapi:2.8.3"))
     implementation(platform(libs.spring.boot.v3.dependencies))
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2023.0.4"))
 
