@@ -129,8 +129,7 @@ class TimeControllerTest extends TestBase {
             .pollInterval(Duration.ofMillis(500L))
             .until(() -> countRecordsInTable() >= 1L);
         assertThat(output.getAll())
-            .contains(
-                "Received record: " + received.value() + " with traceId " + traceId);
+            .contains("Received record: " + received.value() + " with traceId " + traceId);
         final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
         assertThat(messageFromDb)
