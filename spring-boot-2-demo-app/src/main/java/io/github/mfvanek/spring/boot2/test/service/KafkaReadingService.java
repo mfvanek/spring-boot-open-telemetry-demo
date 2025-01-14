@@ -3,6 +3,8 @@ package io.github.mfvanek.spring.boot2.test.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -20,6 +22,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KafkaReadingService {
 
+    @Value("${tenant.name}")
+    private String tenantName;
     private final Tracer tracer;
     private final Clock clock;
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -28,7 +32,9 @@ public class KafkaReadingService {
     public void listen(ConsumerRecord<UUID, String> message, Acknowledgment ack) {
         final Span currentSpan = tracer.currentSpan();
         final String traceId = currentSpan != null ? currentSpan.context().traceId() : "";
-        log.info("Received record: {} with traceId {}", message.value(), traceId);
+        try (var ignored = MDC.putCloseable("tenant.name", tenantName)) {
+            log.info("Received record: {} with traceId {}", message.value(), traceId);
+        }
         jdbcTemplate.update("insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",
             Map.ofEntries(
                 Map.entry("msg", message.value()),

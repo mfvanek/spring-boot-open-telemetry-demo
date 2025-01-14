@@ -37,6 +37,7 @@ dependencies {
     implementation("net.ttddyy:datasource-proxy:1.9") {
         because("https://github.com/jdbc-observations/datasource-proxy/issues/111")
     }
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
