@@ -1,4 +1,4 @@
-@defaultMessage Avoid using these methods, consider alternative approaches
+@defaultMessage Avoid using these methods/annotations, consider alternative approaches
 java.util.Collections#emptyList()
 java.util.Collections#emptyMap()
 java.util.Collections#emptySet()
@@ -12,3 +12,4 @@ java.util.Collections#singletonMap(java.lang.Object,java.lang.Object)
 java.util.Arrays#asList(java.lang.Object[])
 java.util.Collections#unmodifiableList(java.util.List)
 java.util.Collections#unmodifiableSet(java.util.Set)
+org.springframework.lang.Nullable

@@ -16,6 +16,7 @@ dependencies {
     implementation(platform("org.springframework.cloud:spring-cloud-sleuth-otel-dependencies:1.1.4"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-ui")
@@ -39,6 +40,7 @@ dependencies {
     }
     implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("org.testcontainers:postgresql")
