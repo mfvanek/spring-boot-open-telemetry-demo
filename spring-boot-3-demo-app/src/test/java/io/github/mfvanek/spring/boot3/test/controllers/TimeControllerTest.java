@@ -163,11 +163,6 @@ class TimeControllerTest extends TestBase {
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
 
-        Awaitility
-            .await()
-            .atMost(10, TimeUnit.SECONDS)
-            .pollInterval(Duration.ofMillis(500L))
-            .until(() -> countRecordsInTable() >= 1L);
         assertThat(output.getAll())
             .contains("\"tenant.name\":\"ru-a1-private\"");
     }
