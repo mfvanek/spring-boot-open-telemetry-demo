@@ -50,7 +50,7 @@
                 <levelValue>[ignore]</levelValue>
             </fieldNames>
             <customFields>
-                {"applicationName":"${applicationName}","env":"-","inst":"-","system":"-"}
+                {"applicationName":"${applicationName}"}
             </customFields>
         </encoder>
     </appender>

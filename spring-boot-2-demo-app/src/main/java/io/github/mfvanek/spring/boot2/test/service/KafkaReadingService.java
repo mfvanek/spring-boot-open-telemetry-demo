@@ -29,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KafkaReadingService {
 
-    @Value("${tenant.name}")
+    @Value("${app.tenant.name}")
     private String tenantName;
     private final Tracer tracer;
     private final Clock clock;

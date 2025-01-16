@@ -78,6 +78,6 @@ class PublicApiServiceTest extends TestBase {
         assertThat(result).isNull();
         assertThat(output).contains("Retrying request to ", "Retries exhausted");
         assertThat(output).doesNotContain("Failed to convert response ");
-        assertThat(output).contains("\"timezone\":\"" + zoneNames + "\"");
+        assertThat(output).contains("\"instance_timezone\":\"" + zoneNames + "\"");
     }
 }

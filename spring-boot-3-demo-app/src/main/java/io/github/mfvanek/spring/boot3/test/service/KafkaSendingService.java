@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 @RequiredArgsConstructor
 public class KafkaSendingService {
 
-    @Value("${tenant.name}")
+    @Value("${app.tenant.name}")
     private String tenantName;
     private final KafkaTemplate<UUID, String> kafkaTemplate;
 

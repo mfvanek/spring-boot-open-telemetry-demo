@@ -1,6 +1,7 @@
 app:
     external-base-url: "http://worldtimeapi.org/api/timezone/"
     retries: 3
+    tenant.name: ru-a1-private
 
 server:
     port: 8080
@@ -18,8 +19,6 @@ demo:
         opentelemetry:
             username: sb-ot-demo-user
             password: pwdForSbOtDemoApp
-
-tenant.name: ru-a1-private
 
 spring:
     application.name: spring-boot-3-demo-app
