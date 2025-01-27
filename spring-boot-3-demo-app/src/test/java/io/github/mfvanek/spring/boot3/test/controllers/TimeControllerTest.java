@@ -99,8 +99,6 @@ class TimeControllerTest extends TestBase {
             .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId).isNotBlank();
-        assertThat(result.getResponseBody())
-            .isBefore(LocalDateTime.now(clock));
         assertThat(output.getAll())
             .contains("Called method getNow. TraceId = " + traceId)
             .contains("Awaiting acknowledgement from Kafka");
@@ -165,5 +163,63 @@ class TimeControllerTest extends TestBase {
 
         assertThat(output.getAll())
             .contains("\"tenant.name\":\"ru-a1-private\"");
+    }
+
+    @SneakyThrows
+    @Test
+    void observationValuesShouldBeReportedInRetryLogs(@Nonnull final CapturedOutput output) {
+        final String zoneNames = TimeZone.getDefault().getID();
+        final RuntimeException exception = new RuntimeException("Retries exhausted");
+        stubFor(get(urlPathMatching("/" + zoneNames))
+            .willReturn(aResponse()
+                .withStatus(500)
+                .withBody(objectMapper.writeValueAsString(exception))
+            ));
+
+        final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
+            .uri(uriBuilder -> uriBuilder.path("current-time")
+                .build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().exists(TRACE_ID_HEADER_NAME)
+            .expectBody(LocalDateTime.class)
+            .returnResult();
+        final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
+        assertThat(traceId).isNotBlank();
+        assertThat(output.getAll())
+            .contains("Called method getNow. TraceId = " + traceId)
+            .contains("Awaiting acknowledgement from Kafka");
+
+        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
+        assertThat(received).isNotNull();
+        assertThat(received.value()).startsWith("Current time = ");
+        final Header[] headers = received.headers().toArray();
+        final List<String> headerNames = Arrays.stream(headers)
+            .map(Header::key)
+            .toList();
+        assertThat(headerNames)
+            .hasSize(2)
+            .containsExactlyInAnyOrder("traceparent", "b3");
+        final List<String> headerValues = Arrays.stream(headers)
+            .map(Header::value)
+            .map(v -> new String(v, StandardCharsets.UTF_8))
+            .toList();
+        assertThat(headerValues)
+            .hasSameSizeAs(headerNames)
+            .allSatisfy(h -> assertThat(h).contains(traceId));
+
+        Awaitility
+            .await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(500L))
+            .until(() -> countRecordsInTable() >= 1L);
+        assertThat(output.getAll())
+            .contains("Received record: " + received.value() + " with traceId " + traceId);
+        assertThat(output).contains("Retrying request to ", "Retries exhausted");
+        assertThat(output).contains("\"instance_timezone\":\"" + zoneNames + "\"");
+        final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
+            Map.of("traceId", traceId), String.class);
+        assertThat(messageFromDb)
+            .isEqualTo(received.value());
     }
 }

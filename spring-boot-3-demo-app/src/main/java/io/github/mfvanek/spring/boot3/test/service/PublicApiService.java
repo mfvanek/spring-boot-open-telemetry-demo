@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
@@ -52,6 +53,7 @@ public class PublicApiService {
     }
 
     private CurrentTime getZonedTimeFromWorldTimeApi() throws JsonProcessingException {
+        Hooks.enableAutomaticContextPropagation();
         final String zoneNames = TimeZone.getDefault().getID();
         final Mono<String> response = webClient.get()
             .uri(String.join("/", zoneNames))

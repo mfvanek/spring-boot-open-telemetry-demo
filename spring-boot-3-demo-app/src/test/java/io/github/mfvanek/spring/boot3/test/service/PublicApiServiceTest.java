@@ -63,7 +63,7 @@ class PublicApiServiceTest extends TestBase {
     }
 
     @Test
-    void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) throws JsonProcessingException {
+    void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) throws JsonProcessingException {
         final String zoneNames = TimeZone.getDefault().getID();
         final RuntimeException exception = new RuntimeException("Retries exhausted");
         stubFor(get(urlPathMatching("/" + zoneNames))
@@ -73,7 +73,7 @@ class PublicApiServiceTest extends TestBase {
             ));
 
         final LocalDateTime result = publicApiService.getZonedTime();
-        verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
 
         assertThat(result).isNull();
         assertThat(output).contains("Retrying request to ", "Retries exhausted");

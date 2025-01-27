@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Hooks;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class TimeController {
         kafkaSendingService.sendNotification("Current time = " + now)
             .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
             .get();
+        Hooks.disableAutomaticContextPropagation();
         return now;
     }
 }
