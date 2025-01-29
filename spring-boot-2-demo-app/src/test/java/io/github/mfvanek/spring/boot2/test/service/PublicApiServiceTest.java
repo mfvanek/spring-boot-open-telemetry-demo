@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.resetAllRequests;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -64,6 +65,7 @@ class PublicApiServiceTest extends TestBase {
 
     @Test
     void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) throws JsonProcessingException {
+        resetAllRequests();
         final String zoneNames = TimeZone.getDefault().getID();
         final RuntimeException exception = new RuntimeException("Retries exhausted");
         stubFor(get(urlPathMatching("/" + zoneNames))
@@ -73,7 +75,7 @@ class PublicApiServiceTest extends TestBase {
             ));
 
         final LocalDateTime result = publicApiService.getZonedTime();
-        verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
 
         assertThat(result).isNull();
         assertThat(output).contains("Retrying request to ", "Retries exhausted");

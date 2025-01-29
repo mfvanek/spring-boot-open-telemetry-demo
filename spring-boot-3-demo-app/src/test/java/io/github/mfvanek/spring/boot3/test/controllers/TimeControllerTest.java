@@ -99,6 +99,8 @@ class TimeControllerTest extends TestBase {
             .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId).isNotBlank();
+        assertThat(result.getResponseBody())
+            .isBefore(LocalDateTime.now(clock));
         assertThat(output.getAll())
             .contains("Called method getNow. TraceId = " + traceId)
             .contains("Awaiting acknowledgement from Kafka");
@@ -167,7 +169,7 @@ class TimeControllerTest extends TestBase {
 
     @SneakyThrows
     @Test
-    void observationValuesShouldBeReportedInRetryLogs(@Nonnull final CapturedOutput output) {
+    void mdcValuesShouldBeReportedInRetryLogs(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
         final RuntimeException exception = new RuntimeException("Retries exhausted");
         stubFor(get(urlPathMatching("/" + zoneNames))
