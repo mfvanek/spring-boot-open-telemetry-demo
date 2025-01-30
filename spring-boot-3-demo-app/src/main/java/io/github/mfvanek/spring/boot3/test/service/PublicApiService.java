@@ -62,7 +62,7 @@ public class PublicApiService {
                 .doBeforeRetry(retrySignal -> {
                     try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneNames)) {
                         log.info("Retrying request to {}, attempt {}/{} due to error:",
-                            webClient.options().uri(String.join("", zoneNames)), retries, retrySignal.totalRetries() + 1, retrySignal.failure());
+                            webClient.options().uri(String.join("", zoneNames)), retrySignal.totalRetries() + 1, retries, retrySignal.failure());
                     }
                 })
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
