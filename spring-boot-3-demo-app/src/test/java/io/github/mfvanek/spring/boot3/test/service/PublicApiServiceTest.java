@@ -56,7 +56,7 @@ class PublicApiServiceTest extends TestBase {
         assertThat(result).isNotNull();
         assertThat(result.truncatedTo(ChronoUnit.MINUTES))
             .isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
-        assertThat(output).doesNotContain(
+        assertThat(output.getAll()).doesNotContain(
             "Retrying request to ",
             "Retries exhausted",
             "Failed to convert response ",
@@ -78,8 +78,7 @@ class PublicApiServiceTest extends TestBase {
         verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
 
         assertThat(result).isNull();
-        assertThat(output).contains("Retrying request to ", "Retries exhausted");
-        assertThat(output).doesNotContain("Failed to convert response ");
-        assertThat(output).contains("\"instance_timezone\":\"" + zoneNames + "\"");
+        assertThat(output.getAll()).contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneNames + "\"");
+        assertThat(output.getAll()).doesNotContain("Failed to convert response ");
     }
 }

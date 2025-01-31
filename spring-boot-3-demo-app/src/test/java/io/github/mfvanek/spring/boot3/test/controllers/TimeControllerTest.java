@@ -217,8 +217,7 @@ class TimeControllerTest extends TestBase {
             .until(() -> countRecordsInTable() >= 1L);
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId);
-        assertThat(output).contains("Retrying request to ", "Retries exhausted");
-        assertThat(output).contains("\"instance_timezone\":\"" + zoneNames + "\"");
+        assertThat(output.getAll()).contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneNames + "\"");
         final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
         assertThat(messageFromDb)
