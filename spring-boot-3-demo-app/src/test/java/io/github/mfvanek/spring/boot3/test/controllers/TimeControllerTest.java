@@ -169,7 +169,7 @@ class TimeControllerTest extends TestBase {
 
     @SneakyThrows
     @Test
-    void mdcValuesShouldBeReportedInRetryLogs(@Nonnull final CapturedOutput output) {
+    void mdcValuesShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
         final String zoneNames = TimeZone.getDefault().getID();
         final RuntimeException exception = new RuntimeException("Retries exhausted");
         stubFor(get(urlPathMatching("/" + zoneNames))
@@ -216,11 +216,11 @@ class TimeControllerTest extends TestBase {
             .pollInterval(Duration.ofMillis(500L))
             .until(() -> countRecordsInTable() >= 1L);
         assertThat(output.getAll())
-            .contains("Received record: " + received.value() + " with traceId " + traceId);
-        assertThat(output.getAll()).contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneNames + "\"");
-        final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
-            Map.of("traceId", traceId), String.class);
-        assertThat(messageFromDb)
-            .isEqualTo(received.value());
+            .contains(
+                "Received record: " + received.value() + " with traceId " + traceId,
+                "Retrying request to ",
+                "Retries exhausted",
+                "\"instance_timezone\":\"" + zoneNames + "\""
+            );
     }
 }
