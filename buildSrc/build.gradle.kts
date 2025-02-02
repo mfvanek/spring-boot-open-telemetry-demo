@@ -13,4 +13,5 @@ dependencies {
     implementation("gradle.plugin.com.google.gradle:osdetector-gradle-plugin:1.7.3")
     implementation("de.thetaphi:forbiddenapis:3.8")
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.1.0")
+    implementation("org.gradle:test-retry-gradle-plugin:1.6.1")
 }

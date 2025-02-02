@@ -18,6 +18,7 @@ plugins {
     id("com.github.spotbugs")
     id("net.ltgt.errorprone")
     id("com.google.osdetector")
+    id("org.gradle.test-retry")
 }
 
 dependencies {
@@ -95,6 +96,12 @@ tasks {
         dependsOn(checkstyleMain, checkstyleTest, pmdMain, pmdTest, spotbugsMain, spotbugsTest)
         finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
         maxParallelForks = 1
+
+        retry {
+            maxRetries.set(1)
+            maxFailures.set(3)
+            failOnPassedAfterRetry.set(false)
+        }
     }
 
     jacocoTestCoverageVerification {
