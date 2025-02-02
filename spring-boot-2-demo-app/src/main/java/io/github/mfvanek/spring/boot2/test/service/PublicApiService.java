@@ -61,12 +61,14 @@ public class PublicApiService {
             .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
                 .doBeforeRetry(retrySignal -> {
                     try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneNames)) {
+                        final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneNames));
                         log.info("Retrying request to {}, attempt {}/{} due to error:",
-                            webClient.options().uri(String.join("", zoneNames)), retrySignal.totalRetries() + 1, retries, retrySignal.failure());
+                            uri, retrySignal.totalRetries() + 1, retries, retrySignal.failure());
                     }
                 })
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                    log.error("Request to {} failed after {} attempts.", webClient.options().uri(String.join("", zoneNames)), retrySignal.totalRetries() + 1);
+                    final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneNames));
+                    log.error("Request to {} failed after {} attempts.", uri, retrySignal.totalRetries() + 1);
                     return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
                 })
             );

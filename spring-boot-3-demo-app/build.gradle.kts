@@ -30,6 +30,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     implementation("com.github.blagerweij:liquibase-sessionlock")
     implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:1.0.6")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
