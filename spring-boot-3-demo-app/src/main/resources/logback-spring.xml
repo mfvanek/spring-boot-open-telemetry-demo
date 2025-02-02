@@ -11,14 +11,10 @@
     <springProperty scope="context" name="applicationName" source="spring.application.name"
                     defaultValue="-"/>
 
-    <!-- append and keyValue -->
-    <springProperty scope="context" name="includeStructuredArguments"
-                    source="logging.arguments.structured"
-                    defaultValue="true"/>
     <!-- arguments -->
     <springProperty scope="context" name="includeNonStructuredArguments"
                     source="logging.arguments.non-structured"
-                    defaultValue="true"/>
+                    defaultValue="false"/>
 
     <!-- simple format -->
     <springProperty scope="context" name="logging.pattern.console" source="logging.pattern.console"
@@ -37,9 +33,7 @@
             <provider class="net.logstash.logback.composite.loggingevent.ArgumentsJsonProvider"/>
             <includeContext>false</includeContext>
             <includeMdc>true</includeMdc>
-            <includeStructuredArguments>${includeStructuredArguments}</includeStructuredArguments>
-            <includeNonStructuredArguments>${includeNonStructuredArguments}
-            </includeNonStructuredArguments>
+            <includeNonStructuredArguments>${includeNonStructuredArguments}</includeNonStructuredArguments>
             <fieldNames>
                 <timestamp>@timestamp</timestamp>
                 <message>message</message>
