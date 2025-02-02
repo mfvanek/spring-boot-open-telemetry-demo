@@ -38,7 +38,12 @@ dependencies {
     implementation("net.ttddyy:datasource-proxy:1.9") {
         because("https://github.com/jdbc-observations/datasource-proxy/issues/111")
     }
-    implementation("net.logstash.logback:logstash-logback-encoder:7.3")
+    implementation("ch.qos.logback:logback-classic:1.2.13") {
+        because("The version is higher than in BOM")
+    }
+    implementation("net.logstash.logback:logstash-logback-encoder:7.3") {
+        because("Versions that are higher require slf4j 2")
+    }
 
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
