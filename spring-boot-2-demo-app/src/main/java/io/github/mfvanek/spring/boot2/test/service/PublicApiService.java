@@ -13,6 +13,7 @@ import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.retry.ExhaustedRetryException;
@@ -58,8 +59,12 @@ public class PublicApiService {
             .retrieve()
             .bodyToMono(String.class)
             .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
-                .doBeforeRetry(retrySignal -> log.info("Retrying request to {}, attempt {}/{} due to error:",
-                    webClient.options().uri(String.join("", zoneNames)), retries, retrySignal.totalRetries() + 1, retrySignal.failure()))
+                .doBeforeRetry(retrySignal -> {
+                    try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneNames)) {
+                        log.info("Retrying request to {}, attempt {}/{} due to error:",
+                            webClient.options().uri(String.join("", zoneNames)), retrySignal.totalRetries() + 1, retries, retrySignal.failure());
+                    }
+                })
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                     log.error("Request to {} failed after {} attempts.", webClient.options().uri(String.join("", zoneNames)), retrySignal.totalRetries() + 1);
                     return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());

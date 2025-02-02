@@ -7,8 +7,6 @@
 
 package io.github.mfvanek.spring.boot3.test.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import org.junit.jupiter.api.Test;
@@ -18,15 +16,10 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.TimeZone;
 import javax.annotation.Nonnull;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,16 +31,9 @@ class PublicApiServiceTest extends TestBase {
     private PublicApiService publicApiService;
 
     @Test
-    void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) throws JsonProcessingException {
-        final String zoneNames = TimeZone.getDefault().getID();
-        final LocalDateTime localDateTimeNow = LocalDateTime.now(ZoneId.systemDefault());
-        final ParsedDateTime parsedDateTime = ParsedDateTime.from(localDateTimeNow);
-        final CurrentTime currentTime = new CurrentTime(parsedDateTime);
-        stubFor(get(urlPathMatching("/" + zoneNames))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(objectMapper.writeValueAsString(currentTime))
-            ));
+    void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
+        final LocalDateTime localDateTimeNow = LocalDateTime.now(clock);
+        final String zoneNames = stubOkResponse(ParsedDateTime.from(localDateTimeNow));
 
         final LocalDateTime result = publicApiService.getZonedTime();
         verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
@@ -55,27 +41,26 @@ class PublicApiServiceTest extends TestBase {
         assertThat(result).isNotNull();
         assertThat(result.truncatedTo(ChronoUnit.MINUTES))
             .isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
-        assertThat(output).doesNotContain(
-            "Retrying request to ",
-            "Retries exhausted",
-            "Failed to convert response ");
+        assertThat(output.getAll())
+            .contains("Request received:")
+            .doesNotContain(
+                "Retrying request to ",
+                "Retries exhausted",
+                "Failed to convert response ",
+                "timezone");
     }
 
     @Test
-    void retriesThreeTimesToGetZonedTime(@Nonnull final CapturedOutput output) throws JsonProcessingException {
-        final String zoneNames = TimeZone.getDefault().getID();
-        final RuntimeException exception = new RuntimeException("Retries exhausted");
-        stubFor(get(urlPathMatching("/" + zoneNames))
-            .willReturn(aResponse()
-                .withStatus(500)
-                .withBody(objectMapper.writeValueAsString(exception))
-            ));
+    void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) {
+        final String zoneNames = stubErrorResponse();
 
         final LocalDateTime result = publicApiService.getZonedTime();
         verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
 
         assertThat(result).isNull();
-        assertThat(output).contains("Retrying request to ", "Retries exhausted");
-        assertThat(output).doesNotContain("Failed to convert response ");
+        assertThat(output.getAll())
+            .contains("Retrying request to ", "Retries exhausted")
+            //.contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneNames + "\"")
+            .doesNotContain("Failed to convert response ");
     }
 }
