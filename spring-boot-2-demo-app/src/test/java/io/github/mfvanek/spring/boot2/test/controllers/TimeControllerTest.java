@@ -7,11 +7,9 @@
 
 package io.github.mfvanek.spring.boot2.test.controllers;
 
-import io.github.mfvanek.spring.boot2.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot2.test.support.KafkaConsumerUtils;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
-import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.awaitility.Awaitility;
@@ -31,22 +29,16 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static io.github.mfvanek.spring.boot2.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,17 +70,10 @@ class TimeControllerTest extends TestBase {
         jdbcTemplate.execute("truncate table otel_demo.storage");
     }
 
-    @SneakyThrows
     @Test
-    void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
-        final String zoneNames = TimeZone.getDefault().getID();
-        final ParsedDateTime parsedDateTime = ParsedDateTime.from(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
-        final CurrentTime currentTime = new CurrentTime(parsedDateTime);
-        stubFor(get(urlPathMatching("/" + zoneNames))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(objectMapper.writeValueAsString(currentTime))
-            ));
+    void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
+        stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
+
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
                 .build())
@@ -107,27 +92,10 @@ class TimeControllerTest extends TestBase {
 
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
-        assertThat(received.value()).startsWith("Current time = ");
-        final Header[] headers = received.headers().toArray();
-        final List<String> headerNames = Arrays.stream(headers)
-            .map(Header::key)
-            .toList();
-        assertThat(headerNames)
-            .hasSize(2)
-            .containsExactlyInAnyOrder("traceparent", "b3");
-        final List<String> headerValues = Arrays.stream(headers)
-            .map(Header::value)
-            .map(v -> new String(v, StandardCharsets.UTF_8))
-            .toList();
-        assertThat(headerValues)
-            .hasSameSizeAs(headerNames)
-            .allSatisfy(h -> assertThat(h).contains(traceId));
+        assertThatTraceIdPresentInKafkaHeaders(received, traceId);
 
-        Awaitility
-            .await()
-            .atMost(10, TimeUnit.SECONDS)
-            .pollInterval(Duration.ofMillis(500L))
-            .until(() -> countRecordsInTable() >= 1L);
+        awaitStoringIntoDatabase();
+
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId);
         final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
@@ -141,17 +109,10 @@ class TimeControllerTest extends TestBase {
         return Objects.requireNonNullElse(queryResult, 0L);
     }
 
-    @SneakyThrows
     @Test
-    void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) {
-        final String zoneNames = TimeZone.getDefault().getID();
-        final ParsedDateTime parsedDateTime = ParsedDateTime.from(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
-        final CurrentTime currentTime = new CurrentTime(parsedDateTime);
-        stubFor(get(urlPathMatching("/" + zoneNames))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withBody(objectMapper.writeValueAsString(currentTime))
-            ));
+    void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
+        stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
+
         webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
                 .build())
@@ -168,16 +129,9 @@ class TimeControllerTest extends TestBase {
             .contains("\"tenant.name\":\"ru-a1-private\"");
     }
 
-    @SneakyThrows
     @Test
-    void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
-        final String zoneNames = TimeZone.getDefault().getID();
-        final RuntimeException exception = new RuntimeException("Retries exhausted");
-        stubFor(get(urlPathMatching("/" + zoneNames))
-            .willReturn(aResponse()
-                .withStatus(500)
-                .withBody(objectMapper.writeValueAsString(exception))
-            ));
+    void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) throws Exception {
+        final String zoneNames = stubErrorResponse();
 
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
@@ -195,6 +149,21 @@ class TimeControllerTest extends TestBase {
 
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
+        assertThatTraceIdPresentInKafkaHeaders(received, traceId);
+
+        awaitStoringIntoDatabase();
+
+        assertThat(output.getAll())
+            .contains(
+                "Received record: " + received.value() + " with traceId " + traceId,
+                "Retrying request to ",
+                "Retries exhausted",
+                "\"instance_timezone\":\"" + zoneNames + "\""
+            );
+    }
+
+    private void assertThatTraceIdPresentInKafkaHeaders(@Nonnull final ConsumerRecord<UUID, String> received,
+                                                        @Nonnull final String expectedTraceId) {
         assertThat(received.value()).startsWith("Current time = ");
         final Header[] headers = received.headers().toArray();
         final List<String> headerNames = Arrays.stream(headers)
@@ -209,19 +178,14 @@ class TimeControllerTest extends TestBase {
             .toList();
         assertThat(headerValues)
             .hasSameSizeAs(headerNames)
-            .allSatisfy(h -> assertThat(h).contains(traceId));
+            .allSatisfy(h -> assertThat(h).contains(expectedTraceId));
+    }
 
+    private void awaitStoringIntoDatabase() {
         Awaitility
             .await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(Duration.ofMillis(500L))
             .until(() -> countRecordsInTable() >= 1L);
-        assertThat(output.getAll())
-            .contains(
-                "Received record: " + received.value() + " with traceId " + traceId,
-                "Retrying request to ",
-                "Retries exhausted",
-                "\"instance_timezone\":\"" + zoneNames + "\""
-            );
     }
 }
