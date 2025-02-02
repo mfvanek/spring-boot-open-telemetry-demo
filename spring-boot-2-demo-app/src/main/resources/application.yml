@@ -1,6 +1,7 @@
 app:
     external-base-url: "http://worldtimeapi.org/api/timezone/"
     retries: 3
+    tenant.name: ru-a1-private
 
 server:
     port: 8090
