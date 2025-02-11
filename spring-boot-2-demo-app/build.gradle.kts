@@ -38,7 +38,7 @@ dependencies {
     implementation("net.ttddyy:datasource-proxy:1.9") {
         because("https://github.com/jdbc-observations/datasource-proxy/issues/111")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.13") {
+    implementation("ch.qos.logback:logback-classic:1.5.16") {
         because("The version is higher than in BOM")
     }
     implementation("net.logstash.logback:logstash-logback-encoder:7.3") {
