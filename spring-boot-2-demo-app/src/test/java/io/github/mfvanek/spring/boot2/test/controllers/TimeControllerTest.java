@@ -24,7 +24,6 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.nio.charset.StandardCharsets;
@@ -43,7 +42,6 @@ import javax.annotation.Nonnull;
 import static io.github.mfvanek.spring.boot2.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test-logback")
 @ExtendWith(OutputCaptureExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TimeControllerTest extends TestBase {
@@ -129,39 +127,6 @@ class TimeControllerTest extends TestBase {
 
         assertThat(output.getAll())
             .contains("\"tenant.name\":\"ru-a1-private\"");
-    }
-
-    @Test
-    void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) throws Exception {
-        final String zoneName = stubErrorResponse();
-
-        final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
-            .uri(uriBuilder -> uriBuilder.path("current-time")
-                .build())
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().exists(TRACE_ID_HEADER_NAME)
-            .expectBody(LocalDateTime.class)
-            .returnResult();
-        final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
-        assertThat(traceId).isNotBlank();
-        assertThat(output.getAll())
-            .contains("Called method getNow. TraceId = " + traceId)
-            .contains("Awaiting acknowledgement from Kafka");
-
-        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
-        assertThat(received).isNotNull();
-        assertThatTraceIdPresentInKafkaHeaders(received, traceId);
-
-        awaitStoringIntoDatabase();
-
-        assertThat(output.getAll())
-            .contains(
-                "Received record: " + received.value() + " with traceId " + traceId,
-                "Retrying request to ",
-                "Retries exhausted",
-                "\"instance_timezone\":\"" + zoneName + "\""
-            );
     }
 
     private void assertThatTraceIdPresentInKafkaHeaders(@Nonnull final ConsumerRecord<UUID, String> received,

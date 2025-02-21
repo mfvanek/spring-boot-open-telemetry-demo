@@ -1,3 +1,0 @@
-logging:
-    appender:
-        name: consoleJsonAppender
