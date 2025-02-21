@@ -9,18 +9,20 @@ package io.github.mfvanek.spring.boot3.test.service;
 
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
-import io.micrometer.tracing.ScopedSpan;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -28,7 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
+@ActiveProfiles("test-retry")
 @ExtendWith(OutputCaptureExtension.class)
 class PublicApiServiceTest extends TestBase {
 
@@ -36,6 +38,8 @@ class PublicApiServiceTest extends TestBase {
     private PublicApiService publicApiService;
     @Autowired
     private Tracer tracer;
+    @Autowired
+    private ObservationRegistry observationRegistry;
 
     @Test
     void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
@@ -59,16 +63,14 @@ class PublicApiServiceTest extends TestBase {
 
     @Test
     void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) {
-        final ScopedSpan span = tracer.startScopedSpan("test");
-        try {
-            final String zoneName = stubErrorResponse();
+        final String zoneName = stubErrorResponse();
+
+        Observation.createNotStarted("test", observationRegistry).observe(() -> {
+            final String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
 
             final LocalDateTime result = publicApiService.getZonedTime();
-            verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
-
             assertThat(result).isNull();
 
-            final String traceId = span.context().traceId();
             assertThat(output.getAll())
                 .containsPattern(String.format(Locale.ROOT,
                     ".*\\[%s-[a-fA-F0-9]{16}] i\\.g\\.m\\.s\\.b\\.test\\.service\\.PublicApiService {2}: Retrying request to",
@@ -77,8 +79,8 @@ class PublicApiServiceTest extends TestBase {
                     ".*\\[%s-[a-fA-F0-9]{16}] i\\.g\\.m\\.s\\.b\\.test\\.service\\.PublicApiService {2}: Request to '/%s' failed after 2 attempts",
                     traceId, zoneName))
                 .doesNotContain("Failed to convert response ");
-        } finally {
-            span.end();
-        }
+        });
+
+        verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
     }
 }
