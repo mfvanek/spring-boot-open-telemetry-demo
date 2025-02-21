@@ -8,7 +8,7 @@
 package io.github.mfvanek.spring.boot2.test.service;
 
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
-import io.github.mfvanek.spring.boot2.test.support.TestBase;
+import io.github.mfvanek.spring.boot2.test.support.RetryTestBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.sleuth.ScopedSpan;
 import org.springframework.cloud.sleuth.Tracer;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -28,9 +27,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test-retry")
 @ExtendWith(OutputCaptureExtension.class)
-class PublicApiServiceTest extends TestBase {
+class PublicApiServiceTest extends RetryTestBase {
 
     @Autowired
     private PublicApiService publicApiService;

@@ -7,12 +7,11 @@
 
 package io.github.mfvanek.spring.boot3.test.controllers;
 
-import io.github.mfvanek.spring.boot3.test.support.TestBase;
+import io.github.mfvanek.spring.boot3.test.support.RetryTestBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.time.LocalDateTime;
@@ -22,9 +21,8 @@ import javax.annotation.Nonnull;
 import static io.github.mfvanek.spring.boot3.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test-retry")
 @ExtendWith(OutputCaptureExtension.class)
-class TimeControllerRetryTest extends TestBase {
+class TimeControllerRetryTest extends RetryTestBase {
 
     @Test
     void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
