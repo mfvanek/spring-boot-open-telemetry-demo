@@ -130,7 +130,7 @@ class TimeControllerTest extends TestBase {
 
     @Test
     void mdcValuesShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) throws Exception {
-        final String zoneNames = stubErrorResponse();
+        final String zoneName = stubErrorResponse();
 
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
@@ -157,7 +157,7 @@ class TimeControllerTest extends TestBase {
                 "Received record: " + received.value() + " with traceId " + traceId,
                 "Retrying request to ",
                 "Retries exhausted",
-                "\"instance_timezone\":\"" + zoneNames + "\""
+                "\"instance_timezone\":\"" + zoneName + "\""
             );
     }
 

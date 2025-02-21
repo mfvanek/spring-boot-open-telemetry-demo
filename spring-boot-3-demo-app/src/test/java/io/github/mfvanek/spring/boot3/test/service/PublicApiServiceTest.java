@@ -33,10 +33,10 @@ class PublicApiServiceTest extends TestBase {
     @Test
     void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
         final LocalDateTime localDateTimeNow = LocalDateTime.now(clock);
-        final String zoneNames = stubOkResponse(ParsedDateTime.from(localDateTimeNow));
+        final String zoneName = stubOkResponse(ParsedDateTime.from(localDateTimeNow));
 
         final LocalDateTime result = publicApiService.getZonedTime();
-        verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(getRequestedFor(urlPathMatching("/" + zoneName)));
 
         assertThat(result).isNotNull();
         assertThat(result.truncatedTo(ChronoUnit.MINUTES))
@@ -52,14 +52,14 @@ class PublicApiServiceTest extends TestBase {
 
     @Test
     void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) {
-        final String zoneNames = stubErrorResponse();
+        final String zoneName = stubErrorResponse();
 
         final LocalDateTime result = publicApiService.getZonedTime();
-        verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
 
         assertThat(result).isNull();
         assertThat(output.getAll())
-            .contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneNames + "\"")
+            .contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneName + "\"")
             .doesNotContain("Failed to convert response ");
     }
 }

@@ -52,22 +52,22 @@ public class PublicApiService {
     }
 
     private CurrentTime getZonedTimeFromWorldTimeApi() throws JsonProcessingException {
-        final String zoneNames = TimeZone.getDefault().getID();
+        final String zoneName = TimeZone.getDefault().getID();
         final Mono<String> response = webClient.get()
-            .uri(String.join("/", zoneNames))
+            .uri(String.join("/", zoneName))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(String.class)
             .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
                 .doBeforeRetry(retrySignal -> {
-                    try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneNames)) {
-                        final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneNames));
+                    try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneName)) {
+                        final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneName));
                         log.info("Retrying request to {}, attempt {}/{} due to error:",
                             uri, retrySignal.totalRetries() + 1, retries, retrySignal.failure());
                     }
                 })
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                    final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneNames));
+                    final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneName));
                     log.error("Request to {} failed after {} attempts.", uri, retrySignal.totalRetries() + 1);
                     return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
                 })

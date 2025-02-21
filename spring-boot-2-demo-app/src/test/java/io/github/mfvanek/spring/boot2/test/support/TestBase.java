@@ -55,15 +55,15 @@ public abstract class TestBase {
 
     @Nonnull
     protected String stubOkResponse(@Nonnull final ParsedDateTime parsedDateTime) {
-        final String zoneNames = TimeZone.getDefault().getID();
-        stubOkResponse(zoneNames, parsedDateTime);
-        return zoneNames;
+        final String zoneName = TimeZone.getDefault().getID();
+        stubOkResponse(zoneName, parsedDateTime);
+        return zoneName;
     }
 
     @SneakyThrows
-    private void stubOkResponse(@Nonnull final String zoneNames, @Nonnull final ParsedDateTime parsedDateTime) {
+    private void stubOkResponse(@Nonnull final String zoneName, @Nonnull final ParsedDateTime parsedDateTime) {
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
-        stubFor(get(urlPathMatching("/" + zoneNames))
+        stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withBody(objectMapper.writeValueAsString(currentTime))
@@ -72,15 +72,15 @@ public abstract class TestBase {
 
     @Nonnull
     protected String stubErrorResponse() {
-        final String zoneNames = TimeZone.getDefault().getID();
+        final String zoneName = TimeZone.getDefault().getID();
         final RuntimeException exception = new RuntimeException("Retries exhausted");
-        stubErrorResponse(zoneNames, exception);
-        return zoneNames;
+        stubErrorResponse(zoneName, exception);
+        return zoneName;
     }
 
     @SneakyThrows
-    private void stubErrorResponse(@Nonnull final String zoneNames, @Nonnull final RuntimeException errorForResponse) {
-        stubFor(get(urlPathMatching("/" + zoneNames))
+    private void stubErrorResponse(@Nonnull final String zoneName, @Nonnull final RuntimeException errorForResponse) {
+        stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()
                 .withStatus(500)
                 .withBody(objectMapper.writeValueAsString(errorForResponse))
