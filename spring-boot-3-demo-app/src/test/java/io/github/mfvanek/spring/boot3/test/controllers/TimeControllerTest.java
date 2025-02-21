@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import java.nio.charset.StandardCharsets;
@@ -42,6 +43,7 @@ import javax.annotation.Nonnull;
 import static io.github.mfvanek.spring.boot3.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test-logback")
 @ExtendWith(OutputCaptureExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TimeControllerTest extends TestBase {

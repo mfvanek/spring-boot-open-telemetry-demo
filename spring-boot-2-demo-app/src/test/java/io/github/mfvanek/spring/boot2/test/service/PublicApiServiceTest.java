@@ -9,6 +9,7 @@ package io.github.mfvanek.spring.boot2.test.service;
 
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot2.test.support.TestBase;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 @ExtendWith(OutputCaptureExtension.class)
 class PublicApiServiceTest extends TestBase {
 

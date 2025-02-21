@@ -58,20 +58,22 @@ public class PublicApiService {
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(String.class)
-            .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
-                .doBeforeRetry(retrySignal -> {
-                    try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneName)) {
-                        final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneName));
-                        log.info("Retrying request to {}, attempt {}/{} due to error:",
-                            uri, retrySignal.totalRetries() + 1, retries, retrySignal.failure());
-                    }
-                })
-                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                    final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneName));
-                    log.error("Request to {} failed after {} attempts.", uri, retrySignal.totalRetries() + 1);
-                    return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
-                })
-            );
+            .retryWhen(prepareRetry(zoneName))
+            .contextCapture();
         return mapper.readValue(response.block(), CurrentTime.class);
+    }
+
+    private Retry prepareRetry(final String zoneName) {
+        return Retry.fixedDelay(retries, Duration.ofSeconds(2))
+            .doBeforeRetry(retrySignal -> {
+                try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneName)) {
+                    log.info("Retrying request to '/{}', attempt {}/{} due to error:",
+                        zoneName, retrySignal.totalRetries() + 1, retries, retrySignal.failure());
+                }
+            })
+            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                log.error("Request to '/{}' failed after {} attempts.", zoneName, retrySignal.totalRetries() + 1);
+                return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
+            });
     }
 }

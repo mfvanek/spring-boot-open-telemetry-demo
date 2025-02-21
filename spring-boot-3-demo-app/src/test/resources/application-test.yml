@@ -2,11 +2,9 @@ app:
     external-base-url: "http://localhost:${wiremock.server.port}/"
     retries: 1
 
-#to change default appender in tests use:
-#logging:
-#    appender.name: CONSOLE
-
 logging:
+    appender:
+        name: CONSOLE
     level:
         org.testcontainers: INFO # In order to troubleshoot issues with Testcontainers, increase the logging level to DEBUG
         com.github.dockerjava: WARN
