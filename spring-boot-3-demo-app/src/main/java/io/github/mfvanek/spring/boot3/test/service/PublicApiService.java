@@ -58,8 +58,7 @@ public class PublicApiService {
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(String.class)
-            .retryWhen(prepareRetry(zoneName))
-            .contextCapture();
+            .retryWhen(prepareRetry(zoneName));
         return mapper.readValue(response.block(), CurrentTime.class);
     }
 

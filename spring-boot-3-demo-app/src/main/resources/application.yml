@@ -52,6 +52,8 @@ spring:
     jdbc:
         template:
             query-timeout: 1s
+    reactor:
+        context-propagation: auto
 
 management:
     server:
