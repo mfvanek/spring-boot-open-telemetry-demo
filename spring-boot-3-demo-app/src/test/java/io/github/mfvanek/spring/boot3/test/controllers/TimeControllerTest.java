@@ -100,39 +100,15 @@ class TimeControllerTest extends TestBase {
         awaitStoringIntoDatabase();
 
         assertThat(output.getAll())
-            .contains("Received record: " + received.value() + " with traceId " + traceId);
+            .contains("Received record: " + received.value() + " with traceId " + traceId)
+            .contains("\"tenant.name\":\"ru-a1-private\"");
         final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
         assertThat(messageFromDb)
             .isEqualTo(received.value());
     }
 
-    private long countRecordsInTable() {
-        final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
-        return Objects.requireNonNullElse(queryResult, 0L);
-    }
-
     @Order(2)
-    @Test
-    void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
-        stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
-
-        webTestClient.get()
-            .uri(uriBuilder -> uriBuilder.path("current-time")
-                .build())
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().exists(TRACE_ID_HEADER_NAME)
-            .expectBody(LocalDateTime.class)
-            .returnResult();
-        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
-        assertThat(received).isNotNull();
-
-        assertThat(output.getAll())
-            .contains("\"tenant.name\":\"ru-a1-private\"");
-    }
-
-    @Order(3)
     @Test
     void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
         final String zoneName = stubErrorResponse();
@@ -161,6 +137,11 @@ class TimeControllerTest extends TestBase {
                     "\"thread\":\"webflux-http-nio-2\",\"level\":\"ERROR\"," +
                     "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
                 zoneName));
+    }
+
+    private long countRecordsInTable() {
+        final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
+        return Objects.requireNonNullElse(queryResult, 0L);
     }
 
     private void assertThatTraceIdPresentInKafkaHeaders(@Nonnull final ConsumerRecord<UUID, String> received,

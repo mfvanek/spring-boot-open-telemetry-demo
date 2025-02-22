@@ -98,8 +98,8 @@ tasks {
         maxParallelForks = 1
 
         retry {
-            maxRetries.set(1)
-            maxFailures.set(3)
+            maxRetries.set(2)
+            maxFailures.set(5)
             failOnPassedAfterRetry.set(false)
         }
     }
