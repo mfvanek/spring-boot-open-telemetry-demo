@@ -16,6 +16,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,6 +72,7 @@ class TimeControllerTest extends TestBase {
         jdbcTemplate.execute("truncate table otel_demo.storage");
     }
 
+    @Order(1)
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
@@ -110,6 +112,7 @@ class TimeControllerTest extends TestBase {
         return Objects.requireNonNullElse(queryResult, 0L);
     }
 
+    @Order(2)
     @Test
     void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
@@ -129,6 +132,7 @@ class TimeControllerTest extends TestBase {
             .contains("\"tenant.name\":\"ru-a1-private\"");
     }
 
+    @Order(3)
     @Test
     void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
         final String zoneName = stubErrorResponse();

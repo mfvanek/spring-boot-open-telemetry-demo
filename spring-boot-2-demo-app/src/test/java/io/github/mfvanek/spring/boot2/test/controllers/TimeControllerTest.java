@@ -16,6 +16,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -70,6 +72,7 @@ class TimeControllerTest extends TestBase {
         jdbcTemplate.execute("truncate table otel_demo.storage");
     }
 
+    @Order(1)
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
@@ -109,6 +112,7 @@ class TimeControllerTest extends TestBase {
         return Objects.requireNonNullElse(queryResult, 0L);
     }
 
+    @Order(2)
     @Test
     void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
@@ -127,6 +131,39 @@ class TimeControllerTest extends TestBase {
 
         assertThat(output.getAll())
             .contains("\"tenant.name\":\"ru-a1-private\"");
+    }
+
+    @Order(3)
+    @Test
+    void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
+        final String zoneName = stubErrorResponse();
+
+        final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
+            .uri(uriBuilder -> uriBuilder.path("current-time")
+                .build())
+            .header("traceparent", "00-38c19768104ab8ae64fabbeed65bbbdf-4cac1747d4e1ee10-01")
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().exists(TRACE_ID_HEADER_NAME)
+            .expectBody(LocalDateTime.class)
+            .returnResult();
+        final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
+        assertThat(traceId)
+            .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf");
+
+        assertThat(output.getAll())
+            .containsPattern(String.format(Locale.ROOT,
+                ".*\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +
+                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot2\\.test\\.service\\.PublicApiService\"," +
+                    "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-2-demo-app\"}%n",
+                zoneName))
+            .containsPattern(String.format(Locale.ROOT,
+                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
+                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot2\\.test\\.service\\.PublicApiService\"," +
+                    "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-2-demo-app\"}%n",
+                zoneName))
+            .doesNotContain("Failed to convert response ");
     }
 
     private void assertThatTraceIdPresentInKafkaHeaders(@Nonnull final ConsumerRecord<UUID, String> received,

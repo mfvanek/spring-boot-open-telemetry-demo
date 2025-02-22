@@ -3,6 +3,8 @@ app:
     retries: 1
 
 logging:
+#    appender:
+#        name: CONSOLE
     level:
         org.testcontainers: INFO # In order to troubleshoot issues with Testcontainers, increase the logging level to DEBUG
         com.github.dockerjava: WARN

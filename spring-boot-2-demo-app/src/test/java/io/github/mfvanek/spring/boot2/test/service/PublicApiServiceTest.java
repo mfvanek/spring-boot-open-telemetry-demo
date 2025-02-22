@@ -8,7 +8,7 @@
 package io.github.mfvanek.spring.boot2.test.service;
 
 import io.github.mfvanek.spring.boot2.test.service.dto.ParsedDateTime;
-import io.github.mfvanek.spring.boot2.test.support.RetryTestBase;
+import io.github.mfvanek.spring.boot2.test.support.TestBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
-class PublicApiServiceTest extends RetryTestBase {
+class PublicApiServiceTest extends TestBase {
 
     @Autowired
     private PublicApiService publicApiService;
@@ -57,26 +57,30 @@ class PublicApiServiceTest extends RetryTestBase {
 
     @Test
     void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) {
+        final String zoneName = stubErrorResponse();
         final ScopedSpan span = tracer.startScopedSpan("test");
         try {
-            final String zoneName = stubErrorResponse();
-
             final LocalDateTime result = publicApiService.getZonedTime();
-            verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
-
             assertThat(result).isNull();
 
             final String traceId = span.context().traceId();
             assertThat(output.getAll())
                 .containsPattern(String.format(Locale.ROOT,
-                    ".*INFO \\[spring-boot-2-demo-app,%s,[a-fA-F0-9]{16}] \\d+ --- \\[.*?] i\\.g\\.m\\.s\\.b\\.test\\.service\\.PublicApiService {2}: Retrying request to",
-                    traceId))
+                    ".*\"message\":\"Retrying request to '/%s', attempt 1/1 due to error:\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot2\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
+                        "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-2-demo-app\"}%n",
+                    zoneName, traceId, zoneName))
                 .containsPattern(String.format(Locale.ROOT,
-                    ".*ERROR \\[spring-boot-2-demo-app,%s,[a-fA-F0-9]{16}] \\d+ --- \\[.*?] i\\.g\\.m\\.s\\.b\\.test\\.service\\.PublicApiService {2}: Request to '/%s' failed after 2 attempts",
-                    traceId, zoneName))
+                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot2\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-2-demo-app\"}%n",
+                    zoneName, traceId))
                 .doesNotContain("Failed to convert response ");
         } finally {
             span.end();
         }
+
+        verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
     }
 }
