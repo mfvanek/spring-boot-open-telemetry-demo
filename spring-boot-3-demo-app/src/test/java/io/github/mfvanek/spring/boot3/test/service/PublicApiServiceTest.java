@@ -8,7 +8,7 @@
 package io.github.mfvanek.spring.boot3.test.service;
 
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
-import io.github.mfvanek.spring.boot3.test.support.RetryTestBase;
+import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
@@ -30,7 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
-class PublicApiServiceTest extends RetryTestBase {
+class PublicApiServiceTest extends TestBase {
 
     @Autowired
     private PublicApiService publicApiService;
@@ -71,11 +71,14 @@ class PublicApiServiceTest extends RetryTestBase {
 
             assertThat(output.getAll())
                 .containsPattern(String.format(Locale.ROOT,
-                    ".*\\[%s-[a-fA-F0-9]{16}] i\\.g\\.m\\.s\\.b\\.test\\.service\\.PublicApiService {2}: Retrying request to",
-                    traceId))
+                    ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error:\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
+                        "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", traceId, zoneName))
                 .containsPattern(String.format(Locale.ROOT,
-                    ".*\\[%s-[a-fA-F0-9]{16}] i\\.g\\.m\\.s\\.b\\.test\\.service\\.PublicApiService {2}: Request to '/%s' failed after 2 attempts",
-                    traceId, zoneName))
+                    ".*\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n", traceId))
                 .doesNotContain("Failed to convert response ");
         });
 
