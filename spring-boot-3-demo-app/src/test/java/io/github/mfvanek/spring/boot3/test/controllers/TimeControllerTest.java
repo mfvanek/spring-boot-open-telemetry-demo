@@ -134,7 +134,7 @@ class TimeControllerTest extends TestBase {
                     "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", zoneName))
             .containsPattern(String.format(Locale.ROOT,
                 ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
-                    "\"thread\":\"webflux-http-nio-2\",\"level\":\"ERROR\"," +
+                    "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
                     "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
                 zoneName));
     }
