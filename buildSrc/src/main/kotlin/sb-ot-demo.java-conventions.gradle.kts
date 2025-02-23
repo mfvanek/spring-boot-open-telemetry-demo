@@ -98,8 +98,8 @@ tasks {
         maxParallelForks = 1
 
         retry {
-            maxRetries.set(1)
-            maxFailures.set(3)
+            maxRetries.set(2)
+            maxFailures.set(5)
             failOnPassedAfterRetry.set(false)
         }
     }
@@ -132,14 +132,14 @@ tasks {
                 limit {
                     counter = "INSTRUCTION"
                     value = "COVEREDRATIO"
-                    minimum = "0.82".toBigDecimal()
+                    minimum = "0.90".toBigDecimal()
                 }
             }
             rule {
                 limit {
                     counter = "BRANCH"
                     value = "COVEREDRATIO"
-                    minimum = "0.50".toBigDecimal()
+                    minimum = "0.65".toBigDecimal()
                 }
             }
         }

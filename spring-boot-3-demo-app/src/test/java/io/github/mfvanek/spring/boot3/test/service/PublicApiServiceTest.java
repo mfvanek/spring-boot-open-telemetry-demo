@@ -9,6 +9,9 @@ package io.github.mfvanek.spring.boot3.test.service;
 
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.tracing.Tracer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -29,14 +34,18 @@ class PublicApiServiceTest extends TestBase {
 
     @Autowired
     private PublicApiService publicApiService;
+    @Autowired
+    private Tracer tracer;
+    @Autowired
+    private ObservationRegistry observationRegistry;
 
     @Test
     void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
         final LocalDateTime localDateTimeNow = LocalDateTime.now(clock);
-        final String zoneNames = stubOkResponse(ParsedDateTime.from(localDateTimeNow));
+        final String zoneName = stubOkResponse(ParsedDateTime.from(localDateTimeNow));
 
         final LocalDateTime result = publicApiService.getZonedTime();
-        verify(getRequestedFor(urlPathMatching("/" + zoneNames)));
+        verify(getRequestedFor(urlPathMatching("/" + zoneName)));
 
         assertThat(result).isNotNull();
         assertThat(result.truncatedTo(ChronoUnit.MINUTES))
@@ -52,14 +61,27 @@ class PublicApiServiceTest extends TestBase {
 
     @Test
     void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) {
-        final String zoneNames = stubErrorResponse();
+        final String zoneName = stubErrorResponse();
 
-        final LocalDateTime result = publicApiService.getZonedTime();
-        verify(2, getRequestedFor(urlPathMatching("/" + zoneNames)));
+        Observation.createNotStarted("test", observationRegistry).observe(() -> {
+            final String traceId = Objects.requireNonNull(tracer.currentSpan()).context().traceId();
 
-        assertThat(result).isNull();
-        assertThat(output.getAll())
-            .contains("Retrying request to ", "Retries exhausted", "\"instance_timezone\":\"" + zoneNames + "\"")
-            .doesNotContain("Failed to convert response ");
+            final LocalDateTime result = publicApiService.getZonedTime();
+            assertThat(result).isNull();
+
+            assertThat(output.getAll())
+                .containsPattern(String.format(Locale.ROOT,
+                    ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error:\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
+                        "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", traceId, zoneName))
+                .containsPattern(String.format(Locale.ROOT,
+                    ".*\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n", traceId))
+                .doesNotContain("Failed to convert response ");
+        });
+
+        verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
     }
 }

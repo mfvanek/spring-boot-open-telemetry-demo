@@ -16,6 +16,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -70,6 +72,7 @@ class TimeControllerTest extends TestBase {
         jdbcTemplate.execute("truncate table otel_demo.storage");
     }
 
+    @Order(1)
     @Test
     void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
@@ -97,68 +100,48 @@ class TimeControllerTest extends TestBase {
         awaitStoringIntoDatabase();
 
         assertThat(output.getAll())
-            .contains("Received record: " + received.value() + " with traceId " + traceId);
+            .contains("Received record: " + received.value() + " with traceId " + traceId)
+            .contains("\"tenant.name\":\"ru-a1-private\"");
         final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
         assertThat(messageFromDb)
             .isEqualTo(received.value());
     }
 
-    private long countRecordsInTable() {
-        final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
-        return Objects.requireNonNullElse(queryResult, 0L);
-    }
-
+    @Order(2)
     @Test
-    void mdcValuesShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
-        stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
-
-        webTestClient.get()
-            .uri(uriBuilder -> uriBuilder.path("current-time")
-                .build())
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().exists(TRACE_ID_HEADER_NAME)
-            .expectBody(LocalDateTime.class)
-            .returnResult();
-        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
-        assertThat(received).isNotNull();
-
-        assertThat(output.getAll())
-            .contains("\"tenant.name\":\"ru-a1-private\"");
-    }
-
-    @Test
-    void mdcValuesShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) throws Exception {
-        final String zoneNames = stubErrorResponse();
+    void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
+        final String zoneName = stubErrorResponse();
 
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
             .uri(uriBuilder -> uriBuilder.path("current-time")
                 .build())
+            .header("traceparent", "00-38c19768104ab8ae64fabbeed65bbbdf-4cac1747d4e1ee10-01")
             .exchange()
             .expectStatus().isOk()
             .expectHeader().exists(TRACE_ID_HEADER_NAME)
             .expectBody(LocalDateTime.class)
             .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
-        assertThat(traceId).isNotBlank();
-        assertThat(output.getAll())
-            .contains("Called method getNow. TraceId = " + traceId)
-            .contains("Awaiting acknowledgement from Kafka");
-
-        final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
-        assertThat(received).isNotNull();
-        assertThatTraceIdPresentInKafkaHeaders(received, traceId);
-
-        awaitStoringIntoDatabase();
+        assertThat(traceId)
+            .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf");
 
         assertThat(output.getAll())
-            .contains(
-                "Received record: " + received.value() + " with traceId " + traceId,
-                "Retrying request to ",
-                "Retries exhausted",
-                "\"instance_timezone\":\"" + zoneNames + "\""
-            );
+            .containsPattern(String.format(Locale.ROOT,
+                ".*\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +
+                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                    "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", zoneName))
+            .containsPattern(String.format(Locale.ROOT,
+                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                    "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
+                zoneName));
+    }
+
+    private long countRecordsInTable() {
+        final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
+        return Objects.requireNonNullElse(queryResult, 0L);
     }
 
     private void assertThatTraceIdPresentInKafkaHeaders(@Nonnull final ConsumerRecord<UUID, String> received,

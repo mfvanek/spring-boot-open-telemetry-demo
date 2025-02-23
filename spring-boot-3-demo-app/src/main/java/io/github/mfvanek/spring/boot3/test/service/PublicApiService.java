@@ -52,26 +52,27 @@ public class PublicApiService {
     }
 
     private CurrentTime getZonedTimeFromWorldTimeApi() throws JsonProcessingException {
-        final String zoneNames = TimeZone.getDefault().getID();
+        final String zoneName = TimeZone.getDefault().getID();
         final Mono<String> response = webClient.get()
-            .uri(String.join("/", zoneNames))
+            .uri(zoneName)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(String.class)
-            .retryWhen(Retry.fixedDelay(retries, Duration.ofSeconds(2))
-                .doBeforeRetry(retrySignal -> {
-                    try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneNames)) {
-                        final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneNames));
-                        log.info("Retrying request to {}, attempt {}/{} due to error:",
-                            uri, retrySignal.totalRetries() + 1, retries, retrySignal.failure());
-                    }
-                })
-                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                    final WebClient.RequestHeadersSpec<?> uri = webClient.options().uri(String.join("", zoneNames));
-                    log.error("Request to {} failed after {} attempts.", uri, retrySignal.totalRetries() + 1);
-                    return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
-                })
-            );
+            .retryWhen(prepareRetry(zoneName));
         return mapper.readValue(response.block(), CurrentTime.class);
+    }
+
+    private Retry prepareRetry(final String zoneName) {
+        return Retry.fixedDelay(retries, Duration.ofSeconds(2))
+            .doBeforeRetry(retrySignal -> {
+                try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneName)) {
+                    log.info("Retrying request to '/{}', attempt {}/{} due to error:",
+                        zoneName, retrySignal.totalRetries() + 1, retries, retrySignal.failure());
+                }
+            })
+            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                log.error("Request to '/{}' failed after {} attempts.", zoneName, retrySignal.totalRetries() + 1);
+                return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
+            });
     }
 }

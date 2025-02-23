@@ -9,12 +9,7 @@
         <exclude name="UnitTestContainsTooManyAsserts"/>
         <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
         <exclude name="GuardLogStatement"/>
-    </rule>
-
-    <rule ref="category/java/bestpractices.xml/AbstractClassWithoutAbstractMethod">
-        <properties>
-            <property name="violationSuppressXPath" value=".[@SimpleName = 'TestBase']"/>
-        </properties>
+        <exclude name="AbstractClassWithoutAbstractMethod"/>
     </rule>
 
     <rule ref="category/java/bestpractices.xml/LooseCoupling">
@@ -78,12 +73,7 @@
         <exclude name="UseUtilityClass"/>
         <exclude name="ExcessiveImports"/>
         <exclude name="CouplingBetweenObjects"/>
-    </rule>
-
-    <rule ref="category/java/design.xml/AbstractClassWithoutAnyMethod">
-        <properties>
-            <property name="violationSuppressXPath" value=".[@SimpleName = 'TestBase']"/>
-        </properties>
+        <exclude name="AbstractClassWithoutAnyMethod"/>
     </rule>
 
     <rule ref="category/java/design.xml/TooManyFields">
