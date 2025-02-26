@@ -24,7 +24,7 @@ dependencies {
     constraints {
         api("org.liquibase:liquibase-core:4.31.1")
         api("com.github.blagerweij:liquibase-sessionlock:1.6.9")
-        api("org.awaitility:awaitility:4.2.2")
+        api("org.awaitility:awaitility:4.3.0")
         api("com.zaxxer:HikariCP:6.2.1")
         api("org.postgresql:postgresql:42.7.5")
     }
