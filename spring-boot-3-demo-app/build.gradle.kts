@@ -10,7 +10,7 @@ dependencies {
     implementation(platform(project(":common-internal-bom")))
     implementation(platform("org.springdoc:springdoc-openapi:2.6.0"))
     implementation(platform(libs.spring.boot.v3.dependencies))
-    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2023.0.5"))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2024.0.1"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
