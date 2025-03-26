@@ -11,7 +11,7 @@ dependencies {
     implementation(platform("org.springdoc:springdoc-openapi:1.7.0")) {
         because("version 1.8.0 brings incompatible logging library")
     }
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.4.4"))
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.9"))
     implementation(platform("org.springframework.cloud:spring-cloud-sleuth-otel-dependencies:1.1.4"))
 
