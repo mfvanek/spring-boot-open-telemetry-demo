@@ -119,28 +119,28 @@ tasks {
                 limit {
                     counter = "METHOD"
                     value = "MISSEDCOUNT"
-                    maximum = "3.0".toBigDecimal()
+                    maximum = "2.0".toBigDecimal()
                 }
             }
             rule {
                 limit {
                     counter = "LINE"
                     value = "MISSEDCOUNT"
-                    maximum = "10.0".toBigDecimal()
+                    maximum = "7.0".toBigDecimal()
                 }
             }
             rule {
                 limit {
                     counter = "INSTRUCTION"
                     value = "COVEREDRATIO"
-                    minimum = "0.90".toBigDecimal()
+                    minimum = "0.93".toBigDecimal()
                 }
             }
             rule {
                 limit {
                     counter = "BRANCH"
                     value = "COVEREDRATIO"
-                    minimum = "0.65".toBigDecimal()
+                    minimum = "0.66".toBigDecimal()
                 }
             }
         }

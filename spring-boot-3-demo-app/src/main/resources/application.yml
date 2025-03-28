@@ -112,6 +112,10 @@ management:
                 - w3c
         sampling:
             probability: 1.0
+    observations:
+        enable:
+            spring:
+                security: false
     otlp:
         tracing:
             endpoint: http://localhost:4317
