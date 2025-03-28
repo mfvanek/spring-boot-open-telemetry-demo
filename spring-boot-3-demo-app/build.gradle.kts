@@ -8,13 +8,14 @@ plugins {
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
-    implementation(platform("org.springdoc:springdoc-openapi:2.6.0"))
+    implementation(platform("org.springdoc:springdoc-openapi:2.8.6"))
     implementation(platform(libs.spring.boot.v3.dependencies))
-    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2023.0.5"))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2024.0.1"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
 
@@ -29,7 +30,7 @@ dependencies {
     implementation(project(":db-migrations"))
     implementation("org.liquibase:liquibase-core")
     implementation("com.github.blagerweij:liquibase-sessionlock")
-    implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:1.0.6")
+    implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:1.1.0")
     implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
