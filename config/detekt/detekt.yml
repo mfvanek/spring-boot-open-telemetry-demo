@@ -1,0 +1,7 @@
+performance:
+    SpreadOperator:
+        active: false
+
+style:
+    MaxLineLength:
+        maxLineLength: 200

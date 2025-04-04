@@ -14,4 +14,8 @@ dependencies {
     implementation("de.thetaphi:forbiddenapis:3.8")
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.1.7")
     implementation("org.gradle:test-retry-gradle-plugin:1.6.2")
+    val kotlinVersion = "1.9.23"
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.6")
 }
