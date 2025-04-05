@@ -33,7 +33,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.postgresql:postgresql")
     implementation("com.zaxxer:HikariCP")
-    implementation(project(":db-migrations"))
+    implementation(project(":db-migrations")){
+        exclude(group = "io.gitlab.arturbosch.detekt")
+    }
     implementation("org.liquibase:liquibase-core")
     implementation("com.github.blagerweij:liquibase-sessionlock")
     implementation("net.ttddyy:datasource-proxy:1.9") {
