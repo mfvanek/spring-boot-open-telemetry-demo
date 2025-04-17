@@ -5,8 +5,6 @@
  * Licensed under the Apache License 2.0
  */
 
-import io.gitlab.arturbosch.detekt.Detekt
-import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -45,9 +43,78 @@ detekt {
     buildUponDefaultConfig = true
 }
 
-tasks.withType<Detekt>().configureEach {
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
+tasks {
+    withType<JavaCompile>().configureEach {
+        options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("--should-stop=ifError=FLOW")
+    }
+
+    test {
+        testLogging.showStandardStreams = false // set to true for debug purposes
+        useJUnitPlatform()
+        maxParallelForks = 1 // try to set a higher value to speed up the local build
+        finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
+    }
+
+    jacocoTestReport {
+        dependsOn(test)
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        dependsOn(jacocoTestReport)
+        violationRules {
+            rule {
+                limit {
+                    counter = "CLASS"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "METHOD"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "LINE"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "INSTRUCTION"
+                    value = "COVEREDRATIO"
+                    minimum = "1.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "1.0".toBigDecimal()
+                }
+            }
+        }
+    }
+
+    check {
+        dependsOn(jacocoTestCoverageVerification)
     }
 }
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+configurations.all {
+    exclude(group = "ch.qos.logback")
+}
+
+

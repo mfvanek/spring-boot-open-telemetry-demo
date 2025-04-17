@@ -4,7 +4,7 @@
  *
  * Licensed under the Apache License 2.0
  */
-package io.github.mfvanek.spring.boot3.kotlin.test.controllers
+package io.github.mfvanek.spring.boot3.kotlin.test
 
 import io.github.mfvanek.spring.boot3.kotlin.test.service.KafkaSendingService
 import io.github.mfvanek.spring.boot3.kotlin.test.service.PublicApiService

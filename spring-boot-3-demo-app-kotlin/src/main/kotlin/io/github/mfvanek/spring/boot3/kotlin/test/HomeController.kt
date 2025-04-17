@@ -4,7 +4,7 @@
  *
  * Licensed under the Apache License 2.0
  */
-package io.github.mfvanek.spring.boot3.kotlin.test.controllers
+package io.github.mfvanek.spring.boot3.kotlin.test
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
