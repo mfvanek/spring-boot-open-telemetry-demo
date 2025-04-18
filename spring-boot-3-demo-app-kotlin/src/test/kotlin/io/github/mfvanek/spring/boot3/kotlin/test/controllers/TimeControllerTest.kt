@@ -49,8 +49,6 @@ class TimeControllerTest : TestBase() {
 
     @BeforeAll
     fun setUpKafkaConsumer() {
-        @Container
-        @JvmStatic
         container = setUpKafkaConsumer(kafkaProperties, consumerRecords)
     }
 

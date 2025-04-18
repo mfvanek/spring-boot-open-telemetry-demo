@@ -45,17 +45,10 @@ java {
     }
 }
 
-jacoco {
-    toolVersion = "0.8.12"
-}
 tasks {
     withType<JavaCompile>().configureEach {
         options.compilerArgs.add("-parameters")
         options.compilerArgs.add("--should-stop=ifError=FLOW")
-        options.errorprone {
-            disableWarningsInGeneratedCode.set(true)
-            disable("Slf4jLoggerShouldBeNonStatic")
-        }
     }
 
     test {

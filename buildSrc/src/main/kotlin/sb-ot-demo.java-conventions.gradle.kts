@@ -19,6 +19,7 @@ plugins {
     id("net.ltgt.errorprone")
     id("com.google.osdetector")
     id("org.gradle.test-retry")
+    id("sb-ot-demo.java-compile")
 }
 
 dependencies {
@@ -41,16 +42,6 @@ dependencies {
     spotbugsPlugins("jp.skypencil.findbugs.slf4j:bug-pattern:1.5.0")
     spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0")
     spotbugsPlugins("com.mebigfatguy.sb-contrib:sb-contrib:7.6.9")
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-jacoco {
-    toolVersion = "0.8.12"
 }
 
 checkstyle {
@@ -84,8 +75,6 @@ tasks.withType<SpotBugsTask>().configureEach {
 
 tasks {
     withType<JavaCompile>().configureEach {
-        options.compilerArgs.add("-parameters")
-        options.compilerArgs.add("--should-stop=ifError=FLOW")
         options.errorprone {
             disableWarningsInGeneratedCode.set(true)
             disable("Slf4jLoggerShouldBeNonStatic")
@@ -93,68 +82,6 @@ tasks {
     }
 
     test {
-        useJUnitPlatform()
         dependsOn(checkstyleMain, checkstyleTest, pmdMain, pmdTest, spotbugsMain, spotbugsTest)
-        finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
-        maxParallelForks = 1
-
-        retry {
-            maxRetries.set(2)
-            maxFailures.set(5)
-            failOnPassedAfterRetry.set(false)
-        }
-    }
-
-    jacocoTestCoverageVerification {
-        dependsOn(jacocoTestReport)
-        violationRules {
-            rule {
-                limit {
-                    counter = "CLASS"
-                    value = "MISSEDCOUNT"
-                    maximum = "0.0".toBigDecimal()
-                }
-            }
-            rule {
-                limit {
-                    counter = "METHOD"
-                    value = "MISSEDCOUNT"
-                    maximum = "2.0".toBigDecimal()
-                }
-            }
-            rule {
-                limit {
-                    counter = "LINE"
-                    value = "MISSEDCOUNT"
-                    maximum = "7.0".toBigDecimal()
-                }
-            }
-            rule {
-                limit {
-                    counter = "INSTRUCTION"
-                    value = "COVEREDRATIO"
-                    minimum = "0.93".toBigDecimal()
-                }
-            }
-            rule {
-                limit {
-                    counter = "BRANCH"
-                    value = "COVEREDRATIO"
-                    minimum = "0.66".toBigDecimal()
-                }
-            }
-        }
-    }
-
-    jacocoTestReport {
-        dependsOn(test)
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-        }
-    }
-
-    check {
-        dependsOn(jacocoTestCoverageVerification)
     }
 }
