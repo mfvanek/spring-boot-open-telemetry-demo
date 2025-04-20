@@ -4,8 +4,9 @@ import org.apache.kafka.common.security.plain.PlainLoginModule
 import org.springframework.boot.test.util.TestPropertyValues.of
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.testcontainers.kafka.KafkaContainer
+import org.testcontainers.containers.KafkaContainer
 import org.testcontainers.utility.DockerImageName
+
 
 private const val KAFKA_USER_NAME = "sb-ot-demo-user"
 private const val KAFKA_USER_PASSWORD = "pwdForSbOtDemoApp"
