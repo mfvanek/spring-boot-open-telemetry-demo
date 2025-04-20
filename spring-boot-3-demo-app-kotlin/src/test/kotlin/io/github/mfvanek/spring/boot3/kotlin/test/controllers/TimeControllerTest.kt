@@ -164,7 +164,7 @@ class TimeControllerTest : TestBase() {
     }
 }
 
-fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
+private fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
     val containerProperties = ContainerProperties(kafkaProperties.template.defaultTopic)
     val consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false");
     consumerProperties[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_PLAINTEXT"
