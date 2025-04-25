@@ -11,17 +11,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toLocalDateTime
-import mu.KotlinLogging
-import org.slf4j.MDC
+import java.time.Duration
+import java.time.LocalDateTime
+import java.util.TimeZone
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.retry.ExhaustedRetryException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.util.retry.Retry
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.TimeZone
 
 private val logger = KotlinLogging.logger {}
 
@@ -36,9 +36,9 @@ class PublicApiService(
             val result: ParsedDateTime = getZonedTimeFromWorldTimeApi().datetime
             return result.toLocalDateTime()
         } catch (e: ExhaustedRetryException) {
-            logger.warn("Failed to get response", e)
+            logger.warn { "Failed to get response $e" }
         } catch (e: JsonProcessingException) {
-            logger.warn("Failed to convert response", e)
+            logger.warn { "Failed to convert response $e" }
         }
         return null
     }
@@ -57,15 +57,14 @@ class PublicApiService(
     private fun prepareRetry(zoneName: String): Retry {
         return Retry.fixedDelay(retries.toLong(), Duration.ofSeconds(2))
             .doBeforeRetry { retrySignal: Retry.RetrySignal ->
-                MDC.putCloseable("instance_timezone", zoneName).use {
-                    logger.info(
-                        "Retrying request to '/{}', attempt {}/{} due to error:",
-                        zoneName, retrySignal.totalRetries() + 1, retries, retrySignal.failure()
-                    )
+                withLoggingContext("instance_timezone" to zoneName) {
+                    logger.info {
+                        "Retrying request to '/$zoneName', attempt ${retrySignal.totalRetries() + 1}/${retrySignal.failure()} due to error:"
+                    }
                 }
             }
             .onRetryExhaustedThrow { _, retrySignal: Retry.RetrySignal ->
-                logger.error("Request to '/{}' failed after {} attempts.", zoneName, retrySignal.totalRetries() + 1)
+                logger.error { "Request to '/$zoneName' failed after ${retrySignal.totalRetries() + 1} attempts." }
                 ExhaustedRetryException("Retries exhausted", retrySignal.failure())
             }
     }
