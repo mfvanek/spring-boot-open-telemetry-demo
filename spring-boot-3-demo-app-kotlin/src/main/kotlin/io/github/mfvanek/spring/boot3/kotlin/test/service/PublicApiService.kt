@@ -59,7 +59,7 @@ class PublicApiService(
             .doBeforeRetry { retrySignal: Retry.RetrySignal ->
                 withLoggingContext("instance_timezone" to zoneName) {
                     logger.info {
-                        "Retrying request to '/$zoneName', attempt ${retrySignal.totalRetries() + 1}/${retrySignal.failure()} due to error:"
+                        "Retrying request to '/$zoneName', attempt ${retrySignal.totalRetries() + 1}/$retries due to error: ${retrySignal.failure()}"
                     }
                 }
             }

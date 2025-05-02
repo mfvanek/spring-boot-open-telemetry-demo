@@ -4,6 +4,7 @@
  *
  * Licensed under the Apache License 2.0
  */
+
 package io.github.mfvanek.spring.boot3.kotlin.test.config
 
 import org.springframework.context.annotation.Bean

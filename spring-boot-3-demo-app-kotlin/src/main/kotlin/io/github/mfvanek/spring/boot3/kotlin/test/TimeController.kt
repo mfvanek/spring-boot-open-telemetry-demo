@@ -33,7 +33,7 @@ class TimeController(
         val nowFromRemote = publicApiService.getZonedTime()
         val now = nowFromRemote ?: LocalDateTime.now(clock)
         kafkaSendingService.sendNotification("Current time = $now")
-            .thenRun { logger.info("Awaiting acknowledgement from Kafka") }
+            .thenRun { logger.info{"Awaiting acknowledgement from Kafka"} }
             .get()
         return now
     }

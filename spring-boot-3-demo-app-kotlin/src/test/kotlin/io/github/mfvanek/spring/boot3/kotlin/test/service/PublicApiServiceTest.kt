@@ -6,21 +6,18 @@ import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.tracing.Tracer
-import org.assertj.core.api.Assertions
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.system.CapturedOutput
 import org.springframework.boot.test.system.OutputCaptureExtension
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import java.util.Locale
-import java.util.Objects
-import javax.annotation.Nonnull
 
 @ExtendWith(OutputCaptureExtension::class)
-class PublicApiServiceTest: TestBase() {
+class PublicApiServiceTest : TestBase() {
     @Autowired
     private lateinit var publicApiService: PublicApiService
 
@@ -70,26 +67,24 @@ class PublicApiServiceTest: TestBase() {
                 .containsPattern(
                     String.format(
                         Locale.ROOT,
-                        ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error:\"," +
-                                "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
-                                "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
-                                "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
-                        traceId,
-                        zoneName
+                        ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error: .+?," +
+                            "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
+                            "\"thread\":\"[^\"]+\",\"level\":\"INFO\"," +
+                            "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", traceId, zoneName
                     )
+                        .toPattern()
                 )
                 .containsPattern(
                     String.format(
                         Locale.ROOT,
                         ".*\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
-                                "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
-                                "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
-                        traceId
+                            "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
+                            "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n", traceId
                     )
+                        .toPattern()
                 )
                 .doesNotContain("Failed to convert response ")
         }
-
         WireMock.verify(
             2, WireMock.getRequestedFor(
                 WireMock.urlPathMatching(

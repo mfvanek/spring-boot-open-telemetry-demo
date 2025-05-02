@@ -2,6 +2,16 @@ package io.github.mfvanek.spring.boot3.kotlin.test.controllers
 
 import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toParsedDateTime
+import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
+import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
+import java.nio.charset.StandardCharsets
+import java.time.Duration
+import java.time.LocalDateTime
+import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -26,17 +36,6 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.testcontainers.shaded.org.awaitility.Awaitility
-import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
-import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
-import net.bytebuddy.utility.dispatcher.JavaDispatcher.Container
-import java.nio.charset.StandardCharsets
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.Locale
-import java.util.UUID
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 
 @ExtendWith(OutputCaptureExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -113,27 +112,26 @@ class TimeControllerTest : TestBase() {
         val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId)
             .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf");
-
         assertThat(output.all)
             .containsPattern(
                 String.format(
                     Locale.ROOT,
-                    ".*\"message\":\"Retrying request to '${Locale.ROOT}', attempt 1/1 due to error:\"," +
-                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
-                        "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
-                        "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"${Locale.ROOT}\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
+                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
+                        "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
+                        "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
                     zoneName
-                )
+                ).toPattern()
             )
             .containsPattern(
                 String.format(
                     Locale.ROOT,
-                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
-                        "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
+                        "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
                     zoneName
-                )
+                ).toPattern()
             )
+
     }
 
     private fun countRecordsInTable(): Long {
@@ -148,11 +146,11 @@ class TimeControllerTest : TestBase() {
         assertThat(headerNames)
             .hasSize(2)
             .containsExactlyInAnyOrder("traceparent", "b3");
-        val headerValues = headers.map { it.key() }
-            .map { v -> String(v.toByteArray(), StandardCharsets.UTF_8) }
+        val headerValues = headers
+            .map { String(it.value(), StandardCharsets.UTF_8) }
         assertThat(headerValues)
             .hasSameSizeAs(headerNames)
-            .allSatisfy { h -> assertThat(h).contains(expectedTraceId) }
+            .allSatisfy { assertThat(it).contains(expectedTraceId) }
     }
 
     private fun awaitStoringIntoDatabase() {

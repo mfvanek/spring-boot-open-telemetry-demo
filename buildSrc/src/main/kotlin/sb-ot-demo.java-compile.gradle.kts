@@ -1,20 +1,18 @@
+/*
+ * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.check
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.checkstyleMain
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.checkstyleTest
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.implementation
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.jacoco
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.jacocoTestCoverageVerification
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.jacocoTestReport
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.java
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.osdetector
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.pmdMain
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.pmdTest
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.spotbugsMain
-import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.spotbugsTest
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.test
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.testImplementation
 import gradle.kotlin.dsl.accessors._82e33fab8c067a1df5c2e280e32692b4.testRuntimeOnly
-import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     id("java")
