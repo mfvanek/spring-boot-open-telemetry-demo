@@ -44,6 +44,24 @@ dependencies {
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
 
+val coverageExcludeList = mutableListOf(
+    "**/*ApplicationKt.class"
+)
+listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskType ->
+    tasks.withType(taskType) {
+        afterEvaluate {
+            classDirectories.setFrom(
+                files(
+                    classDirectories.files.map { file ->
+                        fileTree(file).apply {
+                            exclude(coverageExcludeList)
+                        }
+                    }
+                )
+            )
+        }
+    }
+}
 springBoot {
     buildInfo()
 }

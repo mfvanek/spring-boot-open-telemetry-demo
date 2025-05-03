@@ -5,7 +5,7 @@
  * Licensed under the Apache License 2.0
  */
 
-package io.github.mfvanek.spring.boot3.kotlin.test
+package io.github.mfvanek.spring.boot3.kotlin.test.controllers
 
 import java.net.URI
 import org.springframework.http.HttpHeaders

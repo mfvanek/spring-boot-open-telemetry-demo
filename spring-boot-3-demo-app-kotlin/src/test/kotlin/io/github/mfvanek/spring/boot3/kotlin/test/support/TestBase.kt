@@ -68,6 +68,12 @@ abstract class TestBase {
         return zoneName
     }
 
+    protected fun stubBadResponse(): String {
+        val zoneName = TimeZone.getDefault().id
+        stubBadResponse(zoneName)
+        return zoneName
+    }
+
     private fun stubErrorResponse(zoneName: String, errorForResponse: RuntimeException) {
         WireMock.stubFor(
             WireMock.get(WireMock.urlPathMatching("/$zoneName"))
@@ -75,6 +81,16 @@ abstract class TestBase {
                     WireMock.aResponse()
                         .withStatus(500)
                         .withBody(objectMapper.writeValueAsString(errorForResponse))
+                )
+        )
+    }
+    private fun stubBadResponse(zoneName: String) {
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlPathMatching("/$zoneName"))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withStatus(200)
+                        .withBody(objectMapper.writeValueAsString("Bad response"))
                 )
         )
     }

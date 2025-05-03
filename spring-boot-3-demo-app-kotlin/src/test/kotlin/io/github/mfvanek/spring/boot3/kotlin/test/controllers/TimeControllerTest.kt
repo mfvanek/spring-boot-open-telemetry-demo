@@ -7,6 +7,7 @@ import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
 import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.BlockingQueue
@@ -18,6 +19,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.UUIDDeserializer
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.within
+import org.assertj.core.data.TemporalUnitOffset
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -109,9 +112,9 @@ class TimeControllerTest : TestBase() {
             .expectHeader().exists(TRACE_ID_HEADER_NAME)
             .expectBody(LocalDateTime::class.java)
             .returnResult()
-        val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME);
+        val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME)
         assertThat(traceId)
-            .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf");
+            .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf")
         assertThat(output.all)
             .containsPattern(
                 String.format(
@@ -133,6 +136,25 @@ class TimeControllerTest : TestBase() {
             )
 
     }
+
+    @Order(3)
+    @Test
+    fun currentTimeReceivedFromClockWhenRemoteServiceGivesBadResponse() {
+        stubErrorResponse()
+
+        val localDateTime = LocalDateTime.now(clock)
+        val result = webTestClient.get().uri { uriBuilder -> uriBuilder.path("current-time").build() }
+            .header("traceparent", "00-38c19768104ab8ae64fabbeed65bbbdf-4cac1747d4e1ee10-01")
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().exists(TRACE_ID_HEADER_NAME)
+            .expectBody(LocalDateTime::class.java)
+            .returnResult()
+
+        assertThat(result).isNotNull
+        assertThat(result.responseBody).isCloseTo(localDateTime, within(5, ChronoUnit.SECONDS))
+    }
+
 
     private fun countRecordsInTable(): Long {
         val queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long::class.java)

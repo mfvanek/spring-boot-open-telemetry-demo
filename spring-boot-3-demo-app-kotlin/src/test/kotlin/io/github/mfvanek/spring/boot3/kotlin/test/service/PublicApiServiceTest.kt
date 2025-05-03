@@ -93,4 +93,14 @@ class PublicApiServiceTest : TestBase() {
             )
         )
     }
+    @Test
+    fun throwsJsonProcessingExceptionWithBdResponse(output: CapturedOutput) {
+        stubBadResponse()
+        Observation.createNotStarted("test", observationRegistry).observe {
+            val result = publicApiService.getZonedTime()
+            assertThat(result).isNull()
+            assertThat(tracer.currentSpan()?.context()?.traceId()).isNotNull()
+            assertThat(output.all).contains("Failed to convert response")
+        }
+    }
 }
