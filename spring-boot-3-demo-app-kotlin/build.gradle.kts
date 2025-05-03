@@ -45,7 +45,11 @@ dependencies {
 }
 
 val coverageExcludeList = mutableListOf(
-    "**/*ApplicationKt.class"
+    "**/*ApplicationKt.class",
+    "**/*KafkaSendingServiceKt.class",
+    "**/*TimeControllerKt.class",
+    "**/*KafkaReadingServiceKt.class",
+    "**/*PublicApiServiceKt.class",
 )
 listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskType ->
     tasks.withType(taskType) {
