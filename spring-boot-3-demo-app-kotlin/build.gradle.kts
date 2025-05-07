@@ -1,3 +1,4 @@
+
 plugins {
     id("sb-ot-demo.kotlin-conventions")
     id("sb-ot-demo.forbidden-apis")
@@ -43,13 +44,51 @@ dependencies {
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
+tasks {
+    jacocoTestCoverageVerification {
+        dependsOn(jacocoTestReport)
+        violationRules {
+            rule {
+                limit {
+                    counter = "CLASS"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "METHOD"
+                    value = "MISSEDCOUNT"
+                    maximum = "6.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "LINE"
+                    value = "MISSEDCOUNT"
+                    maximum = "8.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "INSTRUCTION"
+                    value = "COVEREDRATIO"
+                    minimum = "0.83".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "0.40".toBigDecimal()
+                }
+            }
+        }
+    }
+}
 
 val coverageExcludeList = mutableListOf(
-    "**/*ApplicationKt.class",
-    "**/*KafkaSendingServiceKt.class",
-    "**/*TimeControllerKt.class",
-    "**/*KafkaReadingServiceKt.class",
-    "**/*PublicApiServiceKt.class",
+    "**/*ApplicationKt.class"
 )
 listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskType ->
     tasks.withType(taskType) {

@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    //implementation("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
+    //implementation("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
     implementation("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
 }
 
@@ -47,6 +47,3 @@ tasks {
         testLogging.showStandardStreams = false // set to true for debug purposes
     }
 }
-
-
-

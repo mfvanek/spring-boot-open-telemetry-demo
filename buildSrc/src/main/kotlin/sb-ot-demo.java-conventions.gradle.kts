@@ -20,6 +20,7 @@ plugins {
     id("com.google.osdetector")
     id("org.gradle.test-retry")
     id("sb-ot-demo.java-compile")
+    id("sb-ot-demo.jacoco-rules")
 }
 
 dependencies {
