@@ -15,7 +15,7 @@ class HomeControllerTest : TestBase() {
             .expectHeader().exists(TRACE_ID_HEADER_NAME)
             .expectBody(String::class.java)
             .returnResult()
-            .responseBody;
+            .responseBody
         assertThat<String>(result)
             .isEqualTo("Hello!")
     }

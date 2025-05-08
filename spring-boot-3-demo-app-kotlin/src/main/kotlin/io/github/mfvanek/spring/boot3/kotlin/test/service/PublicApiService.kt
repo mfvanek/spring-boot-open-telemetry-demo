@@ -11,9 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toLocalDateTime
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.TimeZone
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.beans.factory.annotation.Value
@@ -22,6 +19,9 @@ import org.springframework.retry.ExhaustedRetryException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.util.retry.Retry
+import java.time.Duration
+import java.time.LocalDateTime
+import java.util.*
 
 private val logger = KotlinLogging.logger {}
 

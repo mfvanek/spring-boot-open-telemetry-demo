@@ -4,7 +4,6 @@ plugins {
     id("sb-ot-demo.forbidden-apis")
     id("sb-ot-demo.docker")
     alias(libs.plugins.spring.boot.v3)
-    id("io.freefair.lombok")
 }
 
 dependencies {
@@ -44,6 +43,7 @@ dependencies {
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
+
 tasks {
     jacocoTestCoverageVerification {
         dependsOn(jacocoTestReport)
@@ -87,9 +87,7 @@ tasks {
     }
 }
 
-val coverageExcludeList = mutableListOf(
-    "**/*ApplicationKt.class"
-)
+val coverageExcludeList = listOf("**/*ApplicationKt.class")
 listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskType ->
     tasks.withType(taskType) {
         afterEvaluate {
@@ -105,6 +103,7 @@ listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskTyp
         }
     }
 }
+
 springBoot {
     buildInfo()
 }

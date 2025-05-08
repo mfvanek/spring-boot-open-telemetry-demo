@@ -16,5 +16,8 @@ data class ParsedDateTime(
     val hour: Int,
     val minute: Int
 )
-fun ParsedDateTime.toLocalDateTime(): LocalDateTime = LocalDateTime.of(year, monthValue, dayOfMonth, hour, minute)
-fun LocalDateTime.toParsedDateTime(): ParsedDateTime = ParsedDateTime (year = year, monthValue = month.value, dayOfMonth = dayOfMonth, hour = hour, minute = minute)
+
+fun ParsedDateTime.toLocalDateTime(): LocalDateTime =
+    LocalDateTime.of(year, monthValue, dayOfMonth, hour, minute)
+fun LocalDateTime.toParsedDateTime(): ParsedDateTime =
+    ParsedDateTime(year = year, monthValue = month.value, dayOfMonth = dayOfMonth, hour = hour, minute = minute)

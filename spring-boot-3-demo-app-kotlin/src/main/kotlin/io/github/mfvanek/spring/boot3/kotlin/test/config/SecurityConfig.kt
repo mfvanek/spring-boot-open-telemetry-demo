@@ -20,5 +20,4 @@ class SecurityConfig {
             authorize.anyRequest().permitAll()
         }
             .build()
-
 }

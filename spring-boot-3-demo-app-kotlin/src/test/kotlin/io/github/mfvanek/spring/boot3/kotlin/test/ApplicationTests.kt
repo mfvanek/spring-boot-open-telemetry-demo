@@ -7,18 +7,16 @@ import io.micrometer.tracing.Span
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.otel.bridge.OtelTracer
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
-import java.util.Locale
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatNoException
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.*
 import org.assertj.core.api.ThrowingConsumer
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.dao.DataAccessResourceFailureException
+import java.util.*
 
-class ApplicationTests: TestBase() {
+class ApplicationTests : TestBase() {
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 

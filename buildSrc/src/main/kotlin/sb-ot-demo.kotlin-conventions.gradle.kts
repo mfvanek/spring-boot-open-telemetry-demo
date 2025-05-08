@@ -18,10 +18,16 @@ plugins {
     id("sb-ot-demo.java-compile")
 }
 
+private val versionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    //implementation("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
-    implementation("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
+    versionCatalog.findLibrary("detekt-formatting").ifPresent {
+        detektPlugins(it)
+    }
+    versionCatalog.findLibrary("detekt-libraries").ifPresent {
+        detektPlugins(it)
+    }
 }
 
 tasks.withType<KotlinCompile> {
@@ -32,7 +38,7 @@ tasks.withType<KotlinCompile> {
 }
 
 detekt {
-    toolVersion = "1.23.6"
+    toolVersion = versionCatalog.findVersion("detekt").get().requiredVersion
     config.setFrom(file("${rootDir}/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
 }

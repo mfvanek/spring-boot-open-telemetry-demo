@@ -16,7 +16,7 @@ class RedirectControllerTest : TestBase() {
             .expectHeader().location("https://www.google.com")
             .expectBody(Any::class.java)
             .returnResult()
-            .responseBody;
+            .responseBody
         assertThat<Any>(result)
             .isNull()
     }

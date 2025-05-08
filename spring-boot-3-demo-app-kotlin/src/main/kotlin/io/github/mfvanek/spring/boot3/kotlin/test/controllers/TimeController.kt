@@ -11,12 +11,13 @@ import io.github.mfvanek.spring.boot3.kotlin.test.service.KafkaSendingService
 import io.github.mfvanek.spring.boot3.kotlin.test.service.PublicApiService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.tracing.Tracer
-import java.time.Clock
-import java.time.LocalDateTime
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Clock
+import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
+
 @RestController
 class TimeController(
     private val tracer: Tracer,
@@ -33,7 +34,7 @@ class TimeController(
         val nowFromRemote = publicApiService.getZonedTime()
         val now = nowFromRemote ?: LocalDateTime.now(clock)
         kafkaSendingService.sendNotification("Current time = $now")
-            .thenRun { logger.info{"Awaiting acknowledgement from Kafka"} }
+            .thenRun { logger.info { "Awaiting acknowledgement from Kafka" } }
             .get()
         return now
     }

@@ -17,5 +17,5 @@ dependencies {
     val kotlinVersion = "2.0.21"
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.6")
+    implementation(libs.detekt)
 }

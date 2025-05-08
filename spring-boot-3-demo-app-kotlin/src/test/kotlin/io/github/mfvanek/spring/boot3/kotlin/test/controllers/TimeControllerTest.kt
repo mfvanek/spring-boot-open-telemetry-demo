@@ -4,15 +4,6 @@ import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServl
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
 import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
-import java.nio.charset.StandardCharsets
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import java.util.Locale
-import java.util.UUID
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -20,7 +11,6 @@ import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.UUIDDeserializer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
-import org.assertj.core.data.TemporalUnitOffset
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -39,6 +29,15 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.testcontainers.shaded.org.awaitility.Awaitility
+import java.nio.charset.StandardCharsets
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 
 @ExtendWith(OutputCaptureExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -67,7 +66,7 @@ class TimeControllerTest : TestBase() {
     @Order(1)
     @Test
     fun spanShouldBeReportedInLogs(output: CapturedOutput) {
-        stubOkResponse((LocalDateTime.now(clock).minusDays(1)).toParsedDateTime());
+        stubOkResponse((LocalDateTime.now(clock).minusDays(1)).toParsedDateTime())
 
         val result = webTestClient.get()
             .uri { uriBuilder -> uriBuilder.path("current-time").build() }
@@ -76,26 +75,27 @@ class TimeControllerTest : TestBase() {
             .expectHeader().exists(TRACE_ID_HEADER_NAME)
             .expectBody(LocalDateTime::class.java)
             .returnResult()
-        val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME);
+        val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME)
         assertThat(traceId).isNotBlank()
         assertThat(result.responseBody)
             .isBefore(LocalDateTime.now(clock))
         assertThat(output.all)
             .contains("Called method getNow. TraceId = $traceId")
-            .contains("Awaiting acknowledgement from Kafka");
+            .contains("Awaiting acknowledgement from Kafka")
 
         val received = consumerRecords.poll(10, TimeUnit.SECONDS)
         assertThat(received).isNotNull()
         assertThatTraceIdPresentInKafkaHeaders(received!!, traceId!!)
 
-        awaitStoringIntoDatabase();
+        awaitStoringIntoDatabase()
 
         assertThat(output.all)
             .contains("Received record: " + received.value() + " with traceId " + traceId)
-            .contains("\"tenant.name\":\"ru-a1-private\"");
+            .contains("\"tenant.name\":\"ru-a1-private\"")
         val messageFromDb = namedParameterJdbcTemplate.queryForObject(
             "select message from otel_demo.storage where trace_id = :traceId",
-            mapOf("traceId" to traceId), String::class.java
+            mapOf("traceId" to traceId),
+            String::class.java
         )
         assertThat(messageFromDb).isEqualTo(received.value())
     }
@@ -155,7 +155,6 @@ class TimeControllerTest : TestBase() {
         assertThat(result.responseBody).isCloseTo(localDateTime, within(5, ChronoUnit.SECONDS))
     }
 
-
     private fun countRecordsInTable(): Long {
         val queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long::class.java)
         return queryResult ?: 0L
@@ -163,7 +162,7 @@ class TimeControllerTest : TestBase() {
 
     private fun assertThatTraceIdPresentInKafkaHeaders(received: ConsumerRecord<UUID, String>, expectedTraceId: String) {
         assertThat(received.value()).startsWith("Current time = ");
-        val headers = received.headers().toArray();
+        val headers = received.headers().toArray()
         val headerNames = headers.map { it.key() }
         assertThat(headerNames)
             .hasSize(2)
