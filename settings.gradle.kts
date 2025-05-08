@@ -13,7 +13,10 @@ dependencyResolutionManagement {
                 .versionRef(springBoot3Version)
             library("spring-boot-v3-dependencies", "org.springframework.boot", "spring-boot-dependencies")
                 .versionRef(springBoot3Version)
+            library("springdoc-openapi", "org.springdoc:springdoc-openapi:2.8.6")
+            library("spring-cloud", "org.springframework.cloud:spring-cloud-dependencies:2024.0.1")
+            library("datasource-micrometer", "net.ttddyy.observation:datasource-micrometer-spring-boot:1.1.0")
+            library("logstash", "net.logstash.logback:logstash-logback-encoder:8.0")
         }
     }
 }
-
