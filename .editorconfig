@@ -8,7 +8,7 @@ max_line_length = 199
 tab_width = 4
 ij_continuation_indent_size = 4
 
-[*.java]
+[*.{java,kt}]
 ij_java_imports_layout = *,|,java.**,javax.**,|,$*
 ij_java_align_multiline_parameters = true
 ij_java_blank_lines_after_class_header = 1
@@ -30,8 +30,8 @@ ij_java_keep_simple_blocks_in_one_line = true
 ij_java_keep_simple_classes_in_one_line = false
 ij_java_keep_simple_lambdas_in_one_line = true
 ij_java_keep_simple_methods_in_one_line = true
-ij_java_names_count_to_use_import_on_demand = 101
-ij_java_class_count_to_use_import_on_demand = 101
+ij_java_names_count_to_use_import_on_demand = 201
+ij_java_class_count_to_use_import_on_demand = 201
 ij_java_packages_to_use_import_on_demand = java.awt.*, javax.swing.*
 ij_java_prefer_longer_names = true
 ij_java_space_after_closing_angle_bracket_in_type_argument = false
