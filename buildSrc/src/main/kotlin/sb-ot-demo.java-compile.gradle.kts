@@ -5,6 +5,7 @@
  * Licensed under the Apache License 2.0
  */
 val javaVersion = JavaVersion.VERSION_17
+
 plugins {
     id("java")
     id("jacoco")
