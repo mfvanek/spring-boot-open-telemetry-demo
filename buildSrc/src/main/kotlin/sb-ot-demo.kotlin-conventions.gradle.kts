@@ -41,6 +41,7 @@ detekt {
     toolVersion = versionCatalog.findVersion("detekt").get().requiredVersion
     config.setFrom(file("${rootDir}/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
+    autoCorrect = true
 }
 
 tasks {

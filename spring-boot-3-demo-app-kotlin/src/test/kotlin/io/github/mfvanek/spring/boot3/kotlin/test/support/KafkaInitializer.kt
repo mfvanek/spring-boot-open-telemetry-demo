@@ -7,7 +7,6 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.KafkaContainer
 import org.testcontainers.utility.DockerImageName
 
-
 private const val KAFKA_USER_NAME = "sb-ot-demo-user"
 private const val KAFKA_USER_PASSWORD = "pwdForSbOtDemoApp"
 
@@ -36,7 +35,9 @@ internal class KafkaInitializer : ApplicationContextInitializer<ConfigurableAppl
         internal fun plainJaas(additionalUsers: Map<String, String> = mapOf()): String =
             additionalUsers.entries
                 .joinToString(" ") { (key, value) -> "user_$key=\"$value\"" }
-                .let { "${PlainLoginModule::class.java.name} required username=\"$KAFKA_USER_NAME\" password=\"$KAFKA_USER_PASSWORD\" $it;" }
+                .let {
+                    "${PlainLoginModule::class.java.name} required username=\"$KAFKA_USER_NAME\" password=\"$KAFKA_USER_PASSWORD\" $it;"
+                }
 
         internal fun getBootstrapSevers(): String = KAFKA_CONTAINER.bootstrapServers
     }

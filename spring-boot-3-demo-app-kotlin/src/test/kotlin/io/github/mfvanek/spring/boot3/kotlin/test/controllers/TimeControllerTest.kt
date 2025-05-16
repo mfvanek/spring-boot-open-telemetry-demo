@@ -4,6 +4,15 @@ import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServl
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
 import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
+import java.nio.charset.StandardCharsets
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -29,15 +38,6 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.testcontainers.shaded.org.awaitility.Awaitility
-import java.nio.charset.StandardCharsets
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import java.util.Locale
-import java.util.UUID
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 
 @ExtendWith(OutputCaptureExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -119,7 +119,8 @@ class TimeControllerTest : TestBase() {
             .containsPattern(
                 String.format(
                     Locale.ROOT,
-                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
+                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
                         "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
                     zoneName
@@ -128,13 +129,13 @@ class TimeControllerTest : TestBase() {
             .containsPattern(
                 String.format(
                     Locale.ROOT,
-                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
+                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
+                        "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
                         "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
                     zoneName
                 ).toPattern()
             )
-
     }
 
     @Order(3)
@@ -161,12 +162,12 @@ class TimeControllerTest : TestBase() {
     }
 
     private fun assertThatTraceIdPresentInKafkaHeaders(received: ConsumerRecord<UUID, String>, expectedTraceId: String) {
-        assertThat(received.value()).startsWith("Current time = ");
+        assertThat(received.value()).startsWith("Current time = ")
         val headers = received.headers().toArray()
         val headerNames = headers.map { it.key() }
         assertThat(headerNames)
             .hasSize(2)
-            .containsExactlyInAnyOrder("traceparent", "b3");
+            .containsExactlyInAnyOrder("traceparent", "b3")
         val headerValues = headers
             .map { String(it.value(), StandardCharsets.UTF_8) }
         assertThat(headerValues)
@@ -185,7 +186,7 @@ class TimeControllerTest : TestBase() {
 
 private fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
     val containerProperties = ContainerProperties(kafkaProperties.template.defaultTopic)
-    val consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false");
+    val consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false")
     consumerProperties[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_PLAINTEXT"
     consumerProperties[SaslConfigs.SASL_MECHANISM] = "PLAIN"
     consumerProperties[SaslConfigs.SASL_JAAS_CONFIG] = KafkaInitializer.plainJaas()

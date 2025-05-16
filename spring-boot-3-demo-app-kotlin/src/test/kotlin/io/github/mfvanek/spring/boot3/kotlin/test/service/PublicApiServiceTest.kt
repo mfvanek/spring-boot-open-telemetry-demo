@@ -6,15 +6,15 @@ import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.tracing.Tracer
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.system.CapturedOutput
 import org.springframework.boot.test.system.OutputCaptureExtension
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 @ExtendWith(OutputCaptureExtension::class)
 class PublicApiServiceTest : TestBase() {
@@ -70,7 +70,9 @@ class PublicApiServiceTest : TestBase() {
                         ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error: .+?," +
                             "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                             "\"thread\":\"[^\"]+\",\"level\":\"INFO\"," +
-                            "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", traceId, zoneName
+                            "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n",
+                        traceId,
+                        zoneName
                     )
                         .toPattern()
                 )
@@ -79,20 +81,23 @@ class PublicApiServiceTest : TestBase() {
                         Locale.ROOT,
                         ".*\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
                             "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.kotlin\\.test\\.service\\.PublicApiService\"," +
-                            "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n", traceId
+                            "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
+                        traceId
                     )
                         .toPattern()
                 )
                 .doesNotContain("Failed to convert response ")
         }
         WireMock.verify(
-            2, WireMock.getRequestedFor(
+            2,
+            WireMock.getRequestedFor(
                 WireMock.urlPathMatching(
                     "/$zoneName"
                 )
             )
         )
     }
+
     @Test
     fun throwsJsonProcessingExceptionWithBdResponse(output: CapturedOutput) {
         stubBadResponse()
