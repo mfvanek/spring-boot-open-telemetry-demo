@@ -32,18 +32,22 @@ class KafkaReadingService(
     @KafkaListener(topics = ["\${spring.kafka.template.default-topic}"])
     fun listen(message: ConsumerRecord<UUID, String>, ack: Acknowledgment) {
         withLoggingContext("tenant.name" to tenantName) {
-            val currentSpan = tracer.currentSpan()
-            val traceId = currentSpan?.context()?.traceId() ?: ""
-            logger.info { "Received record: ${message.value()} with traceId $traceId" }
-            jdbcTemplate.update(
-                "insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",
-                mapOf(
-                    "msg" to message.value(),
-                    "traceId" to traceId,
-                    "createdAt" to LocalDateTime.now(clock)
-                )
-            )
+            processMessage(message)
             ack.acknowledge()
         }
+    }
+
+    private fun processMessage(message: ConsumerRecord<UUID, String>) {
+        val currentSpan = tracer.currentSpan()
+        val traceId = currentSpan?.context()?.traceId() ?: ""
+        logger.info { "Received record: ${message.value()} with traceId $traceId" }
+        jdbcTemplate.update(
+            "insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",
+            mapOf(
+                "msg" to message.value(),
+                "traceId" to traceId,
+                "createdAt" to LocalDateTime.now(clock)
+            )
+        )
     }
 }

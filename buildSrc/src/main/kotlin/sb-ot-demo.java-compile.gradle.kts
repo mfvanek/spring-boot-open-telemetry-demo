@@ -4,7 +4,6 @@
  *
  * Licensed under the Apache License 2.0
  */
-val javaVersion = JavaVersion.VERSION_17
 
 plugins {
     id("java")
@@ -12,6 +11,7 @@ plugins {
     id("com.google.osdetector")
     id("org.gradle.test-retry")
 }
+
 dependencies {
     testImplementation("org.assertj:assertj-core")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -24,8 +24,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withJavadocJar()
     withSourcesJar()
 }

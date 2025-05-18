@@ -18,14 +18,14 @@ plugins {
     id("sb-ot-demo.java-compile")
 }
 
-private val versionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+private val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    versionCatalog.findLibrary("detekt-formatting").ifPresent {
+    libs.findLibrary("detekt-formatting").ifPresent {
         detektPlugins(it)
     }
-    versionCatalog.findLibrary("detekt-libraries").ifPresent {
+    libs.findLibrary("detekt-libraries").ifPresent {
         detektPlugins(it)
     }
 }
@@ -33,24 +33,13 @@ dependencies {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.add("-Xjsr305=strict")
-        jvmTarget = JvmTarget.JVM_17
+        jvmTarget = JvmTarget.JVM_21
     }
 }
 
 detekt {
-    toolVersion = versionCatalog.findVersion("detekt").get().requiredVersion
+    toolVersion = libs.findVersion("detekt").get().requiredVersion
     config.setFrom(file("${rootDir}/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
     autoCorrect = true
-}
-
-tasks {
-    withType<JavaCompile>().configureEach {
-        options.compilerArgs.add("-parameters")
-        options.compilerArgs.add("--should-stop=ifError=FLOW")
-    }
-
-    test {
-        testLogging.showStandardStreams = false // set to true for debug purposes
-    }
 }
