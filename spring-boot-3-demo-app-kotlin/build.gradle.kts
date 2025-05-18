@@ -1,9 +1,9 @@
+
 plugins {
-    id("sb-ot-demo.java-conventions")
+    id("sb-ot-demo.kotlin-conventions")
     id("sb-ot-demo.forbidden-apis")
     id("sb-ot-demo.docker")
     alias(libs.plugins.spring.boot.v3)
-    id("io.freefair.lombok")
 }
 
 dependencies {
@@ -27,13 +27,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.postgresql:postgresql")
     implementation("com.zaxxer:HikariCP")
-    implementation(project(":db-migrations")) {
-        exclude(group = "io.gitlab.arturbosch.detekt")
-    }
+    implementation(project(":db-migrations"))
     implementation("org.liquibase:liquibase-core")
     implementation("com.github.blagerweij:liquibase-sessionlock")
     implementation(libs.datasource.micrometer)
     implementation(libs.logstash)
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -43,6 +42,66 @@ dependencies {
     testImplementation("org.awaitility:awaitility")
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+}
+
+tasks {
+    jacocoTestCoverageVerification {
+        dependsOn(jacocoTestReport)
+        violationRules {
+            rule {
+                limit {
+                    counter = "CLASS"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "METHOD"
+                    value = "MISSEDCOUNT"
+                    maximum = "5.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "LINE"
+                    value = "MISSEDCOUNT"
+                    maximum = "0.0".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "INSTRUCTION"
+                    value = "COVEREDRATIO"
+                    minimum = "0.92".toBigDecimal()
+                }
+            }
+            rule {
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "0.57".toBigDecimal()
+                }
+            }
+        }
+    }
+}
+
+val coverageExcludeList = listOf("**/*ApplicationKt.class")
+listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskType ->
+    tasks.withType(taskType) {
+        afterEvaluate {
+            classDirectories.setFrom(
+                files(
+                    classDirectories.files.map { file ->
+                        fileTree(file).apply {
+                            exclude(coverageExcludeList)
+                        }
+                    }
+                )
+            )
+        }
+    }
 }
 
 springBoot {
