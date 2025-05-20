@@ -9,7 +9,7 @@ detekt-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules
 spring-boot-v3-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot-v3" }
 springdoc-openapi = "org.springdoc:springdoc-openapi:2.8.6"
 spring-cloud = "org.springframework.cloud:spring-cloud-dependencies:2024.0.1"
-datasource-micrometer = "net.ttddyy.observation:datasource-micrometer-spring-boot:1.1.0"
+datasource-micrometer = "net.ttddyy.observation:datasource-micrometer-spring-boot:1.1.1"
 logstash = "net.logstash.logback:logstash-logback-encoder:8.0"
 
 [plugins]
