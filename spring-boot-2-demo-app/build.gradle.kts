@@ -2,7 +2,7 @@ plugins {
     id("sb-ot-demo.java-conventions")
     id("sb-ot-demo.forbidden-apis")
     id("sb-ot-demo.docker")
-    id("org.springframework.boot") version "2.7.18"
+    id("org.springframework.boot") version "3.5.0"
     id("io.freefair.lombok")
 }
 
@@ -11,7 +11,7 @@ dependencies {
     implementation(platform("org.springdoc:springdoc-openapi:1.7.0")) {
         because("version 1.8.0 brings incompatible logging library")
     }
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.5.0"))
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.9"))
     implementation(platform("org.springframework.cloud:spring-cloud-sleuth-otel-dependencies:1.1.4"))
 
