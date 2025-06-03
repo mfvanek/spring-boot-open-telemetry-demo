@@ -12,7 +12,7 @@ dependencies {
         because("version 1.8.0 brings incompatible logging library")
     }
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
-    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.9"))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2025.0.0"))
     implementation(platform("org.springframework.cloud:spring-cloud-sleuth-otel-dependencies:1.1.4"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
