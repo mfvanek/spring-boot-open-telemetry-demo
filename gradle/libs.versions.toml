@@ -7,7 +7,7 @@ detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin",
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
 spring-boot-v3-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot-v3" }
-springdoc-openapi = "org.springdoc:springdoc-openapi-bom:2.8.8"
+springdoc-openapi = "org.springdoc:springdoc-openapi-bom:2.8.9"
 spring-cloud = "org.springframework.cloud:spring-cloud-dependencies:2024.0.1"
 datasource-micrometer = "net.ttddyy.observation:datasource-micrometer-spring-boot:1.1.1"
 logstash = "net.logstash.logback:logstash-logback-encoder:8.1"
