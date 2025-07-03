@@ -9,6 +9,7 @@ package io.github.mfvanek.spring.boot3.reactive.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import io.github.mfvanek.spring.boot3.reactive.filters.TraceIdInResponseReactiveFilter;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
 import lombok.SneakyThrows;
@@ -50,6 +51,8 @@ public abstract class TestBase {
     protected JdbcTemplate jdbcTemplate;
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
+    protected TraceIdInResponseReactiveFilter traceIdInResponseReactiveFilter;
 
     @BeforeEach
     void resetExternalMocks() {
