@@ -45,20 +45,21 @@ public class TimeController {
             .map(TraceContext::traceId)
             .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        final Mono<LocalDateTime> now = Objects.requireNonNull(Objects.requireNonNull(publicApiService
+        return Objects.requireNonNull(Objects.requireNonNull(publicApiService
                 .getZonedTime())
             .map(it -> {
                 if (it.equals(LocalDateTime.MIN)) {
-                    return LocalDateTime.now(clock);
+                    final LocalDateTime localDateTime = LocalDateTime.now(clock);
+                    sendWithKafka(localDateTime);
+                    return localDateTime;
                 } else {
+                    sendWithKafka(it);
                     return it;
                 }
             }));
-        now.subscribe(this::accept);
-        return now;
     }
 
-    private void accept(LocalDateTime localDateTime) {
+    private void sendWithKafka(LocalDateTime localDateTime) {
         try {
             kafkaSendingService.sendNotification("Current time = " + localDateTime)
                 .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))

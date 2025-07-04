@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 public class TraceIdInResponseReactiveFilter implements WebFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraceIdInResponseReactiveFilter.class);
+    private static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -32,8 +33,8 @@ public class TraceIdInResponseReactiveFilter implements WebFilter {
                 final TracingContext traceContext = observationContext.get(TracingContext.class);
                 if (traceContext != null) {
                     final String traceId = traceContext.getSpan().context().traceId();
-                    exchange.getResponse().getHeaders().add("X-Trace-Id", traceId);
-                    LOGGER.debug("Added TraceId: {} to the response", traceId);
+                    exchange.getResponse().getHeaders().add(TRACE_ID_HEADER_NAME, traceId);
+                    LOGGER.info("Added TraceId: {} to the response", traceId);
                 }
             }
             return Mono.empty();

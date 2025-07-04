@@ -127,13 +127,13 @@ class TimeControllerTest extends TestBase {
         assertThat(output.getAll())
             .containsPattern(String.format(Locale.ROOT,
                 ".*\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +
-                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.reactive\\.service\\.PublicApiService\"," +
                     "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
-                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", zoneName))
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-3-demo-app-reactive\"\\}%n", zoneName))
             .containsPattern(String.format(Locale.ROOT,
-                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.reactive\\.service\\.PublicApiService\"," +
                     "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
-                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app-reactive\"}%n",
                 zoneName));
     }
 

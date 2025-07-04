@@ -9,7 +9,6 @@ package io.github.mfvanek.spring.boot3.reactive.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import io.github.mfvanek.spring.boot3.reactive.filters.TraceIdInResponseReactiveFilter;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
 import lombok.SneakyThrows;
@@ -40,7 +39,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 @AutoConfigureWireMock(port = 0)
 public abstract class TestBase {
 
-    protected static final String TRACE_ID_HEADER_NAME = "X-TraceId";
+    protected static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
     @Autowired
     protected WebTestClient webTestClient;
     @Autowired
@@ -51,8 +50,6 @@ public abstract class TestBase {
     protected JdbcTemplate jdbcTemplate;
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    @Autowired
-    protected TraceIdInResponseReactiveFilter traceIdInResponseReactiveFilter;
 
     @BeforeEach
     void resetExternalMocks() {
