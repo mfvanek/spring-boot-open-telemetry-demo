@@ -20,7 +20,7 @@ class IndexesMaintenanceTest : TestBase() {
     fun checkPostgresVersion() {
         val pgVersion = jdbcTemplate.queryForObject("select version();", String::class.java)
         assertThat(pgVersion)
-            .startsWith("PostgreSQL 17.2")
+            .startsWith("PostgreSQL 17.4")
     }
 
     @Test
