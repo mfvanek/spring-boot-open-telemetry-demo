@@ -18,8 +18,8 @@ javaPlatform {
 dependencies {
     api(platform("org.assertj:assertj-bom:3.27.3"))
     api(platform("org.testcontainers:testcontainers-bom:1.21.3"))
-    api(platform("org.junit:junit-bom:5.13.2"))
-    api(platform("io.github.mfvanek:pg-index-health-bom:0.15.0"))
+    api(platform("org.junit:junit-bom:5.13.3"))
+    api(platform("io.github.mfvanek:pg-index-health-bom:0.20.2"))
 
     constraints {
         api("org.liquibase:liquibase-core:4.32.0")
