@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -45,18 +44,12 @@ public class TimeController {
             .map(TraceContext::traceId)
             .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        return Objects.requireNonNull(Objects.requireNonNull(publicApiService
-                .getZonedTime())
+        return publicApiService.getZonedTime()
+            .switchIfEmpty(Mono.just(LocalDateTime.now(clock)))
             .map(it -> {
-                if (it.equals(LocalDateTime.MIN)) {
-                    final LocalDateTime localDateTime = LocalDateTime.now(clock);
-                    sendWithKafka(localDateTime);
-                    return localDateTime;
-                } else {
-                    sendWithKafka(it);
-                    return it;
-                }
-            }));
+                sendWithKafka(it);
+                return it;
+            });
     }
 
     private void sendWithKafka(LocalDateTime localDateTime) {
