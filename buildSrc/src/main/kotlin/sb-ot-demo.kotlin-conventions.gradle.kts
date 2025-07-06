@@ -43,3 +43,9 @@ detekt {
     buildUponDefaultConfig = true
     autoCorrect = true
 }
+
+tasks {
+    test {
+        dependsOn(detektMain, detektTest)
+    }
+}

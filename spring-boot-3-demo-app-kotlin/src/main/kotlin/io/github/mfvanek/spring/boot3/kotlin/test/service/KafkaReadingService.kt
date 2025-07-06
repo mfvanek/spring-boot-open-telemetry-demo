@@ -39,7 +39,7 @@ class KafkaReadingService(
 
     private fun processMessage(message: ConsumerRecord<UUID, String>) {
         val currentSpan = tracer.currentSpan()
-        val traceId = currentSpan?.context()?.traceId() ?: ""
+        val traceId = currentSpan?.context()?.traceId().orEmpty()
         logger.info { "Received record: ${message.value()} with traceId $traceId" }
         jdbcTemplate.update(
             "insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",

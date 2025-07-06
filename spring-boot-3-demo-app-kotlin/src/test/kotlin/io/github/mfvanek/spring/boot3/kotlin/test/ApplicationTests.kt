@@ -7,13 +7,15 @@ import io.micrometer.tracing.Span
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.otel.bridge.OtelTracer
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatNoException
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.dao.DataAccessResourceFailureException
-import java.util.*
+import java.util.Locale
 import java.util.function.Consumer
 
 class ApplicationTests : TestBase() {
@@ -24,31 +26,38 @@ class ApplicationTests : TestBase() {
     fun contextLoads() {
         assertThat(applicationContext.containsBean("otlpMeterRegistry"))
             .isFalse()
+
         assertThat(applicationContext.getBean(ObservationRegistry::class.java))
-            .isNotNull()
+            .isNotNull
             .isInstanceOf(ObservationRegistry::class.java)
+
         assertThat(applicationContext.getBean(Tracer::class.java))
-            .isNotNull()
+            .isNotNull
             .isInstanceOf(OtelTracer::class.java)
-            .satisfies(Consumer { t: Tracer ->
-                assertThat(t.currentSpan())
-                    .isNotEqualTo(Span.NOOP)
-            })
+            .satisfies(
+                Consumer { t: Tracer ->
+                    assertThat(t.currentSpan())
+                        .isNotEqualTo(Span.NOOP)
+                }
+            )
 
         assertThat(applicationContext.getBean("otelJaegerGrpcSpanExporter"))
-            .isNotNull()
+            .isNotNull
             .isInstanceOf(OtlpGrpcSpanExporter::class.java)
-            .satisfies(Consumer { e ->
-                assertThat(e.toString())
-                    .contains(
-                        String.format(
-                            Locale.ROOT, """
+            .satisfies(
+                Consumer { e ->
+                    assertThat(e.toString())
+                        .contains(
+                            String.format(
+                                Locale.ROOT,
+                                """
                         OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, timeoutNanos=5000000000, connectTimeoutNanos=10000000000, compressorEncoding=null, headers=Headers{User-Agent=OBFUSCATED}, retryPolicy=RetryPolicy{maxAttempts=5, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},
-                        """.trimIndent(),
-                            JaegerInitializer.getFirstMappedPort()
+                                """.trimIndent(),
+                                JaegerInitializer.getFirstMappedPort()
+                            )
                         )
-                    )
-            })
+                }
+            )
     }
 
     @Test
