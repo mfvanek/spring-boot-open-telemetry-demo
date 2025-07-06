@@ -2,14 +2,14 @@ include:
     - docker-compose-base.yml
 
 services:
-    spring-boot-2-demo-app:
-        container_name: spring_boot_2_demo_app
-        image: spring-boot-2-demo-app:latest
+    spring-boot-3-demo-app:
+        container_name: spring_boot_3_demo_app
+        image: spring-boot-3-demo-app:latest
         environment:
             - SPRING_PROFILES_ACTIVE=docker
         ports:
-            - "8090:8090"
-            - "8091:8091"
+            - "8080:8080"
+            - "8085:8085"
         restart: unless-stopped
         depends_on:
             jaeger:
@@ -22,14 +22,14 @@ services:
         networks:
             - jaeger-example
 
-    spring-boot-3-demo-app:
-        container_name: spring_boot_3_demo_app
-        image: spring-boot-3-demo-app:latest
+    spring-boot-3-demo-app-kotlin:
+        container_name: spring_boot_3_demo_app_kotlin
+        image: spring-boot-3-demo-app-kotlin:latest
         environment:
             - SPRING_PROFILES_ACTIVE=docker
         ports:
-            - "8080:8080"
-            - "8085:8085"
+            - "8090:8090"
+            - "8091:8091"
         restart: unless-stopped
         depends_on:
             jaeger:

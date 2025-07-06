@@ -13,7 +13,7 @@ class TraceIdInResponseServletFilter(
     private val tracer: Tracer
 ) : Filter {
     companion object {
-        const val TRACE_ID_HEADER_NAME = "X-TraceId"
+        const val TRACE_ID_HEADER_NAME: String = "X-TraceId"
     }
 
     override fun doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain) {
