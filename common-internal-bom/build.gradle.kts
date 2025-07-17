@@ -17,15 +17,15 @@ javaPlatform {
 
 dependencies {
     api(platform("org.assertj:assertj-bom:3.27.3"))
-    api(platform("org.testcontainers:testcontainers-bom:1.21.0"))
-    api(platform("org.junit:junit-bom:5.12.2"))
-    api(platform("io.github.mfvanek:pg-index-health-bom:0.14.6"))
+    api(platform("org.testcontainers:testcontainers-bom:1.21.3"))
+    api(platform("org.junit:junit-bom:5.13.3"))
+    api(platform("io.github.mfvanek:pg-index-health-bom:0.20.2"))
 
     constraints {
         api("org.liquibase:liquibase-core:4.32.0")
         api("com.github.blagerweij:liquibase-sessionlock:1.6.9")
         api("org.awaitility:awaitility:4.3.0")
         api("com.zaxxer:HikariCP:6.3.0")
-        api("org.postgresql:postgresql:42.7.5")
+        api("org.postgresql:postgresql:42.7.7")
     }
 }

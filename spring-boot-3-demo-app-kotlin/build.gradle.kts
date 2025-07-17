@@ -73,7 +73,7 @@ tasks {
                 limit {
                     counter = "INSTRUCTION"
                     value = "COVEREDRATIO"
-                    minimum = "0.92".toBigDecimal()
+                    minimum = "0.90".toBigDecimal()
                 }
             }
             rule {

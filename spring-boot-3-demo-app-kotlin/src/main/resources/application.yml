@@ -4,7 +4,7 @@ app:
     tenant.name: ru-a1-private
 
 server:
-    port: 8080
+    port: 8090
     # See also https://docs.spring.io/spring-boot/docs/2.7.9/reference/html/application-properties.html#appendix.application-properties.server
     tomcat:
         accept-count: 10
@@ -119,8 +119,10 @@ management:
     otlp:
         tracing:
             endpoint: http://localhost:4317
-            compression: none
+            compression: gzip
+            transport: grpc
             timeout: 5s
+            connect-timeout: 2s
 
 springdoc:
     show-actuator: true

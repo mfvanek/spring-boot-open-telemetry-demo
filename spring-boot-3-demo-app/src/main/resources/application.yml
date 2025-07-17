@@ -57,7 +57,7 @@ spring:
 
 management:
     server:
-        port: 8085
+        port: 8086
     endpoints:
         web:
             exposure.include: '*'
@@ -119,8 +119,10 @@ management:
     otlp:
         tracing:
             endpoint: http://localhost:4317
-            compression: none
+            compression: gzip
+            transport: grpc
             timeout: 5s
+            connect-timeout: 2s
 
 springdoc:
     show-actuator: true

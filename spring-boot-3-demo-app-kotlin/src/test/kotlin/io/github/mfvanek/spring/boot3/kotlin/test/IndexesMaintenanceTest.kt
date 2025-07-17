@@ -20,7 +20,7 @@ class IndexesMaintenanceTest : TestBase() {
     fun checkPostgresVersion() {
         val pgVersion = jdbcTemplate.queryForObject("select version();", String::class.java)
         assertThat(pgVersion)
-            .startsWith("PostgreSQL 17.2")
+            .startsWith("PostgreSQL 17.4")
     }
 
     @Test
@@ -29,9 +29,9 @@ class IndexesMaintenanceTest : TestBase() {
             .hasSameSizeAs(Diagnostic.entries.toTypedArray())
 
         checks
-            .filter { obj: DatabaseCheckOnHost<out DbObject?>? -> obj!!.isStatic }
-            .forEach { check: DatabaseCheckOnHost<out DbObject?>? ->
-                assertThat(check!!.check(PgContext.ofPublic(), SkipLiquibaseTablesPredicate.ofPublic()))
+            .filter { obj: DatabaseCheckOnHost<out DbObject>? -> obj!!.isStatic }
+            .forEach { check: DatabaseCheckOnHost<out DbObject>? ->
+                assertThat(check!!.check(PgContext.ofDefault(), SkipLiquibaseTablesPredicate.ofDefault()))
                     .`as`(check.diagnostic.name)
                     .isEmpty()
             }

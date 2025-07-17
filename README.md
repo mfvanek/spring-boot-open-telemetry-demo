@@ -1,7 +1,13 @@
-# Spring Boot Open Telemetry Demo
+# Spring Boot OpenTelemetry Demo
+
+A set of small Spring Boot applications to demonstrate OpenTelemetry capabilities and nuances
 
 [![Java CI](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml/badge.svg)](https://github.com/mfvanek/spring-boot-open-telemetry-demo/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/mfvanek/spring-boot-open-telemetry-demo/graph/badge.svg?token=NUWI02T68G)](https://codecov.io/gh/mfvanek/spring-boot-open-telemetry-demo)
+
+## Spring Cloud Sleuth example
+
+If you are looking for a **Spring Boot 2.7.x** example with [Spring Cloud Sleuth](https://spring.io/projects/spring-cloud-sleuth), take a look at version [0.4.1](https://github.com/mfvanek/spring-boot-open-telemetry-demo/releases/tag/v.0.4.1)
 
 ## Local run from IDEA
 
@@ -19,7 +25,7 @@ docker-compose --file docker/docker-compose-base.yml  --project-name="spring-boo
 ### Start applications
 
 ```shell
-./gradlew spring-boot-2-demo-app:bootRun
+./gradlew spring-boot-3-demo-app-kotlin:bootRun
 ```
 
 ```shell
@@ -38,9 +44,9 @@ curl http://localhost:8080/current-time
 
 #### Other endpoints
 
-* [Swagger UI SB2](http://localhost:8091/actuator/swagger-ui)
-* [Prometheus metrics SB2](http://localhost:8091/actuator/prometheus)
-* [Health SB2](http://localhost:8091/actuator/health)
+* [Swagger UI](http://localhost:8085/actuator/swagger-ui)
+* [Prometheus metrics](http://localhost:8085/actuator/prometheus)
+* [Health](http://localhost:8085/actuator/health)
 
 ## Run in Docker
 

@@ -28,7 +28,7 @@ class PostgresInitializer : ApplicationContextInitializer<ConfigurableApplicatio
 
     companion object {
         @JvmStatic
-        private val IMAGE = DockerImageName.parse("postgres:17.2")
+        private val IMAGE = DockerImageName.parse("postgres:17.4")
 
         @JvmStatic
         private val NETWORK = Network.newNetwork()

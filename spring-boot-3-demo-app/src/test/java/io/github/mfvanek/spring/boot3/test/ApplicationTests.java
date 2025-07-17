@@ -43,16 +43,17 @@ class ApplicationTests extends TestBase {
             .isInstanceOf(OtelTracer.class)
             .satisfies(t -> assertThat(t.currentSpan())
                 .isNotEqualTo(Span.NOOP));
-        assertThat(applicationContext.getBean("otelJaegerGrpcSpanExporter"))
+        assertThat(applicationContext.getBean("otlpGrpcSpanExporter"))
             .isNotNull()
             .isInstanceOf(OtlpGrpcSpanExporter.class)
-            .hasToString(String.format(Locale.ROOT, """
-                OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, \
-                endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
-                timeoutNanos=5000000000, connectTimeoutNanos=10000000000, compressorEncoding=null, \
-                headers=Headers{User-Agent=OBFUSCATED}, \
-                retryPolicy=RetryPolicy{maxAttempts=5, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5}, \
-                memoryMode=IMMUTABLE_DATA}""", JaegerInitializer.getFirstMappedPort()));
+            .satisfies(e -> assertThat(e.toString())
+                .contains(String.format(Locale.ROOT, """
+                        OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, \
+                        endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
+                        timeoutNanos=5000000000, connectTimeoutNanos=2000000000, compressorEncoding=gzip, \
+                        headers=Headers{User-Agent=OBFUSCATED}, \
+                        retryPolicy=RetryPolicy{maxAttempts=2, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},""",
+                    JaegerInitializer.getFirstMappedPort())));
     }
 
     @Test
