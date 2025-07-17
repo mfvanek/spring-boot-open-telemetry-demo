@@ -72,7 +72,7 @@ class TimeControllerTest extends TestBase {
 
     @Order(1)
     @Test
-    void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws Exception {
+    void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws InterruptedException {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
 
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()

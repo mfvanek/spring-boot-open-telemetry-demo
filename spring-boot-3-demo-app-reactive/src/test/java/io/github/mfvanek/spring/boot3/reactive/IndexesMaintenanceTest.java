@@ -42,7 +42,7 @@ class IndexesMaintenanceTest extends TestBase {
         checks.stream()
             .filter(DatabaseCheckOnHost::isStatic)
             .forEach(check ->
-                assertThat(check.check(PgContext.ofPublic(), SkipLiquibaseTablesPredicate.ofPublic()))
+                assertThat(check.check(PgContext.ofDefault(), SkipLiquibaseTablesPredicate.ofDefault()))
                     .as(check.getDiagnostic().name())
                     .isEmpty());
     }

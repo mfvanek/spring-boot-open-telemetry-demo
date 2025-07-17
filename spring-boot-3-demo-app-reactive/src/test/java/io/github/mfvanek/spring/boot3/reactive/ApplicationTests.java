@@ -51,8 +51,8 @@ class ApplicationTests extends TestBase {
                 endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
                 timeoutNanos=5000000000, connectTimeoutNanos=10000000000, compressorEncoding=null, \
                 headers=Headers{User-Agent=OBFUSCATED}, \
-                retryPolicy=RetryPolicy{maxAttempts=5, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5}, \
-                memoryMode=IMMUTABLE_DATA}""", JaegerInitializer.getFirstMappedPort()));
+                retryPolicy=RetryPolicy{maxAttempts=5, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, \
+                retryExceptionPredicate=null}, serviceClassLoader=jdk.internal.loader.ClassLoaders$AppClassLoader@2c7b84de, memoryMode=REUSABLE_DATA}""", JaegerInitializer.getFirstMappedPort()));
     }
 
     @Test
