@@ -45,6 +45,21 @@ dependencies {
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 }
 
+tasks {
+    jacocoTestCoverageVerification {
+        dependsOn(jacocoTestReport)
+        violationRules {
+            rule {
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "0.66".toBigDecimal()
+                }
+            }
+        }
+    }
+}
+
 springBoot {
     buildInfo()
 }

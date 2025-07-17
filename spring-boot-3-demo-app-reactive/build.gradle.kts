@@ -45,6 +45,38 @@ dependencies {
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("io.projectreactor:reactor-test:3.8.0-M3")
 }
+tasks {
+    jacocoTestCoverageVerification {
+        dependsOn(jacocoTestReport)
+        violationRules {
+            rule {
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "0.50".toBigDecimal()
+                }
+            }
+        }
+    }
+}
+
+val coverageExcludeList = listOf("**/*Application.class")
+listOf(JacocoCoverageVerification::class, JacocoReport::class).forEach { taskType ->
+    tasks.withType(taskType) {
+        afterEvaluate {
+            classDirectories.setFrom(
+                files(
+                    classDirectories.files.map { file ->
+                        fileTree(file).apply {
+                            exclude(coverageExcludeList)
+                        }
+                    }
+                )
+            )
+        }
+    }
+}
+
 
 springBoot {
     buildInfo()

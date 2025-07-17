@@ -53,13 +53,13 @@ public class PublicApiService {
             .retrieve()
             .bodyToMono(String.class)
             .retryWhen(prepareRetry(zoneName))
-            .map(string -> {
+            .flatMap(string -> {
                 try {
-                    return mapper.readValue(string, CurrentTime.class);
+                    return Mono.just(mapper.readValue(string, CurrentTime.class));
                 } catch (JsonProcessingException e) {
                     log.info("error from webclient ", e);
                 }
-                return null;
+                return Mono.empty();
             });
     }
 

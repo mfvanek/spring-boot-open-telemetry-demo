@@ -56,6 +56,21 @@ dependencies {
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
 }
 
+tasks {
+    jacocoTestCoverageVerification {
+        dependsOn(jacocoTestReport)
+        violationRules {
+            rule {
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "0.66".toBigDecimal()
+                }
+            }
+        }
+    }
+}
+
 springBoot {
     buildInfo()
 }

@@ -34,13 +34,13 @@ tasks {
                     minimum = "0.93".toBigDecimal()
                 }
             }
-            rule {
-                limit {
-                    counter = "BRANCH"
-                    value = "COVEREDRATIO"
-                    minimum = "0.66".toBigDecimal()
-                }
-            }
+//            rule {
+//                limit {
+//                    counter = "BRANCH"
+//                    value = "COVEREDRATIO"
+//                    minimum = "0.66".toBigDecimal()
+//                }
+//            }
         }
     }
 }

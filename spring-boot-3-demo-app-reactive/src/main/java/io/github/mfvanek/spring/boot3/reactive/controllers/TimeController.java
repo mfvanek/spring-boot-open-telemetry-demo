@@ -13,7 +13,6 @@ import io.micrometer.tracing.Span;
 import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +34,6 @@ public class TimeController {
     private final PublicApiService publicApiService;
 
     // http://localhost:8080/current-time
-    @SneakyThrows
     @GetMapping(path = "/current-time")
     public Mono<LocalDateTime> getNow() {
         log.trace("tracer {}", tracer);
@@ -46,10 +44,7 @@ public class TimeController {
         log.info("Called method getNow. TraceId = {}", traceId);
         return publicApiService.getZonedTime()
             .switchIfEmpty(Mono.just(LocalDateTime.now(clock)))
-            .map(it -> {
-                sendWithKafka(it);
-                return it;
-            });
+            .doOnSuccess(this::sendWithKafka);
     }
 
     private void sendWithKafka(LocalDateTime localDateTime) {
