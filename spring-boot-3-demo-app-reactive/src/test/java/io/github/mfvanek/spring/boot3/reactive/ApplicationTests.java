@@ -46,13 +46,15 @@ class ApplicationTests extends TestBase {
         assertThat(applicationContext.getBean("otelJaegerGrpcSpanExporter"))
             .isNotNull()
             .isInstanceOf(OtlpGrpcSpanExporter.class)
-            .hasToString(String.format(Locale.ROOT, """
-                OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, \
-                endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
-                timeoutNanos=5000000000, connectTimeoutNanos=10000000000, compressorEncoding=null, \
-                headers=Headers{User-Agent=OBFUSCATED}, \
-                retryPolicy=RetryPolicy{maxAttempts=5, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, \
-                retryExceptionPredicate=null}, serviceClassLoader=jdk.internal.loader.ClassLoaders$AppClassLoader@2c7b84de, memoryMode=REUSABLE_DATA}""", JaegerInitializer.getFirstMappedPort()));
+            .satisfies(e -> assertThat(e.toString())
+                .contains(String.format(Locale.ROOT, """
+                    OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, \
+                    endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
+                    timeoutNanos=5000000000, connectTimeoutNanos=10000000000, compressorEncoding=null, \
+                    headers=Headers{User-Agent=OBFUSCATED}, \
+                    retryPolicy=RetryPolicy{maxAttempts=5, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, \
+                    retryExceptionPredicate=null},""", JaegerInitializer.getFirstMappedPort()))
+            );
     }
 
     @Test
