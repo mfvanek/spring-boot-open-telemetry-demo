@@ -64,11 +64,11 @@ internal class NewTraceIdTest : TestBase() {
                 val traceContext = tracer.traceContextBuilder()
                     .traceId(newSpan.context().traceId())
                     .spanId(newSpan.context().spanId())
-                    .sampled(true) // Обязательно!
+                    .sampled(true) // Important!
                     .build()
                 tracer.currentTraceContext().newScope(
                     traceContext
-                ).use { // Scope из newScope обязательно нужно закрывать
+                ).use { // Scope from newScope must be closed
                     val newTraceId = tracer.currentSpan()?.context()?.traceId()
                     assertThat(newTraceId)
                         .isNotEqualTo(previousTraceId)
