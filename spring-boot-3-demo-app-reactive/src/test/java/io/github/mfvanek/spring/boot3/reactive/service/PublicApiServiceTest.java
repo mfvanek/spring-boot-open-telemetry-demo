@@ -103,4 +103,13 @@ class PublicApiServiceTest extends TestBase {
             .expectNextCount(0)
             .verifyComplete();
     }
+
+    @Test
+    void emptyResponseWhen200StatusWithBadResposeWithStepVerifier(@Nonnull final CapturedOutput output) {
+        stubOkButNotCorrectResponse();
+
+        StepVerifier.create(publicApiService.getZonedTime())
+            .expectNextCount(0)
+            .verifyComplete();
+    }
 }

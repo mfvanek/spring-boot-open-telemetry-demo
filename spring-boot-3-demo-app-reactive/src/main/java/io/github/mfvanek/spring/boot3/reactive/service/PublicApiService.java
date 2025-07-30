@@ -7,10 +7,10 @@
 
 package io.github.mfvanek.spring.boot3.reactive.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,14 +53,9 @@ public class PublicApiService {
             .retrieve()
             .bodyToMono(String.class)
             .retryWhen(prepareRetry(zoneName))
-            .flatMap(string -> {
-                try {
-                    return Mono.just(mapper.readValue(string, CurrentTime.class));
-                } catch (JsonProcessingException e) {
-                    log.info("error from webclient ", e);
-                }
-                return Mono.empty();
-            });
+            .flatMap(this::convert)
+            .onErrorComplete()
+            .flatMap(Mono::justOrEmpty);
     }
 
     private Retry prepareRetry(final String zoneName) {
@@ -77,4 +72,8 @@ public class PublicApiService {
             });
     }
 
+    @SneakyThrows
+    private Mono<? extends CurrentTime> convert(String string) {
+        return Mono.just(mapper.readValue(string, CurrentTime.class));
+    }
 }

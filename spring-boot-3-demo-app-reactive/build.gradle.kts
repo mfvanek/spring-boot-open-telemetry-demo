@@ -27,9 +27,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.postgresql:postgresql")
     implementation("com.zaxxer:HikariCP")
-    implementation(project(":db-migrations")) {
-        exclude(group = "io.gitlab.arturbosch.detekt")
-    }
+    implementation(project(":db-migrations"))
     implementation("org.liquibase:liquibase-core")
     implementation("com.github.blagerweij:liquibase-sessionlock")
     implementation(libs.datasource.micrometer)
@@ -43,8 +41,9 @@ dependencies {
     testImplementation("org.awaitility:awaitility")
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
-    testImplementation("io.projectreactor:reactor-test:3.8.0-M3")
+    testImplementation("io.projectreactor:reactor-test")
 }
+
 tasks {
     jacocoTestCoverageVerification {
         dependsOn(jacocoTestReport)

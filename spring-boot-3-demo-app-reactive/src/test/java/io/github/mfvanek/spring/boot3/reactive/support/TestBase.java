@@ -89,4 +89,21 @@ public abstract class TestBase {
                 .withBody(objectMapper.writeValueAsString(errorForResponse))
             ));
     }
+
+    @Nonnull
+    protected String stubOkButNotCorrectResponse() {
+        final String zoneName = TimeZone.getDefault().getID();
+        stubOkButNotCorrectResponse(zoneName);
+        return zoneName;
+    }
+
+    @SneakyThrows
+    private void stubOkButNotCorrectResponse(@Nonnull final String zoneName) {
+        stubFor(get(urlPathMatching("/" + zoneName))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withBody(objectMapper.writeValueAsString("bad response"))
+            ));
+    }
+
 }

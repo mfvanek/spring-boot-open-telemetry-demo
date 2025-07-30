@@ -36,8 +36,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
@@ -49,7 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TimeControllerTest extends TestBase {
 
     private KafkaMessageListenerContainer<UUID, String> container;
-    private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new LinkedBlockingQueue<>();
+    private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new ArrayBlockingQueue<>(4);
 
     @Autowired
     private KafkaProperties kafkaProperties;

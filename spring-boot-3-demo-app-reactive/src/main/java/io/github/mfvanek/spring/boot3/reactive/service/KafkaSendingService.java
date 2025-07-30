@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nonnull;
 
 @Slf4j
@@ -28,10 +28,12 @@ public class KafkaSendingService {
     @Value("${app.tenant.name}")
     private String tenantName;
 
-    public CompletableFuture<SendResult<UUID, String>> sendNotification(@Nonnull final String message) {
-        try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
-            log.info("Sending message \"{}\" to Kafka", message);
-            return kafkaTemplate.sendDefault(UUID.randomUUID(), message);
-        }
+    public Mono<SendResult<UUID, String>> sendNotification(@Nonnull final String message) {
+        return Mono.fromCallable(() -> {
+            try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
+                log.info("Sending message \"{}\" to Kafka", message);
+                return kafkaTemplate.sendDefault(UUID.randomUUID(), message).get();
+            }
+        });
     }
 }

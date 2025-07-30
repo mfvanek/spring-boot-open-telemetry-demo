@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -44,16 +43,13 @@ public class TimeController {
         log.info("Called method getNow. TraceId = {}", traceId);
         return publicApiService.getZonedTime()
             .switchIfEmpty(Mono.just(LocalDateTime.now(clock)))
-            .doOnSuccess(this::sendWithKafka);
+            .doOnNext(this::sendWithKafka);
     }
 
     private void sendWithKafka(LocalDateTime localDateTime) {
-        try {
-            kafkaSendingService.sendNotification("Current time = " + localDateTime)
-                .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
-                .get();
-        } catch (InterruptedException | ExecutionException e) {
-            log.info("error ", e);
-        }
+        kafkaSendingService.sendNotification("Current time = " + localDateTime)
+            .doOnNext(result -> log.info("Awaiting acknowledgement from Kafka"))
+            .doOnError(e -> log.info("error ", e))
+            .subscribe();
     }
 }
