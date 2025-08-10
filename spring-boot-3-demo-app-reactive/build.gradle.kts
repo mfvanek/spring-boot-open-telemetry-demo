@@ -42,9 +42,14 @@ dependencies {
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.projectreactor.tools:blockhound:1.0.13.RELEASE")
 }
 
 tasks {
+    withType<Test>().all {
+        jvmArgs("-XX:+AllowRedefinitionToAddDeleteMethods")
+    }
+
     jacocoTestCoverageVerification {
         dependsOn(jacocoTestReport)
         violationRules {

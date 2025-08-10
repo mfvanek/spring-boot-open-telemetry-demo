@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class IndexesMaintenanceTest extends TestBase {
+class DatabaseStructureStaticAnalysisTest extends TestBase {
 
     @Autowired
     private List<DatabaseCheckOnHost<? extends DbObject>> checks;

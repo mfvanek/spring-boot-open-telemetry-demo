@@ -15,6 +15,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -32,7 +33,8 @@ public class KafkaSendingService {
         return Mono.deferContextual(contextView -> {
             try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
                 log.info("Sending message \"{}\" to Kafka", message);
-                return Mono.fromFuture(() -> kafkaTemplate.sendDefault(UUID.randomUUID(), message));
+                return Mono.fromFuture(() -> kafkaTemplate.sendDefault(UUID.randomUUID(), message))
+                    .subscribeOn(Schedulers.boundedElastic());
             }
         });
     }

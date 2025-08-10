@@ -11,7 +11,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class IndexesMaintenanceTest : TestBase() {
+internal class DatabaseStructureStaticAnalysisTest : TestBase() {
+
     @Autowired
     private lateinit var checks: List<DatabaseCheckOnHost<out DbObject>>
 

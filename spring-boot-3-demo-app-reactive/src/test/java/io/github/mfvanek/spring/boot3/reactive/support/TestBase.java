@@ -12,6 +12,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -22,6 +23,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.blockhound.BlockHound;
 
 import java.time.Clock;
 import java.util.TimeZone;
@@ -50,6 +52,11 @@ public abstract class TestBase {
     protected JdbcTemplate jdbcTemplate;
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @BeforeAll
+    static void initBlockHound() {
+        BlockHound.install();
+    }
 
     @BeforeEach
     void resetExternalMocks() {
