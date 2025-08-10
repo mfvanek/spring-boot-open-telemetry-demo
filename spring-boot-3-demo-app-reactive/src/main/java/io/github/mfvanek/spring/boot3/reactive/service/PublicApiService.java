@@ -54,7 +54,6 @@ public class PublicApiService {
             .bodyToMono(String.class)
             .retryWhen(prepareRetry(zoneName))
             .flatMap(this::convert)
-            .doOnError(err -> log.warn("Received error response", err)) // TODO ???
             .onErrorComplete()
             .flatMap(Mono::justOrEmpty);
     }

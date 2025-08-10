@@ -16,7 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,6 +27,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.TimeZone;
 import javax.annotation.Nonnull;
 
@@ -35,9 +41,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 @ActiveProfiles("test")
 @AutoConfigureObservability
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class})
+@ContextConfiguration(
+    classes = TestBase.CustomClockConfiguration.class,
+    initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class}
+)
 @AutoConfigureWireMock(port = 0)
 public abstract class TestBase {
+
+    private static final ZoneOffset FIXED_ZONE = ZoneOffset.ofHours(-1);
+    private static final LocalDateTime BEFORE_MILLENNIUM = LocalDateTime.of(1999, Month.DECEMBER, 31, 23, 59, 59);
 
     @Autowired
     protected WebTestClient webTestClient;
@@ -87,5 +99,15 @@ public abstract class TestBase {
                 .withStatus(500)
                 .withBody(objectMapper.writeValueAsString(errorForResponse))
             ));
+    }
+
+    @TestConfiguration
+    static class CustomClockConfiguration {
+
+        @Bean
+        @Primary
+        public Clock fixedClock() {
+            return Clock.fixed(BEFORE_MILLENNIUM.toInstant(FIXED_ZONE), FIXED_ZONE);
+        }
     }
 }

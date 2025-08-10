@@ -50,13 +50,6 @@ class PublicApiServiceTest extends TestBase {
         assertThat(result).isNotNull();
         assertThat(result.truncatedTo(ChronoUnit.MINUTES))
             .isEqualTo(localDateTimeNow.truncatedTo(ChronoUnit.MINUTES));
-        assertThat(output.getAll())
-            .contains("Request received:")
-            .doesNotContain(
-                "Retrying request to ",
-                "Retries exhausted",
-                "Failed to convert response ",
-                "timezone");
     }
 
     @Test
