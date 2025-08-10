@@ -4,15 +4,6 @@ import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServl
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
 import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
-import java.nio.charset.StandardCharsets
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import java.util.Locale
-import java.util.UUID
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -38,12 +29,20 @@ import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.testcontainers.shaded.org.awaitility.Awaitility
+import java.nio.charset.StandardCharsets
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.TimeUnit
 
 @ExtendWith(OutputCaptureExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TimeControllerTest : TestBase() {
     private lateinit var container: KafkaMessageListenerContainer<UUID, String>
-    private val consumerRecords = LinkedBlockingQueue<ConsumerRecord<UUID, String>>()
+    private val consumerRecords = ArrayBlockingQueue<ConsumerRecord<UUID, String>>(4)
 
     @Autowired
     private lateinit var kafkaProperties: KafkaProperties

@@ -5,31 +5,27 @@
  * Licensed under the Apache License 2.0
  */
 
-package io.github.mfvanek.spring.boot3.test.support;
+package io.github.mfvanek.spring.boot3.reactive.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
-import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
+import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
+import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.blockhound.BlockHound;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
 import java.util.TimeZone;
 import javax.annotation.Nonnull;
 
@@ -41,16 +37,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 @ActiveProfiles("test")
 @AutoConfigureObservability
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(
-    classes = TestBase.CustomClockConfiguration.class,
-    initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class}
-)
+@ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class})
 @AutoConfigureWireMock(port = 0)
 public abstract class TestBase {
 
-    private static final ZoneOffset FIXED_ZONE = ZoneOffset.ofHours(-1);
-    private static final LocalDateTime BEFORE_MILLENNIUM = LocalDateTime.of(1999, Month.DECEMBER, 31, 23, 59, 59);
-
+    protected static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
     @Autowired
     protected WebTestClient webTestClient;
     @Autowired
@@ -61,6 +52,11 @@ public abstract class TestBase {
     protected JdbcTemplate jdbcTemplate;
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @BeforeAll
+    static void initBlockHound() {
+        BlockHound.install();
+    }
 
     @BeforeEach
     void resetExternalMocks() {
@@ -101,13 +97,19 @@ public abstract class TestBase {
             ));
     }
 
-    @TestConfiguration
-    static class CustomClockConfiguration {
+    @Nonnull
+    protected String stubOkButNotCorrectResponse() {
+        final String zoneName = TimeZone.getDefault().getID();
+        stubOkButNotCorrectResponse(zoneName);
+        return zoneName;
+    }
 
-        @Bean
-        @Primary
-        public Clock fixedClock() {
-            return Clock.fixed(BEFORE_MILLENNIUM.toInstant(FIXED_ZONE), FIXED_ZONE);
-        }
+    @SneakyThrows
+    private void stubOkButNotCorrectResponse(@Nonnull final String zoneName) {
+        stubFor(get(urlPathMatching("/" + zoneName))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withBody(objectMapper.writeValueAsString("bad response"))
+            ));
     }
 }

@@ -5,11 +5,11 @@
  * Licensed under the Apache License 2.0
  */
 
-package io.github.mfvanek.spring.boot3.test.controllers;
+package io.github.mfvanek.spring.boot3.reactive.controllers;
 
-import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
-import io.github.mfvanek.spring.boot3.test.support.KafkaConsumerUtils;
-import io.github.mfvanek.spring.boot3.test.support.TestBase;
+import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
+import io.github.mfvanek.spring.boot3.reactive.support.KafkaConsumerUtils;
+import io.github.mfvanek.spring.boot3.reactive.support.TestBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.awaitility.Awaitility;
@@ -30,6 +30,7 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -41,16 +42,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
-import static io.github.mfvanek.spring.boot3.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 @ExtendWith(OutputCaptureExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TimeControllerTest extends TestBase {
 
-    private KafkaMessageListenerContainer<UUID, String> container;
     private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new ArrayBlockingQueue<>(4);
-
+    private KafkaMessageListenerContainer<UUID, String> container;
     @Autowired
     private KafkaProperties kafkaProperties;
 
@@ -87,8 +87,7 @@ class TimeControllerTest extends TestBase {
             .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId).isNotBlank();
-        assertThat(result.getResponseBody())
-            .isBefore(LocalDateTime.now(clock));
+        assertThat(result.getResponseBody()).isCloseTo(LocalDateTime.now(clock).minusDays(1), within(1, ChronoUnit.MINUTES));
         assertThat(output.getAll())
             .contains("Called method getNow. TraceId = " + traceId)
             .contains("Awaiting acknowledgement from Kafka");
@@ -125,17 +124,17 @@ class TimeControllerTest extends TestBase {
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId)
             .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf");
-
+        assertThat(result.getResponseBody()).isCloseTo(LocalDateTime.now(clock), within(1, ChronoUnit.MINUTES));
         assertThat(output.getAll())
             .containsPattern(String.format(Locale.ROOT,
                 ".*\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +
-                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                    "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.reactive\\.service\\.PublicApiService\"," +
                     "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
-                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-3-demo-app\"\\}%n", zoneName))
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-3-demo-app-reactive\"\\}%n", zoneName))
             .containsPattern(String.format(Locale.ROOT,
-                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.test\\.service\\.PublicApiService\"," +
+                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot3\\.reactive\\.service\\.PublicApiService\"," +
                     "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
-                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app\"}%n",
+                    "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-3-demo-app-reactive\"}%n",
                 zoneName));
     }
 
