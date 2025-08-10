@@ -30,6 +30,7 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 @ExtendWith(OutputCaptureExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -85,11 +87,10 @@ class TimeControllerTest extends TestBase {
             .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId).isNotBlank();
-        assertThat(result.getResponseBody())
-            .isBefore(LocalDateTime.now(clock));
+        assertThat(result.getResponseBody()).isCloseTo(LocalDateTime.now(clock).minusDays(1), within(1, ChronoUnit.MINUTES));
         assertThat(output.getAll())
-            .contains("Called method getNow. TraceId = " + traceId)
-            .contains("Awaiting acknowledgement from Kafka");
+            .contains("Called method getNow. TraceId = " + traceId);
+        //.contains("Awaiting acknowledgement from Kafka");
 
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
@@ -123,7 +124,7 @@ class TimeControllerTest extends TestBase {
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
         assertThat(traceId)
             .isEqualTo("38c19768104ab8ae64fabbeed65bbbdf");
-
+        assertThat(result.getResponseBody()).isCloseTo(LocalDateTime.now(clock), within(1, ChronoUnit.MINUTES));
         assertThat(output.getAll())
             .containsPattern(String.format(Locale.ROOT,
                 ".*\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +

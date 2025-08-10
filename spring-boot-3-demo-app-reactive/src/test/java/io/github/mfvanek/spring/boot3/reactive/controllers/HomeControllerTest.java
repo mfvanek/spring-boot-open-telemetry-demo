@@ -27,5 +27,4 @@ class HomeControllerTest extends TestBase {
         assertThat(result)
             .isEqualTo("Hello!");
     }
-
 }

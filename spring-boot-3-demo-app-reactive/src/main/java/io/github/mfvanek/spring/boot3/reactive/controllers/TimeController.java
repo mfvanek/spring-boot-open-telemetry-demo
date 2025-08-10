@@ -41,15 +41,14 @@ public class TimeController {
             .map(TraceContext::traceId)
             .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        return publicApiService.getZonedTime()
-            .switchIfEmpty(Mono.just(LocalDateTime.now(clock)))
-            .doOnNext(this::sendWithKafka);
-    }
-
-    private void sendWithKafka(LocalDateTime localDateTime) {
-        kafkaSendingService.sendNotification("Current time = " + localDateTime)
-            .doOnNext(result -> log.info("Awaiting acknowledgement from Kafka"))
-            .doOnError(e -> log.info("error ", e))
-            .subscribe();
+        final Mono<LocalDateTime> response = publicApiService.getZonedTime()
+            .switchIfEmpty(Mono.just(LocalDateTime.now(clock)));
+        response
+            .subscribe(it -> {
+                assert traceId != null;
+                kafkaSendingService.sendNotification("Current time = " + it, traceId);
+                log.info("Awaiting acknowledgement from Kafka");
+            });
+        return response;
     }
 }

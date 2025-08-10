@@ -105,5 +105,4 @@ public abstract class TestBase {
                 .withBody(objectMapper.writeValueAsString("bad response"))
             ));
     }
-
 }
