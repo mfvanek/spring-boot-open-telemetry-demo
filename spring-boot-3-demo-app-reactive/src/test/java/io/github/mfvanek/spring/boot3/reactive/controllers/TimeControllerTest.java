@@ -89,8 +89,8 @@ class TimeControllerTest extends TestBase {
         assertThat(traceId).isNotBlank();
         assertThat(result.getResponseBody()).isCloseTo(LocalDateTime.now(clock).minusDays(1), within(1, ChronoUnit.MINUTES));
         assertThat(output.getAll())
-            .contains("Called method getNow. TraceId = " + traceId);
-        //.contains("Awaiting acknowledgement from Kafka");
+            .contains("Called method getNow. TraceId = " + traceId)
+            .contains("Awaiting acknowledgement from Kafka");
 
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
