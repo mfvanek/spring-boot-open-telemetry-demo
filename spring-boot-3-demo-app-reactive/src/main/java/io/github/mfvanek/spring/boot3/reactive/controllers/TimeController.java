@@ -36,19 +36,18 @@ public class TimeController {
     @GetMapping(path = "/current-time")
     public Mono<LocalDateTime> getNow() {
         log.trace("tracer {}", tracer);
+
         final String traceId = Optional.ofNullable(tracer.currentSpan())
             .map(Span::context)
             .map(TraceContext::traceId)
             .orElse(null);
         log.info("Called method getNow. TraceId = {}", traceId);
-        final Mono<LocalDateTime> response = publicApiService.getZonedTime()
-            .switchIfEmpty(Mono.just(LocalDateTime.now(clock)));
-        response
-            .subscribe(it -> {
-                assert traceId != null;
-                kafkaSendingService.sendNotification("Current time = " + it, traceId);
-                log.info("Awaiting acknowledgement from Kafka");
-            });
-        return response;
+
+        return publicApiService.getZonedTime()
+            .defaultIfEmpty(LocalDateTime.now(clock))
+            .flatMap(now -> kafkaSendingService.sendNotification("Current time = " + now)
+                .doOnSuccess(v -> log.info("Awaiting acknowledgement from Kafka"))
+                .thenReturn(now)
+            );
     }
 }
