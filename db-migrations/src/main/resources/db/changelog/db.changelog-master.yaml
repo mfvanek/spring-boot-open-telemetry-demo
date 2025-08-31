@@ -3,3 +3,7 @@ databaseChangeLog:
         file: db/changelog/sql/schema.sql
     - include:
         file: db/changelog/sql/storage.sql
+    -   include:
+            file: db/changelog/sql/add_span_column.sql
+    -   include:
+            file: db/changelog/sql/set_span_and_trace_unique.sql
