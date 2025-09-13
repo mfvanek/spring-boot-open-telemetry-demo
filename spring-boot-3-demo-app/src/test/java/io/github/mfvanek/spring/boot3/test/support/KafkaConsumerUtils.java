@@ -31,7 +31,7 @@ public class KafkaConsumerUtils {
     public KafkaMessageListenerContainer<UUID, String> setUpKafkaConsumer(
         @Nonnull final KafkaProperties kafkaProperties,
         @Nonnull final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords) {
-        final var containerProperties = new ContainerProperties(kafkaProperties.getTemplate().getDefaultTopic());
+        final var containerProperties = new ContainerProperties(kafkaProperties.getTemplate().getDefaultTopic(), "open.telemetry.sb3.queue.additional");
         final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false");
         consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
@@ -41,7 +41,7 @@ public class KafkaConsumerUtils {
         final var container = new KafkaMessageListenerContainer<>(consumer, containerProperties);
         container.setupMessageListener((MessageListener<UUID, String>) consumerRecords::add);
         container.start();
-        ContainerTestUtils.waitForAssignment(container, 1);
+        ContainerTestUtils.waitForAssignment(container, 2);
         return container;
     }
 }

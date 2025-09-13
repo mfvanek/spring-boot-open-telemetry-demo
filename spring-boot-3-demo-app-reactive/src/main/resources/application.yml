@@ -26,14 +26,19 @@ spring:
         template:
             default-topic: open.telemetry.sb3.queue
             observation-enabled: true # Important!!!
+            additional-topic: open.telemetry.sb3.queue.additional
         producer:
             key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+            properties:
+                linger.ms: 100
+                batch.size: 10000
         listener:
             observation-enabled: true # Important!!!
             ack-mode: manual_immediate
         consumer:
             auto-offset-reset: earliest
             group-id: ${spring.kafka.template.default-topic}-group
+            additional-groupId: ${spring.kafka.template.additional-topic}-group
         client-id: open.telemetry.client
         bootstrap-servers: localhost:9092
         security:

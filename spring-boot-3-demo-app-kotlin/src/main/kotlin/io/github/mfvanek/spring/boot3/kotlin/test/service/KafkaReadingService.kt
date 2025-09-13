@@ -56,8 +56,8 @@ class KafkaReadingService(
     }
 
     @KafkaListener(
-        id = "\${spring.kafka.opentelemetry.additional-consumer-groupId}",
-        topics = ["\${spring.kafka.opentelemetry.additional-topic}"],
+        id = "\${spring.kafka.consumer.additional-groupId}",
+        topics = ["\${spring.kafka.template.additional-topic}"],
         batch = "true"
     )
     fun listenAdditional(records: List<ConsumerRecord<UUID, String>>, ack: Acknowledgment) {

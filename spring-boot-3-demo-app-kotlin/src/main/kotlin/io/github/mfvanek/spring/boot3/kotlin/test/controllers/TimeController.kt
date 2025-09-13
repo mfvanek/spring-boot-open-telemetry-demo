@@ -25,7 +25,7 @@ class TimeController(
     private val kafkaSendingService: KafkaSendingService,
     private val publicApiService: PublicApiService
 ) {
-
+    // http://localhost:8090/current-time
     @GetMapping(path = ["/current-time"])
     fun getNow(): LocalDateTime {
         logger.trace { "tracer $tracer" }

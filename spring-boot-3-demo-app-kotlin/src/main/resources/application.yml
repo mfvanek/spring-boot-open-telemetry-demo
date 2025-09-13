@@ -29,7 +29,6 @@ spring:
         url: jdbc:postgresql://localhost:6432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
     liquibase:
         change-log: classpath:/db/changelog/db.changelog-master.yaml
-        clear-checksums: true
     kafka:
         template:
             default-topic: open.telemetry.sb3.queue

@@ -84,4 +84,16 @@ class PublicApiServiceTest extends TestBase {
 
         verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
     }
+
+    @Test
+    void throwsJsonProcessingExceptionWithBdResponse(CapturedOutput output) {
+        final String zoneName = stubBadResponse();
+        Observation.createNotStarted("test", observationRegistry).observe(() -> {
+            final LocalDateTime result = publicApiService.getZonedTime();
+            assertThat(result).isNull();
+            assertThat(Objects.requireNonNull(tracer.currentSpan()).context().traceId()).isNotNull();
+            assertThat(output.getAll()).contains("Failed to convert response");
+        });
+        verify(1, getRequestedFor(urlPathMatching("/" + zoneName)));
+    }
 }

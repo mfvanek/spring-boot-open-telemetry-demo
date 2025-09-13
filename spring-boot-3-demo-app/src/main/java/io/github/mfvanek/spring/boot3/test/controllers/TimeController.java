@@ -47,6 +47,9 @@ public class TimeController {
         kafkaSendingService.sendNotification("Current time = " + now)
             .thenRun(() -> log.info("Awaiting acknowledgement from Kafka"))
             .get();
+        kafkaSendingService.sendNotificationToOtherTopic("Current time = " + now)
+            .thenRun(() -> log.info("Awaiting acknowledgement from Kafka with batch"))
+            .get();
         return now;
     }
 }
