@@ -28,12 +28,23 @@ public class KafkaSendingService {
     private final KafkaTemplate<UUID, String> kafkaTemplate;
     @Value("${app.tenant.name}")
     private String tenantName;
+    @Value("${spring.kafka.template.additional-topic}") private String additionalTopic;
 
     public Mono<SendResult<UUID, String>> sendNotification(@Nonnull final String message) {
         return Mono.deferContextual(contextView -> {
             try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
                 log.info("Sending message \"{}\" to Kafka", message);
                 return Mono.fromFuture(() -> kafkaTemplate.sendDefault(UUID.randomUUID(), message))
+                    .subscribeOn(Schedulers.boundedElastic());
+            }
+        });
+    }
+
+    public Mono<SendResult<UUID, String>> sendNotificationToOtherTopic(@Nonnull final String message) {
+        return Mono.deferContextual(contextView -> {
+            try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
+                log.info("Sending message \"{}\" to {} of Kafka", message, additionalTopic);
+                return Mono.fromFuture(() -> kafkaTemplate.send(additionalTopic, UUID.randomUUID(), message))
                     .subscribeOn(Schedulers.boundedElastic());
             }
         });

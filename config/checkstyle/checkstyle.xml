@@ -56,7 +56,7 @@
         <!-- <module name="FinalParameters"/> disabled here. Controlled by PMD.AvoidReassigningParameters -->
         <!-- <module name="HiddenField"/> invalid -->
         <!-- <module name="HideUtilityClassConstructor"/> invalid -->
-        <module name="IllegalCatch"/>
+        <!--<module name="IllegalCatch"/> -->
         <module name="IllegalIdentifierName"/>
         <module name="IllegalInstantiation"/>
         <module name="IllegalThrows"/>

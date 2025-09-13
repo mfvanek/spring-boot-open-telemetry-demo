@@ -21,12 +21,20 @@ private val logger = KotlinLogging.logger {}
 @Service
 class KafkaSendingService(
     @Value("\${app.tenant.name}") private val tenantName: String,
-    private val kafkaTemplate: KafkaTemplate<UUID, String>
+    private val kafkaTemplate: KafkaTemplate<UUID, String>,
+    @Value("\${spring.kafka.template.additional-topic}") private val additionalTopic: String,
 ) {
     fun sendNotification(message: String): CompletableFuture<SendResult<UUID, String>> {
         withLoggingContext("tenant.name" to tenantName) {
             logger.info { "Sending message \"$message\" to Kafka" }
             return kafkaTemplate.sendDefault(UUID.randomUUID(), message)
+        }
+    }
+
+    fun sendNotificationToOtherTopic(message: String): CompletableFuture<SendResult<UUID, String>> {
+        withLoggingContext("tenant.name" to tenantName) {
+            logger.info { "Sending message \"$message\" to $additionalTopic of Kafka" }
+            return kafkaTemplate.send(additionalTopic, UUID.randomUUID(), message)
         }
     }
 }
