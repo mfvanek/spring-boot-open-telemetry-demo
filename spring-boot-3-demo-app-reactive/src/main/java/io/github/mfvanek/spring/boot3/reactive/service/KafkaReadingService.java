@@ -7,6 +7,7 @@
 
 package io.github.mfvanek.spring.boot3.reactive.service;
 
+import io.github.mfvanek.db.migrations.common.saver.DbSaver;
 import io.micrometer.tracing.ScopedSpan;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
@@ -14,18 +15,12 @@ import io.micrometer.tracing.propagation.Propagator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -33,16 +28,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KafkaReadingService {
 
+    private static final Propagator.Getter<ConsumerRecord<UUID, String>> KAFKA_PROPAGATOR_GETTER = (carrier, key) -> new String(carrier.headers().lastHeader(key).value(), StandardCharsets.UTF_8);
+
     private final Tracer tracer;
-    private final Clock clock;
-    private final NamedParameterJdbcTemplate jdbcTemplate;
-    @Value("${app.tenant.name}")
-    private String tenantName;
     private final Propagator propagator;
+    private final DbSaver dbSaver;
 
     @KafkaListener(topics = "${spring.kafka.template.default-topic}")
-    public void listen(ConsumerRecord<UUID, String> message, Acknowledgment ack) {
-        processSingleRecordIfNeed(message, ack);
+    public void listen(ConsumerRecord<UUID, String> record, Acknowledgment ack) {
+        dbSaver.processSingleRecord(record);
+        ack.acknowledge();
     }
 
     @KafkaListener(
@@ -57,8 +52,7 @@ public class KafkaReadingService {
             log.info(
                 "Received from Kafka {} records", records.size()
             );
-            records.forEach(record ->
-                restoreContextAndProcessSingleRecordIfNeed(record, ack));
+            records.forEach(this::restoreContextAndProcessSingleRecordIfNeed);
             ack.acknowledge();
         } catch (Exception e) {
             batchSpan.error(e);
@@ -68,33 +62,16 @@ public class KafkaReadingService {
         }
     }
 
-    private void restoreContextAndProcessSingleRecordIfNeed(ConsumerRecord<UUID, String> record, Acknowledgment ack) {
-        final Propagator.Getter<ConsumerRecord<UUID, String>> kafkaPropagatorGetter = (carrier, key) -> Arrays.toString(carrier.headers().lastHeader("traceparent").value());
-        final Span.Builder builder = propagator.extract(record, kafkaPropagatorGetter);
+    private void restoreContextAndProcessSingleRecordIfNeed(ConsumerRecord<UUID, String> record) {
+        final Span.Builder builder = propagator.extract(record, KAFKA_PROPAGATOR_GETTER);
         final Span spanFromRecord = builder.name("processing-record-from-kafka").start();
         try (Tracer.SpanInScope ignored = tracer.withSpan(spanFromRecord)) {
-            processSingleRecordIfNeed(record, ack);
+            dbSaver.processSingleRecord(record);
         } catch (Exception e) {
             spanFromRecord.error(e);
             throw e;
         } finally {
             spanFromRecord.end();
-        }
-    }
-
-    private void processSingleRecordIfNeed(ConsumerRecord<UUID, String> message, Acknowledgment ack) {
-        try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
-            final Span currentSpan = tracer.currentSpan();
-            final String traceId = currentSpan != null ? currentSpan.context().traceId() : "";
-            log.info("Received record: {} with traceId {}", message.value(), traceId);
-            jdbcTemplate.update("insert into otel_demo.storage(message, trace_id, created_at) values(:msg, :traceId, :createdAt);",
-                Map.ofEntries(
-                    Map.entry("msg", message.value()),
-                    Map.entry("traceId", traceId),
-                    Map.entry("createdAt", LocalDateTime.now(clock))
-                )
-            );
-            ack.acknowledge();
         }
     }
 }

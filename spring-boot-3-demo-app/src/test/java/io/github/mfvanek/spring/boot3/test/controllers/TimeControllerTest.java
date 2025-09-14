@@ -105,8 +105,9 @@ class TimeControllerTest extends TestBase {
             .contains("\"tenant.name\":\"ru-a1-private\"");
         final List<String> tracesFromDb = namedParameterJdbcTemplate.query("select trace_id from otel_demo.storage where message like :message",
             Map.of("message", received.value()), (rs, rowNum) -> rs.getString("trace_id"));
-        assertThat(tracesFromDb.size()).isEqualTo(2);
-        assertThat(tracesFromDb.stream().filter(it -> it.equals(traceId))).hasSize(1);
+        assertThat(tracesFromDb)
+            .hasSize(2)
+            .containsOnly(traceId);
     }
 
     @Order(2)
