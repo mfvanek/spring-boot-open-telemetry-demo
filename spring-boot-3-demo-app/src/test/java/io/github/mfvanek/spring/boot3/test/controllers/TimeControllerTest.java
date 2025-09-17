@@ -91,7 +91,8 @@ class TimeControllerTest extends TestBase {
             .isBefore(LocalDateTime.now(clock));
         assertThat(output.getAll())
             .contains("Called method getNow. TraceId = " + traceId)
-            .contains("Awaiting acknowledgement from Kafka");
+            .contains("Awaiting acknowledgement from Kafka")
+            .contains("Awaiting acknowledgement from Kafka with batch");
 
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
@@ -102,10 +103,11 @@ class TimeControllerTest extends TestBase {
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"");
-        final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
-            Map.of("traceId", traceId), String.class);
-        assertThat(messageFromDb)
-            .isEqualTo(received.value());
+        final List<String> tracesFromDb = namedParameterJdbcTemplate.query("select trace_id from otel_demo.storage where message like :message",
+            Map.of("message", received.value()), (rs, rowNum) -> rs.getString("trace_id"));
+        assertThat(tracesFromDb)
+            .hasSize(2)
+            .containsOnly(traceId);
     }
 
     @Order(2)
@@ -168,6 +170,6 @@ class TimeControllerTest extends TestBase {
             .await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(Duration.ofMillis(500L))
-            .until(() -> countRecordsInTable() >= 1L);
+            .until(() -> countRecordsInTable() >= 2L);
     }
 }
