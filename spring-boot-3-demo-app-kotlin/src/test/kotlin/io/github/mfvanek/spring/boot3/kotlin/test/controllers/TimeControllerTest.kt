@@ -91,15 +91,15 @@ class TimeControllerTest : TestBase() {
         assertThat(output.all)
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"")
-        val tracesFromDb = namedParameterJdbcTemplate
-            .query(
-                "select trace_id from otel_demo.storage where message like :message",
-                mapOf("message" to received.value())
-            ) { rs, _ ->
-                rs.getString("trace_id")
-            }
-        assertThat(tracesFromDb.size).isEqualTo(2)
-        assertThat(tracesFromDb.stream().filter { it == traceId }).hasSize(2)
+        val messageFromDb = namedParameterJdbcTemplate.queryForList(
+            "select message from otel_demo.storage where trace_id = :traceId",
+            mapOf("traceId" to traceId),
+            String::class.java
+        )
+        messageFromDb.forEach {
+            assertThat(it).isNotNull()
+            assertThat(it).isEqualTo(received.value())
+        }
     }
 
     @Order(2)

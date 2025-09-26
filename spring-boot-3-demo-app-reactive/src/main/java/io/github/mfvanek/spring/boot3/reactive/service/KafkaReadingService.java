@@ -15,6 +15,8 @@ import io.micrometer.tracing.propagation.Propagator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.dao.DataAccessException;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
@@ -47,14 +49,13 @@ public class KafkaReadingService {
     )
     public void listenAdditional(List<ConsumerRecord<UUID, String>> records, Acknowledgment ack) {
         final ScopedSpan batchSpan = tracer.startScopedSpan("batch-processing");
-        log.info("current span: {}", tracer.currentSpan());
         try {
             log.info(
                 "Received from Kafka {} records", records.size()
             );
             records.forEach(this::restoreContextAndProcessSingleRecordIfNeed);
             ack.acknowledge();
-        } catch (Exception e) {
+        } catch (KafkaException e) {
             batchSpan.error(e);
             throw e;
         } finally {
@@ -67,7 +68,7 @@ public class KafkaReadingService {
         final Span spanFromRecord = builder.name("processing-record-from-kafka").start();
         try (Tracer.SpanInScope ignored = tracer.withSpan(spanFromRecord)) {
             dbSaver.processSingleRecord(record);
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             spanFromRecord.error(e);
             throw e;
         } finally {

@@ -12,6 +12,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.propagation.Propagator
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.springframework.dao.DataAccessException
+import org.springframework.kafka.KafkaException
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
@@ -44,14 +46,13 @@ class KafkaReadingService(
     )
     fun listenAdditional(records: List<ConsumerRecord<UUID, String>>, ack: Acknowledgment) {
         val batchSpan = tracer.startScopedSpan("batch-processing")
-        logger.info { "current span: ${tracer.currentSpan()}" }
         try {
             logger.info {
                 "Received from Kafka ${records.size} records"
             }
             records.forEach { record -> restoreContextAndProcessSingleRecordIfNeed(record) }
             ack.acknowledge()
-        } catch (e: Throwable) {
+        } catch (e: KafkaException) {
             batchSpan.error(e)
             throw e
         } finally {
@@ -66,7 +67,7 @@ class KafkaReadingService(
             tracer.withSpan(spanFromRecord).use {
                 dbSaver.processSingleRecord(record)
             }
-        } catch (e: Throwable) {
+        } catch (e: DataAccessException) {
             spanFromRecord.error(e)
             throw e
         } finally {

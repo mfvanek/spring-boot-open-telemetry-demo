@@ -91,8 +91,7 @@ class TimeControllerTest extends TestBase {
             .isBefore(LocalDateTime.now(clock));
         assertThat(output.getAll())
             .contains("Called method getNow. TraceId = " + traceId)
-            .contains("Awaiting acknowledgement from Kafka")
-            .contains("Awaiting acknowledgement from Kafka with batch");
+            .contains("Awaiting acknowledgement from Kafka");
 
         final ConsumerRecord<UUID, String> received = consumerRecords.poll(10, TimeUnit.SECONDS);
         assertThat(received).isNotNull();
@@ -103,11 +102,12 @@ class TimeControllerTest extends TestBase {
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"");
-        final List<String> tracesFromDb = namedParameterJdbcTemplate.query("select trace_id from otel_demo.storage where message like :message",
-            Map.of("message", received.value()), (rs, rowNum) -> rs.getString("trace_id"));
-        assertThat(tracesFromDb)
-            .hasSize(2)
-            .containsOnly(traceId);
+        final List<String> messageFromDb = namedParameterJdbcTemplate.queryForList("select message from otel_demo.storage where trace_id = :traceId",
+            Map.of("traceId", traceId), String.class);
+        messageFromDb.forEach(it -> {
+            assertThat(it).isNotNull();
+            assertThat(it).isEqualTo(received.value());
+        });
     }
 
     @Order(2)

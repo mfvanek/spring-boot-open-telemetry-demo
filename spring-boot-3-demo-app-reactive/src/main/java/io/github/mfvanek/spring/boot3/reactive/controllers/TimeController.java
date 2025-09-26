@@ -35,14 +35,13 @@ public class TimeController {
     // http://localhost:8081/current-time
     @GetMapping(path = "/current-time")
     public Mono<LocalDateTime> getNow() {
-        return Mono.just(tracer)
-            .map(tracer -> {
-                log.trace("tracer {}", tracer);
-                return Optional.ofNullable(tracer.currentSpan())
+        log.trace("tracer {}", tracer);
+        return Mono.justOrEmpty(
+                Optional.ofNullable(tracer.currentSpan())
                     .map(Span::context)
                     .map(TraceContext::traceId)
-                    .orElse(null);
-            })
+                    .orElse(null)
+            )
             .doOnNext(traceId -> log.info("Called method getNow. TraceId = {}", traceId))
             .then(publicApiService.getZonedTime())
             .defaultIfEmpty(LocalDateTime.now(clock))

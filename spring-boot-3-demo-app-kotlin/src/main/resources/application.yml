@@ -54,9 +54,6 @@ spring:
             sasl:
                 mechanism: PLAIN
                 jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${demo.kafka.opentelemetry.username}" password="${demo.kafka.opentelemetry.password}";
-        opentelemetry:
-            additional-topic: open.telemetry.sb3.queue.additional
-            additional-consumer-groupId: open.telemetry.sb3.queue.additional-group
     jdbc:
         template:
             query-timeout: 1s
