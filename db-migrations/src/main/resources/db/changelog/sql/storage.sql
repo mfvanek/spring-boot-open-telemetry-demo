@@ -5,7 +5,7 @@ create table if not exists otel_demo.storage
 (
     id bigint generated always as identity,
     message text not null,
-    trace_id varchar(64) not null unique,
+    trace_id text not null unique,
     created_at timestamptz not null
 );
 

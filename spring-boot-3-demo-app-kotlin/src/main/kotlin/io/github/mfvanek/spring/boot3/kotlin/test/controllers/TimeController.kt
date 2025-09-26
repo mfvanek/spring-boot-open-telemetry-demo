@@ -25,7 +25,7 @@ class TimeController(
     private val kafkaSendingService: KafkaSendingService,
     private val publicApiService: PublicApiService
 ) {
-
+    // http://localhost:8090/current-time
     @GetMapping(path = ["/current-time"])
     fun getNow(): LocalDateTime {
         logger.trace { "tracer $tracer" }
@@ -33,8 +33,13 @@ class TimeController(
         logger.info { "Called method getNow. TraceId = $traceId" }
         val nowFromRemote = publicApiService.getZonedTime()
         val now = nowFromRemote ?: LocalDateTime.now(clock)
-        kafkaSendingService.sendNotification("Current time = $now")
+        val message = "Current time = $now"
+        kafkaSendingService.sendNotification(message)
             .thenRun { logger.info { "Awaiting acknowledgement from Kafka" } }
+            .get()
+
+        kafkaSendingService.sendNotificationToOtherTopic(message)
+            .thenRun { logger.info { "Awaiting acknowledgement from Kafka with batch" } }
             .get()
         return now
     }
