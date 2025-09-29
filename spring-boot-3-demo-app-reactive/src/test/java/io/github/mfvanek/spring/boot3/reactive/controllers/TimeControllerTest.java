@@ -103,10 +103,7 @@ class TimeControllerTest extends TestBase {
             .contains("\"tenant.name\":\"ru-a1-private\"");
         final List<String> messageFromDb = namedParameterJdbcTemplate.queryForList("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
-        messageFromDb.forEach(it -> {
-            assertThat(it).isNotNull();
-            assertThat(it).isEqualTo(received.value());
-        });
+        messageFromDb.forEach(it -> assertThat(it).isEqualTo(received.value()));
     }
 
     @Order(2)

@@ -91,7 +91,7 @@ class PublicApiServiceTest extends TestBase {
         Observation.createNotStarted("test", observationRegistry).observe(() -> {
             final LocalDateTime result = publicApiService.getZonedTime();
             assertThat(result).isNull();
-            assertThat(Objects.requireNonNull(tracer.currentSpan()).context().traceId()).isNotNull();
+            assertThat(tracer.currentSpan().context().traceId()).isNotNull();
             assertThat(output.getAll()).contains("Failed to convert response");
         });
         verify(1, getRequestedFor(urlPathMatching("/" + zoneName)));

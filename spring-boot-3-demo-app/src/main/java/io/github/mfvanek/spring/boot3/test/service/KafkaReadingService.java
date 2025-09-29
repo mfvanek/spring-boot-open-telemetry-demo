@@ -15,8 +15,6 @@ import io.micrometer.tracing.propagation.Propagator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.dao.DataAccessException;
-import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
@@ -42,6 +40,7 @@ public class KafkaReadingService {
         ack.acknowledge();
     }
 
+    @SuppressWarnings({"IllegalCatch", "PMD.AvoidCatchingThrowable"})
     @KafkaListener(
         id = "${spring.kafka.consumer.additional-groupId}",
         topics = "${spring.kafka.template.additional-topic}",
@@ -55,22 +54,23 @@ public class KafkaReadingService {
             );
             records.forEach(this::restoreContextAndProcessSingleRecordIfNeed);
             ack.acknowledge();
-        } catch (KafkaException e) {
-            batchSpan.error(e);
-            throw e;
+        } catch (Throwable throwable) {
+            batchSpan.error(throwable);
+            throw throwable;
         } finally {
             batchSpan.end();
         }
     }
 
+    @SuppressWarnings({"IllegalCatch", "PMD.AvoidCatchingThrowable"})
     private void restoreContextAndProcessSingleRecordIfNeed(ConsumerRecord<UUID, String> record) {
         final Span.Builder builder = propagator.extract(record, KAFKA_PROPAGATOR_GETTER);
         final Span spanFromRecord = builder.name("processing-record-from-kafka").start();
         try (Tracer.SpanInScope ignored = tracer.withSpan(spanFromRecord)) {
             dbSaver.processSingleRecord(record);
-        } catch (DataAccessException e) {
-            spanFromRecord.error(e);
-            throw e;
+        } catch (Throwable throwable) {
+            spanFromRecord.error(throwable);
+            throw throwable;
         } finally {
             spanFromRecord.end();
         }

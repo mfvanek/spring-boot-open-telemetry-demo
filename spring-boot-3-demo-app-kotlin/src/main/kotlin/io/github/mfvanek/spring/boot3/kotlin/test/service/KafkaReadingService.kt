@@ -12,8 +12,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.propagation.Propagator
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.springframework.dao.DataAccessException
-import org.springframework.kafka.KafkaException
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
@@ -39,6 +37,7 @@ class KafkaReadingService(
         ack.acknowledge()
     }
 
+    @SuppressWarnings("IllegalCatch", "PMD.AvoidCatchingThrowable")
     @KafkaListener(
         id = "\${spring.kafka.consumer.additional-groupId}",
         topics = ["\${spring.kafka.template.additional-topic}"],
@@ -52,14 +51,15 @@ class KafkaReadingService(
             }
             records.forEach { record -> restoreContextAndProcessSingleRecordIfNeed(record) }
             ack.acknowledge()
-        } catch (e: KafkaException) {
-            batchSpan.error(e)
-            throw e
+        } catch (throwable: Throwable) {
+            batchSpan.error(throwable)
+            throw throwable
         } finally {
             batchSpan.end()
         }
     }
 
+    @SuppressWarnings("IllegalCatch", "PMD.AvoidCatchingThrowable")
     private fun restoreContextAndProcessSingleRecordIfNeed(record: ConsumerRecord<UUID, String>) {
         val builder = propagator.extract(record, KafkaHeadersGetter)
         val spanFromRecord = builder.name("processing-record-from-kafka").start()
@@ -67,9 +67,9 @@ class KafkaReadingService(
             tracer.withSpan(spanFromRecord).use {
                 dbSaver.processSingleRecord(record)
             }
-        } catch (e: DataAccessException) {
-            spanFromRecord.error(e)
-            throw e
+        } catch (throwable: Throwable) {
+            spanFromRecord.error(throwable)
+            throw throwable
         } finally {
             spanFromRecord.end()
         }

@@ -97,7 +97,6 @@ class TimeControllerTest : TestBase() {
             String::class.java
         )
         messageFromDb.forEach {
-            assertThat(it).isNotNull()
             assertThat(it).isEqualTo(received.value())
         }
     }
