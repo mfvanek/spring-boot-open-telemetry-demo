@@ -92,6 +92,12 @@ public abstract class TestBase {
         return zoneName;
     }
 
+    protected String stubBadResponse() {
+        final String zoneName = TimeZone.getDefault().getID();
+        stubBadResponse(zoneName);
+        return zoneName;
+    }
+
     @SneakyThrows
     private void stubErrorResponse(@Nonnull final String zoneName, @Nonnull final RuntimeException errorForResponse) {
         stubFor(get(urlPathMatching("/" + zoneName))
@@ -99,6 +105,18 @@ public abstract class TestBase {
                 .withStatus(500)
                 .withBody(objectMapper.writeValueAsString(errorForResponse))
             ));
+    }
+
+    @SneakyThrows
+    private void stubBadResponse(String zoneName) {
+        stubFor(
+            get(urlPathMatching("/" + zoneName))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withBody(objectMapper.writeValueAsString("Bad response"))
+                )
+        );
     }
 
     @TestConfiguration

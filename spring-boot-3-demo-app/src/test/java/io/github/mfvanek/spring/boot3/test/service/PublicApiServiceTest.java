@@ -11,6 +11,7 @@ import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,5 +84,20 @@ class PublicApiServiceTest extends TestBase {
         });
 
         verify(2, getRequestedFor(urlPathMatching("/" + zoneName)));
+    }
+
+    @Test
+    void throwsJsonProcessingExceptionWithBadResponse(CapturedOutput output) {
+        final String zoneName = stubBadResponse();
+        Observation.createNotStarted("test", observationRegistry).observe(() -> {
+            final LocalDateTime result = publicApiService.getZonedTime();
+            final Span currentSpan = tracer.currentSpan();
+
+            assert currentSpan != null;
+            assertThat(result).isNull();
+            assertThat(currentSpan.context().traceId()).isNotNull();
+            assertThat(output.getAll()).contains("Failed to convert response");
+        });
+        verify(1, getRequestedFor(urlPathMatching("/" + zoneName)));
     }
 }
