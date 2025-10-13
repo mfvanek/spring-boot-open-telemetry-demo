@@ -21,6 +21,7 @@ dependencies {
     if (osdetector.arch == "aarch_64") {
         testImplementation("io.netty:netty-all:4.1.104.Final")
     }
+    testImplementation("io.opentelemetry:opentelemetry-sdk-testing")
 }
 
 java {

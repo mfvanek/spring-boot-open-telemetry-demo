@@ -4,6 +4,7 @@ import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServl
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
 import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
+import io.opentelemetry.api.GlobalOpenTelemetry
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -49,6 +50,7 @@ class TimeControllerTest : TestBase() {
 
     @BeforeAll
     fun setUpKafkaConsumer() {
+        GlobalOpenTelemetry.resetForTest()
         container = setUpKafkaConsumer(kafkaProperties, consumerRecords)
     }
 
@@ -91,12 +93,13 @@ class TimeControllerTest : TestBase() {
         assertThat(output.all)
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"")
-        val messageFromDb = namedParameterJdbcTemplate.queryForList(
+        val messagesFromDb = namedParameterJdbcTemplate.queryForList(
             "select message from otel_demo.storage where trace_id = :traceId",
             mapOf("traceId" to traceId),
             String::class.java
         )
-        messageFromDb.forEach {
+        assertThat(messagesFromDb.size).isEqualTo(2)
+        messagesFromDb.forEach {
             assertThat(it).isEqualTo(received.value())
         }
     }
@@ -185,7 +188,7 @@ class TimeControllerTest : TestBase() {
     }
 }
 
-private fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
+fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
     val containerProperties = ContainerProperties(kafkaProperties.template.defaultTopic)
     val consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false")
     consumerProperties[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_PLAINTEXT"

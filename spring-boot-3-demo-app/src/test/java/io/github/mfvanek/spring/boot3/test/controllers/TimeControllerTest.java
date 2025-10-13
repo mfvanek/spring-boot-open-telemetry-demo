@@ -10,6 +10,7 @@ package io.github.mfvanek.spring.boot3.test.controllers;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.test.support.KafkaConsumerUtils;
 import io.github.mfvanek.spring.boot3.test.support.TestBase;
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.awaitility.Awaitility;
@@ -48,14 +49,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TimeControllerTest extends TestBase {
 
-    private KafkaMessageListenerContainer<UUID, String> container;
     private final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords = new ArrayBlockingQueue<>(4);
-
+    private KafkaMessageListenerContainer<UUID, String> container;
     @Autowired
     private KafkaProperties kafkaProperties;
 
     @BeforeAll
     void setUpKafkaConsumer() {
+        GlobalOpenTelemetry.resetForTest();
         container = KafkaConsumerUtils.setUpKafkaConsumer(kafkaProperties, consumerRecords);
     }
 
@@ -102,9 +103,10 @@ class TimeControllerTest extends TestBase {
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"");
-        final List<String> messageFromDb = namedParameterJdbcTemplate.queryForList("select message from otel_demo.storage where trace_id = :traceId",
+        final List<String> messagesFromDb = namedParameterJdbcTemplate.queryForList("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
-        messageFromDb.forEach(it -> assertThat(it).isEqualTo(received.value()));
+        assertThat(messagesFromDb.size()).isEqualTo(2);
+        messagesFromDb.forEach(it -> assertThat(it).isEqualTo(received.value()));
     }
 
     @Order(2)
