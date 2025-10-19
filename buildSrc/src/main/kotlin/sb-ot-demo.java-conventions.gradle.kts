@@ -37,12 +37,12 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    errorprone("com.google.errorprone:error_prone_core:2.39.0")
+    errorprone("com.google.errorprone:error_prone_core:2.42.0")
     errorprone("jp.skypencil.errorprone.slf4j:errorprone-slf4j:0.1.29")
 
     spotbugsPlugins("jp.skypencil.findbugs.slf4j:bug-pattern:1.5.0")
     spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0")
-    spotbugsPlugins("com.mebigfatguy.sb-contrib:sb-contrib:7.6.11")
+    spotbugsPlugins("com.mebigfatguy.sb-contrib:sb-contrib:7.6.15")
 }
 
 checkstyle {
@@ -61,7 +61,7 @@ pmd {
 }
 
 spotbugs {
-    toolVersion.set("4.9.3")
+    toolVersion.set("4.9.8")
     showProgress.set(true)
     effort.set(Effort.MAX)
     reportLevel.set(Confidence.LOW)

@@ -43,7 +43,7 @@ class DatabaseStructureStaticAnalysisTest extends TestBase {
             .filter(DatabaseCheckOnHost::isStatic)
             .forEach(check ->
                 assertThat(check.check(PgContext.ofDefault(), SkipLiquibaseTablesPredicate.ofDefault()))
-                    .as(check.getDiagnostic().name())
+                    .as(check.getName())
                     .isEmpty());
     }
 }
