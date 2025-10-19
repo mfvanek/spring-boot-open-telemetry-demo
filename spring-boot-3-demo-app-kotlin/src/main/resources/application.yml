@@ -36,8 +36,9 @@ spring:
             additional-topic: open.telemetry.sb3.queue.additional
         producer:
             key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+            batch-size: 32KB
             properties:
-                linger.ms: 100
+                linger.ms: 20
                 batch.size: 10000
         listener:
             observation-enabled: true # Important!!!
