@@ -24,17 +24,13 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.data.StatusData
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
-import org.springframework.kafka.listener.KafkaMessageListenerContainer
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.bean.override.mockito.MockitoBean
@@ -43,7 +39,6 @@ import org.springframework.web.util.UriBuilder
 import java.time.Clock
 import java.time.LocalDateTime
 import java.util.*
-import java.util.concurrent.ArrayBlockingQueue
 import java.util.function.Function
 
 @ActiveProfiles("test")
@@ -53,8 +48,7 @@ import java.util.function.Function
     initializers = [KafkaInitializer::class, JaegerInitializer::class, PostgresInitializer::class]
 )
 @AutoConfigureWireMock(port = 0)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal open class KafkaTracingTest {
+internal class KafkaTracingTest {
     @Autowired
     private lateinit var webTestClient: WebTestClient
 
@@ -70,20 +64,12 @@ internal open class KafkaTracingTest {
     @MockitoBean
     private lateinit var dbSaver: DbSaver
 
-    @Autowired
-    private lateinit var kafkaProperties: KafkaProperties
-    private lateinit var container: KafkaMessageListenerContainer<UUID, String>
-    private val consumerRecords = ArrayBlockingQueue<ConsumerRecord<UUID, String>>(4)
-
-    @BeforeAll
-    fun setUpKafkaConsumerAndResetTelemetry() {
-        GlobalOpenTelemetry.resetForTest()
-        container = io.github.mfvanek.spring.boot3.kotlin.test.controllers.setUpKafkaConsumer(kafkaProperties, consumerRecords)
-    }
-
-    @AfterAll
-    fun tearDownKafkaConsumer() {
-        container.stop()
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun resetTelemetry() {
+            GlobalOpenTelemetry.resetForTest()
+        }
     }
 
     @Test

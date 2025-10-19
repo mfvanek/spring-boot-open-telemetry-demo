@@ -4,7 +4,6 @@ import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServl
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.support.KafkaInitializer
 import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
-import io.opentelemetry.api.GlobalOpenTelemetry
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -50,7 +49,6 @@ class TimeControllerTest : TestBase() {
 
     @BeforeAll
     fun setUpKafkaConsumer() {
-        GlobalOpenTelemetry.resetForTest()
         container = setUpKafkaConsumer(kafkaProperties, consumerRecords)
     }
 

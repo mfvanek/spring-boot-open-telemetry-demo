@@ -10,7 +10,6 @@ package io.github.mfvanek.spring.boot3.reactive.controllers;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot3.reactive.support.KafkaConsumerUtils;
 import io.github.mfvanek.spring.boot3.reactive.support.TestBase;
-import io.opentelemetry.api.GlobalOpenTelemetry;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.awaitility.Awaitility;
@@ -57,7 +56,6 @@ class TimeControllerTest extends TestBase {
 
     @BeforeAll
     void setUpKafkaConsumer() {
-        GlobalOpenTelemetry.resetForTest();
         container = KafkaConsumerUtils.setUpKafkaConsumer(kafkaProperties, consumerRecords);
     }
 
