@@ -91,12 +91,15 @@ class TimeControllerTest : TestBase() {
         assertThat(output.all)
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"")
-        val messageFromDb = namedParameterJdbcTemplate.queryForObject(
+        val messagesFromDb = namedParameterJdbcTemplate.queryForList(
             "select message from otel_demo.storage where trace_id = :traceId",
             mapOf("traceId" to traceId),
             String::class.java
         )
-        assertThat(messageFromDb).isEqualTo(received.value())
+        assertThat(messagesFromDb.size).isEqualTo(2)
+        messagesFromDb.forEach {
+            assertThat(it).isEqualTo(received.value())
+        }
     }
 
     @Order(2)
@@ -179,11 +182,11 @@ class TimeControllerTest : TestBase() {
             .await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(Duration.ofMillis(500L))
-            .until { countRecordsInTable() >= 1L }
+            .until { countRecordsInTable() >= 2L }
     }
 }
 
-private fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
+fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: BlockingQueue<ConsumerRecord<UUID, String>>): KafkaMessageListenerContainer<UUID, String> {
     val containerProperties = ContainerProperties(kafkaProperties.template.defaultTopic)
     val consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false")
     consumerProperties[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_PLAINTEXT"

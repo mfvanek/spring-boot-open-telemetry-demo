@@ -22,8 +22,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class TraceIdInResponseReactiveFilter implements WebFilter {
 
+    public static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
     private static final Logger LOGGER = LoggerFactory.getLogger(TraceIdInResponseReactiveFilter.class);
-    private static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {

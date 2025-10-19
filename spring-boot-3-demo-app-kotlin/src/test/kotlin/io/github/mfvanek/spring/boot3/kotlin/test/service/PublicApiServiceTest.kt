@@ -99,7 +99,7 @@ class PublicApiServiceTest : TestBase() {
     }
 
     @Test
-    fun throwsJsonProcessingExceptionWithBdResponse(output: CapturedOutput) {
+    fun throwsJsonProcessingExceptionWithBadResponse(output: CapturedOutput) {
         stubBadResponse()
         Observation.createNotStarted("test", observationRegistry).observe {
             val result = publicApiService.getZonedTime()

@@ -32,22 +32,25 @@ public class TimeController {
     private final KafkaSendingService kafkaSendingService;
     private final PublicApiService publicApiService;
 
-    // http://localhost:8080/current-time
+    // http://localhost:8081/current-time
     @GetMapping(path = "/current-time")
     public Mono<LocalDateTime> getNow() {
         log.trace("tracer {}", tracer);
-
-        final String traceId = Optional.ofNullable(tracer.currentSpan())
-            .map(Span::context)
-            .map(TraceContext::traceId)
-            .orElse(null);
-        log.info("Called method getNow. TraceId = {}", traceId);
-
-        return publicApiService.getZonedTime()
+        return Mono.justOrEmpty(
+                Optional.ofNullable(tracer.currentSpan())
+                    .map(Span::context)
+                    .map(TraceContext::traceId)
+                    .orElse(null)
+            )
+            .doOnNext(traceId -> log.info("Called method getNow. TraceId = {}", traceId))
+            .then(publicApiService.getZonedTime())
             .defaultIfEmpty(LocalDateTime.now(clock))
             .flatMap(now -> kafkaSendingService.sendNotification("Current time = " + now)
                 .doOnSuccess(v -> log.info("Awaiting acknowledgement from Kafka"))
                 .thenReturn(now)
-            );
+            )
+            .flatMap(now -> kafkaSendingService.sendNotificationToOtherTopic("Current time = " + now)
+                .doOnSuccess(v -> log.info("Awaiting acknowledgement from Kafka with batch"))
+                .thenReturn(now));
     }
 }

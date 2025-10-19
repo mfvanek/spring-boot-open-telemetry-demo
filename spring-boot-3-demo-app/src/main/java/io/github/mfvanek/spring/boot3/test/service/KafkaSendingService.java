@@ -27,11 +27,19 @@ public class KafkaSendingService {
     @Value("${app.tenant.name}")
     private String tenantName;
     private final KafkaTemplate<UUID, String> kafkaTemplate;
+    @Value("${spring.kafka.template.additional-topic}") private String additionalTopic;
 
     public CompletableFuture<SendResult<UUID, String>> sendNotification(@Nonnull final String message) {
         try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
             log.info("Sending message \"{}\" to Kafka", message);
             return kafkaTemplate.sendDefault(UUID.randomUUID(), message);
+        }
+    }
+
+    public CompletableFuture<SendResult<UUID, String>> sendNotificationToOtherTopic(@Nonnull final String message) {
+        try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
+            log.info("Sending message \"{}\" to \"{}\" of Kafka", message, additionalTopic);
+            return kafkaTemplate.send(additionalTopic, UUID.randomUUID(), message);
         }
     }
 }

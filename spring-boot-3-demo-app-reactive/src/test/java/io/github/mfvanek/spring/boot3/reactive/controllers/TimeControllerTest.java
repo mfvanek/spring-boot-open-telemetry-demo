@@ -101,10 +101,10 @@ class TimeControllerTest extends TestBase {
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId)
             .contains("\"tenant.name\":\"ru-a1-private\"");
-        final String messageFromDb = namedParameterJdbcTemplate.queryForObject("select message from otel_demo.storage where trace_id = :traceId",
+        final List<String> messagesFromDb = namedParameterJdbcTemplate.queryForList("select message from otel_demo.storage where trace_id = :traceId",
             Map.of("traceId", traceId), String.class);
-        assertThat(messageFromDb)
-            .isEqualTo(received.value());
+        assertThat(messagesFromDb.size()).isEqualTo(2);
+        messagesFromDb.forEach(it -> assertThat(it).isEqualTo(received.value()));
     }
 
     @Order(2)
@@ -167,6 +167,6 @@ class TimeControllerTest extends TestBase {
             .await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(Duration.ofMillis(500L))
-            .until(() -> countRecordsInTable() >= 1L);
+            .until(() -> countRecordsInTable() >= 2L);
     }
 }
