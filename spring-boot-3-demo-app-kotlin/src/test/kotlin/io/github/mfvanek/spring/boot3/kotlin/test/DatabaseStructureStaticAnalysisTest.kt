@@ -33,7 +33,7 @@ internal class DatabaseStructureStaticAnalysisTest : TestBase() {
             .filter { obj: DatabaseCheckOnHost<out DbObject>? -> obj!!.isStatic }
             .forEach { check: DatabaseCheckOnHost<out DbObject>? ->
                 assertThat(check!!.check(PgContext.ofDefault(), SkipLiquibaseTablesPredicate.ofDefault()))
-                    .`as`(check.diagnostic.name)
+                    .`as`(check.name)
                     .isEmpty()
             }
     }
