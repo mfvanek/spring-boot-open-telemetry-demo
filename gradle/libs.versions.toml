@@ -10,7 +10,7 @@ spring-boot-v3-dependencies = { group = "org.springframework.boot", name = "spri
 springdoc-openapi = "org.springdoc:springdoc-openapi-bom:2.8.13"
 spring-cloud = "org.springframework.cloud:spring-cloud-dependencies:2025.0.0"
 datasource-micrometer = "net.ttddyy.observation:datasource-micrometer-spring-boot:1.2.0"
-logstash = "net.logstash.logback:logstash-logback-encoder:8.1"
+logstash = "net.logstash.logback:logstash-logback-encoder:9.0"
 
 [plugins]
 spring-boot-v3 = { id = "org.springframework.boot", version.ref = "spring-boot-v3" }
