@@ -45,7 +45,11 @@ detekt {
 }
 
 tasks {
-    test {
+    val detektTask = named("detekt") {
         dependsOn(detektMain, detektTest)
+    }
+
+    test {
+        dependsOn(detektTask)
     }
 }

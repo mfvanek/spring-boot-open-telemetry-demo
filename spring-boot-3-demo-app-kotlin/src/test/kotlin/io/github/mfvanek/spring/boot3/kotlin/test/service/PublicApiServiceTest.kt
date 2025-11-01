@@ -6,15 +6,15 @@ import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.tracing.Tracer
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import java.util.Locale
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.system.CapturedOutput
 import org.springframework.boot.test.system.OutputCaptureExtension
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 @ExtendWith(OutputCaptureExtension::class)
 class PublicApiServiceTest : TestBase() {

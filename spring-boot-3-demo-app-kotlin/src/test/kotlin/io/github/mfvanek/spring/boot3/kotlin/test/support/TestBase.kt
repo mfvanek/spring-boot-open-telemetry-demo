@@ -17,6 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import java.time.Clock
 import java.util.*
 
+@Suppress("UnnecessaryAbstractClass")
 @ActiveProfiles("test")
 @AutoConfigureObservability
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -7,6 +7,7 @@
 
 package io.github.mfvanek.spring.boot3.kotlin.test.service.dto
 
+@Suppress("ForbiddenPublicDataClass")
 data class CurrentTime(
     val datetime: ParsedDateTime
 )

@@ -9,6 +9,7 @@ package io.github.mfvanek.spring.boot3.kotlin.test.service.dto
 
 import java.time.LocalDateTime
 
+@Suppress("ForbiddenPublicDataClass")
 data class ParsedDateTime(
     val year: Int,
     val monthValue: Int,
