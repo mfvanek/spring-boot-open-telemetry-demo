@@ -32,7 +32,7 @@ dependencies {
     implementation("com.github.blagerweij:liquibase-sessionlock")
     implementation(libs.datasource.micrometer)
     implementation(libs.logstash)
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.01")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
