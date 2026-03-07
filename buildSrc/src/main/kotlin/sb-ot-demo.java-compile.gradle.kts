@@ -34,6 +34,7 @@ tasks {
     withType<JavaCompile>().configureEach {
         options.compilerArgs.add("-parameters")
         options.compilerArgs.add("--should-stop=ifError=FLOW")
+        options.compilerArgs.add("-XDaddTypeAnnotationsToSymbol=true")
     }
 
     test {

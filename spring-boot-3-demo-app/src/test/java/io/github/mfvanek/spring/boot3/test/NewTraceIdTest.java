@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings({"PMD.AvoidCatchingThrowable", "PMD.ExceptionAsFlowControl", "checkstyle:NestedTryDepth", "checkstyle:IllegalCatch"})
+@SuppressWarnings({"PMD.AvoidCatchingGenericException", "PMD.ExceptionAsFlowControl", "checkstyle:NestedTryDepth", "checkstyle:IllegalCatch"})
 class NewTraceIdTest extends TestBase {
 
     @Autowired

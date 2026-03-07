@@ -124,7 +124,7 @@ public abstract class TestBase {
 
         @Bean
         @Primary
-        public Clock fixedClock() {
+        Clock fixedClock() {
             return Clock.fixed(BEFORE_MILLENNIUM.toInstant(FIXED_ZONE), FIXED_ZONE);
         }
     }
