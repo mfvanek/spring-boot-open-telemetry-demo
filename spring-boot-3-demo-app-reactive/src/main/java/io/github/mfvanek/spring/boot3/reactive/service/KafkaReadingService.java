@@ -40,7 +40,7 @@ public class KafkaReadingService {
         ack.acknowledge();
     }
 
-    @SuppressWarnings({"IllegalCatch", "PMD.AvoidCatchingThrowable"})
+    @SuppressWarnings({"IllegalCatch", "PMD.AvoidCatchingGenericException"})
     @KafkaListener(
         id = "${spring.kafka.consumer.additional-groupId}",
         topics = "${spring.kafka.template.additional-topic}",
@@ -62,7 +62,7 @@ public class KafkaReadingService {
         }
     }
 
-    @SuppressWarnings({"IllegalCatch", "PMD.AvoidCatchingThrowable"})
+    @SuppressWarnings({"IllegalCatch", "PMD.AvoidCatchingGenericException"})
     private void restoreContextAndProcessSingleRecordIfNeed(ConsumerRecord<UUID, String> record) {
         final Span.Builder builder = propagator.extract(record, KAFKA_PROPAGATOR_GETTER);
         final Span spanFromRecord = builder.name("processing-record-from-kafka").start();
