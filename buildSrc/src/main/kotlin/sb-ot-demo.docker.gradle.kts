@@ -11,7 +11,7 @@ plugins {
 
 docker {
     javaApplication {
-        baseImage.set("eclipse-temurin:17.0.7_7-jre-focal")
+        baseImage.set("eclipse-temurin:21.0.10_7-jre-noble")
         maintainer.set("Ivan Vakhrushev")
         images.set(listOf("${project.name}:${project.version}", "${project.name}:latest"))
     }
