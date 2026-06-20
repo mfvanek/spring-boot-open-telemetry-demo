@@ -25,7 +25,7 @@ dependencies {
         api("org.liquibase:liquibase-core:5.0.3")
         api("com.github.blagerweij:liquibase-sessionlock:1.6.9")
         api("org.awaitility:awaitility:4.3.0")
-        api("com.zaxxer:HikariCP:7.0.2")
+        api("com.zaxxer:HikariCP:7.1.0")
         api("org.postgresql:postgresql:42.7.11")
     }
 }
