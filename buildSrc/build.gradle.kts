@@ -11,7 +11,7 @@ dependencies {
     implementation("io.freefair.gradle:lombok-plugin:9.5.0")
     implementation("com.bmuschko:gradle-docker-plugin:9.4.0")
     implementation("gradle.plugin.com.google.gradle:osdetector-gradle-plugin:1.7.3")
-    implementation("de.thetaphi:forbiddenapis:3.10")
+    implementation("de.thetaphi:forbiddenapis:3.11")
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.4.4")
     implementation("org.gradle:test-retry-gradle-plugin:1.6.4")
     val kotlinVersion = "2.0.21"
