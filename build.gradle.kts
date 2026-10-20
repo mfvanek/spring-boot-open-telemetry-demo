@@ -2,7 +2,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("base")
-    id("com.github.ben-manes.versions") version "0.65.0"
+    id("com.github.ben-manes.versions") version "0.66.0"
 }
 
 description = "Experiments with Java"
