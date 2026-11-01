@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(platform(project(":common-internal-bom")))
-    implementation(platform(libs.spring.boot.v3.dependencies))
+    implementation(platform(libs.spring.boot.v4.dependencies))
 
     implementation("io.micrometer:micrometer-tracing")
     implementation("org.apache.kafka:kafka-clients")

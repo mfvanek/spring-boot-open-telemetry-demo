@@ -12,7 +12,7 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
@@ -32,7 +32,7 @@ public class KafkaConsumerUtils {
         @Nonnull final KafkaProperties kafkaProperties,
         @Nonnull final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords) {
         final var containerProperties = new ContainerProperties(kafkaProperties.getTemplate().getDefaultTopic(), "open.telemetry.sb3.queue.additional");
-        final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false");
+        final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", false);
         consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, KafkaInitializer.plainJaas());

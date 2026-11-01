@@ -28,7 +28,7 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
 
         final String jaegerUrl = "http://localhost:" + JAEGER.getFirstMappedPort();
         TestPropertyValues.of(
-            "management.otlp.tracing.endpoint=" + jaegerUrl
+            "management.opentelemetry.tracing.export.otlp.endpoint=" + jaegerUrl
         ).applyTo(context.getEnvironment());
     }
 

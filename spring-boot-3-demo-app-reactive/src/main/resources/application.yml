@@ -103,7 +103,8 @@ management:
             export:
                 enabled: true
     tracing:
-        enabled: true
+        export:
+            enabled: true
         propagation:
             type:
                 - b3
@@ -114,11 +115,13 @@ management:
         enable:
             spring:
                 security: false
-    otlp:
+    opentelemetry:
         tracing:
-            endpoint: http://localhost:4317
-            compression: none
-            timeout: 5s
+            export:
+                otlp:
+                    endpoint: http://localhost:4317
+                    compression: none
+                    timeout: 5s
 
 springdoc:
     show-actuator: true
@@ -139,4 +142,4 @@ spring:
     kafka.bootstrap-servers: kafka1:29092
     datasource.url: jdbc:postgresql://postgres:5432/otel_demo_db?prepareThreshold=0&targetServerType=primary&hostRecheckSeconds=2&connectTimeout=1&socketTimeout=600
 
-management.otlp.tracing.endpoint: http://jaeger:4317
+management.opentelemetry.tracing.export.otlp.endpoint: http://jaeger:4317

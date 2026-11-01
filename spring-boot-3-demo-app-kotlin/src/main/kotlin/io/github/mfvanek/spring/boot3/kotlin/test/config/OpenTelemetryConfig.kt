@@ -10,9 +10,9 @@ package io.github.mfvanek.spring.boot3.kotlin.test.config
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporterBuilder
 import io.opentelemetry.sdk.common.export.RetryPolicy
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.autoconfigure.tracing.otlp.OtlpGrpcSpanExporterBuilderCustomizer
-import org.springframework.boot.actuate.autoconfigure.tracing.otlp.OtlpTracingAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
+import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.otlp.OtlpGrpcSpanExporterBuilderCustomizer
+import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.otlp.OtlpTracingAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -22,7 +22,7 @@ class OpenTelemetryConfig {
 
     @Bean
     fun otelJaegerGrpcSpanExporterBuilderCustomizer(
-        @Value("\${management.otlp.tracing.retry.max-attempts:2}") maxAttempts: Int
+        @Value("\${management.opentelemetry.tracing.export.otlp.retry.max-attempts:2}") maxAttempts: Int
     ): OtlpGrpcSpanExporterBuilderCustomizer {
         return OtlpGrpcSpanExporterBuilderCustomizer { builder: OtlpGrpcSpanExporterBuilder ->
             builder.setRetryPolicy(

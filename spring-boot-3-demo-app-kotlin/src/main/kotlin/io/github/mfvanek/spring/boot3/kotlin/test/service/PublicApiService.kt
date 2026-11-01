@@ -6,8 +6,6 @@
  */
 package io.github.mfvanek.spring.boot3.kotlin.test.service
 
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.toLocalDateTime
@@ -15,10 +13,11 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
-import org.springframework.retry.ExhaustedRetryException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.util.retry.Retry
+import tools.jackson.core.JacksonException
+import tools.jackson.databind.ObjectMapper
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -35,9 +34,9 @@ class PublicApiService(
         try {
             val result: ParsedDateTime = getZonedTimeFromWorldTimeApi().datetime
             return result.toLocalDateTime()
-        } catch (e: ExhaustedRetryException) {
+        } catch (e: RetriesExhaustedException) {
             logger.warn { "Failed to get response $e" }
-        } catch (e: JsonProcessingException) {
+        } catch (e: JacksonException) {
             logger.warn { "Failed to convert response $e" }
         }
         return null
@@ -66,7 +65,7 @@ class PublicApiService(
             }
             .onRetryExhaustedThrow { _, retrySignal: Retry.RetrySignal ->
                 logger.error { "Request to '/$zoneName' failed after ${retrySignal.totalRetries() + 1} attempts." }
-                ExhaustedRetryException("Retries exhausted", retrySignal.failure())
+                RetriesExhaustedException("Retries exhausted", retrySignal.failure())
             }
     }
 }

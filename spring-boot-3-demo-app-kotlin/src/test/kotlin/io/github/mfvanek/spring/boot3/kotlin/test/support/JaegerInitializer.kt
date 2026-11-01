@@ -12,7 +12,7 @@ class JaegerInitializer : ApplicationContextInitializer<ConfigurableApplicationC
         JAEGER.start()
         val jaegerUrl = "http://localhost:" + JAEGER.firstMappedPort
         TestPropertyValues.of(
-            "management.otlp.tracing.endpoint=$jaegerUrl"
+            "management.opentelemetry.tracing.export.otlp.endpoint=$jaegerUrl"
         ).applyTo(context.environment)
     }
 

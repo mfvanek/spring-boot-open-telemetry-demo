@@ -7,7 +7,6 @@
 
 package io.github.mfvanek.spring.boot3.kotlin.test.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.github.mfvanek.db.migrations.common.saver.DbSaver
 import io.github.mfvanek.spring.boot3.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
@@ -30,12 +29,14 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriBuilder
+import org.wiremock.spring.EnableWireMock
+import tools.jackson.databind.ObjectMapper
 import java.time.Clock
 import java.time.LocalDateTime
 import java.util.*
@@ -47,7 +48,8 @@ import java.util.function.Function
     classes = [SpanExporterConfiguration::class],
     initializers = [KafkaInitializer::class, JaegerInitializer::class, PostgresInitializer::class]
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
+@AutoConfigureWebTestClient
 internal class KafkaTracingTest {
     @Autowired
     private lateinit var webTestClient: WebTestClient
@@ -90,7 +92,7 @@ internal class KafkaTracingTest {
             .exchange()
             .expectStatus().isOk()
             .expectHeader().exists(TRACE_ID_HEADER_NAME)
-            .expectBody<LocalDateTime?>(LocalDateTime::class.java)
+            .expectBody(LocalDateTime::class.java)
             .returnResult()
         val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME)
         val finishedSpans = spanExporter.finishedSpanItems

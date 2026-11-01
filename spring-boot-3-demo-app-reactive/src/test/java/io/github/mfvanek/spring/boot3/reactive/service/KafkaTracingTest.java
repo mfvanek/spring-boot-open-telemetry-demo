@@ -7,7 +7,6 @@
 
 package io.github.mfvanek.spring.boot3.reactive.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.db.migrations.common.saver.DbSaver;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
@@ -25,12 +24,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.wiremock.spring.EnableWireMock;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -54,7 +55,8 @@ import static org.mockito.Mockito.doThrow;
     classes = SpanExporterConfiguration.class,
     initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class}
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
+@AutoConfigureWebTestClient
 class KafkaTracingTest {
 
     @Autowired

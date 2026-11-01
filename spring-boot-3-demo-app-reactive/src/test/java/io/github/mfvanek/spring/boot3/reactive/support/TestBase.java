@@ -7,23 +7,24 @@
 
 package io.github.mfvanek.spring.boot3.reactive.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.ParsedDateTime;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
+import org.springframework.boot.micrometer.metrics.test.autoconfigure.AutoConfigureMetrics;
+import org.springframework.boot.micrometer.tracing.test.autoconfigure.AutoConfigureTracing;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.wiremock.spring.EnableWireMock;
 import reactor.blockhound.BlockHound;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 import java.util.TimeZone;
@@ -35,10 +36,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 @ActiveProfiles("test")
-@AutoConfigureObservability
+@AutoConfigureTracing
+@AutoConfigureMetrics
+@AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class})
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
 public abstract class TestBase {
 
     protected static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
@@ -70,7 +73,6 @@ public abstract class TestBase {
         return zoneName;
     }
 
-    @SneakyThrows
     private void stubOkResponse(@Nonnull final String zoneName, @Nonnull final ParsedDateTime parsedDateTime) {
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
         stubFor(get(urlPathMatching("/" + zoneName))
@@ -88,7 +90,6 @@ public abstract class TestBase {
         return zoneName;
     }
 
-    @SneakyThrows
     private void stubErrorResponse(@Nonnull final String zoneName, @Nonnull final RuntimeException errorForResponse) {
         stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()
@@ -104,7 +105,6 @@ public abstract class TestBase {
         return zoneName;
     }
 
-    @SneakyThrows
     private void stubOkButNotCorrectResponse(@Nonnull final String zoneName) {
         stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()

@@ -1,28 +1,32 @@
 package io.github.mfvanek.spring.boot3.kotlin.test.support
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot3.kotlin.test.service.dto.ParsedDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability
+import org.springframework.boot.micrometer.metrics.test.autoconfigure.AutoConfigureMetrics
+import org.springframework.boot.micrometer.tracing.test.autoconfigure.AutoConfigureTracing
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.wiremock.spring.EnableWireMock
+import tools.jackson.databind.ObjectMapper
 import java.time.Clock
 import java.util.*
 
 @Suppress("UnnecessaryAbstractClass")
 @ActiveProfiles("test")
-@AutoConfigureObservability
+@AutoConfigureTracing
+@AutoConfigureMetrics
+@AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = [KafkaInitializer::class, JaegerInitializer::class, PostgresInitializer::class])
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
 abstract class TestBase {
     @Autowired
     lateinit var webTestClient: WebTestClient
