@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Locale;
@@ -26,8 +26,8 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
 
     private static final DockerImageName IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.7.1");
 
-    private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(IMAGE_NAME)
-        .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
+    private static final ConfluentKafkaContainer KAFKA_CONTAINER = new ConfluentKafkaContainer(IMAGE_NAME)
+        .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT")
         .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_SASL_ENABLED_MECHANISMS", "PLAIN")
         .withEnv("KAFKA_SASL_JAAS_CONFIG", plainJaas())
         .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_PLAIN_SASL_JAAS_CONFIG", plainJaas(Map.of(KAFKA_USER_NAME, KAFKA_USER_PASSWORD)));
