@@ -19,6 +19,7 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
 import lombok.SneakyThrows;
+import org.awaitility.Awaitility;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,11 @@ import org.wiremock.spring.EnableWireMock;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -83,11 +86,18 @@ class KafkaTracingTest {
             .expectBody(LocalDateTime.class)
             .returnResult();
         final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
-        final List<SpanData> finishedSpans = spanExporter.getFinishedSpanItems();
 
-        assertThat(finishedSpans.stream().map(SpanData::getTraceId)).contains(traceId);
-        assertThat(finishedSpans.stream().map(SpanData::getStatus)).contains(StatusData.create(StatusCode.ERROR, "saving failed"));
-        assertThat(finishedSpans.stream().map(SpanData::getName)).contains("processing-record-from-kafka");
+        Awaitility
+            .await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(100L))
+            .untilAsserted(() -> {
+                final List<SpanData> finishedSpans = spanExporter.getFinishedSpanItems();
+
+                assertThat(finishedSpans.stream().map(SpanData::getTraceId)).contains(traceId);
+                assertThat(finishedSpans.stream().map(SpanData::getStatus)).contains(StatusData.create(StatusCode.ERROR, "saving failed"));
+                assertThat(finishedSpans.stream().map(SpanData::getName)).contains("processing-record-from-kafka");
+            });
     }
 
     protected void stubOkResponse(@NonNull final ParsedDateTime parsedDateTime) {

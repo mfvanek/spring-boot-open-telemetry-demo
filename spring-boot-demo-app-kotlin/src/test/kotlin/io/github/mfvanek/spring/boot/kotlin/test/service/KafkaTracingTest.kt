@@ -22,6 +22,7 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.data.StatusData
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
@@ -36,8 +37,10 @@ import org.springframework.web.util.UriBuilder
 import org.wiremock.spring.EnableWireMock
 import tools.jackson.databind.ObjectMapper
 import java.time.Clock
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 @ActiveProfiles("test")
@@ -85,11 +88,20 @@ internal class KafkaTracingTest {
             .expectBody(LocalDateTime::class.java)
             .returnResult()
         val traceId = result.responseHeaders.getFirst(TRACE_ID_HEADER_NAME)
-        val finishedSpans = spanExporter.finishedSpanItems
 
-        assertThat(finishedSpans.map { it.traceId }).contains(traceId)
-        assertThat(finishedSpans.map { it.status }).contains(StatusData.create(StatusCode.ERROR, "saving failed"))
-        assertThat(finishedSpans.map { it.name }).contains("processing-record-from-kafka")
+        Awaitility
+            .await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(100L))
+            .untilAsserted {
+                val finishedSpans = spanExporter.finishedSpanItems
+
+                assertThat(finishedSpans.map { it.traceId }).contains(traceId)
+                assertThat(
+                    finishedSpans.map { it.status }
+                ).contains(StatusData.create(StatusCode.ERROR, "saving failed"))
+                assertThat(finishedSpans.map { it.name }).contains("processing-record-from-kafka")
+            }
     }
 
     private fun stubOkResponse(parsedDateTime: ParsedDateTime): String {
