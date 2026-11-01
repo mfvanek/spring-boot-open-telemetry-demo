@@ -2,9 +2,9 @@ include:
     - docker-compose-base.yml
 
 services:
-    spring-boot-3-demo-app:
-        container_name: spring_boot_3_demo_app
-        image: spring-boot-3-demo-app:latest
+    spring-boot-demo-app:
+        container_name: spring_boot_demo_app
+        image: spring-boot-demo-app:latest
         environment:
             - SPRING_PROFILES_ACTIVE=docker
         ports:
@@ -22,9 +22,9 @@ services:
         networks:
             - jaeger-example
 
-    spring-boot-3-demo-app-kotlin:
-        container_name: spring_boot_3_demo_app_kotlin
-        image: spring-boot-3-demo-app-kotlin:latest
+    spring-boot-demo-app-kotlin:
+        container_name: spring_boot_demo_app_kotlin
+        image: spring-boot-demo-app-kotlin:latest
         environment:
             - SPRING_PROFILES_ACTIVE=docker
         ports:

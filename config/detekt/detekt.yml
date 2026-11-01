@@ -32,6 +32,7 @@ style:
         forbiddenImports:
             - 'org.junit.jupiter.api.Assertions*'
             - 'org.hamcrest*'
+            - 'org.testcontainers.shaded.org.awaitility.Awaitility*'
     ForbiddenMethodCall:
         active: true
         methods:

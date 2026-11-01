@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
+package io.github.mfvanek.spring.boot.test.service;
+
+import io.github.mfvanek.db.migrations.common.saver.DbSaver;
+import io.github.mfvanek.spring.boot.initializers.JaegerInitializer;
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer;
+import io.github.mfvanek.spring.boot.initializers.PostgresInitializer;
+import io.github.mfvanek.spring.boot.test.service.dto.CurrentTime;
+import io.github.mfvanek.spring.boot.test.service.dto.ParsedDateTime;
+import io.github.mfvanek.spring.boot.test.support.SpanExporterConfiguration;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
+import io.opentelemetry.sdk.trace.data.SpanData;
+import io.opentelemetry.sdk.trace.data.StatusData;
+import lombok.SneakyThrows;
+import org.awaitility.Awaitility;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.wiremock.spring.EnableWireMock;
+import tools.jackson.databind.ObjectMapper;
+
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static io.github.mfvanek.spring.boot.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+
+@SuppressWarnings("checkstyle:classfanoutcomplexity")
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(
+    classes = SpanExporterConfiguration.class,
+    initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class}
+)
+@EnableWireMock
+@AutoConfigureWebTestClient
+class KafkaTracingTest {
+
+    @Autowired
+    protected WebTestClient webTestClient;
+    @Autowired
+    protected ObjectMapper objectMapper;
+    @Autowired
+    protected Clock clock;
+    @Autowired
+    private InMemorySpanExporter spanExporter;
+    @MockitoBean
+    private DbSaver dbSaver;
+
+    @Test
+    void closeAllSpansWhenException() {
+        final Exception testException = new RuntimeException("saving failed");
+        doThrow(testException).when(dbSaver).processSingleRecord(any());
+        stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
+
+        final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
+            .uri(uriBuilder -> uriBuilder.path("current-time")
+                .build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().exists(TRACE_ID_HEADER_NAME)
+            .expectBody(LocalDateTime.class)
+            .returnResult();
+        final String traceId = result.getResponseHeaders().getFirst(TRACE_ID_HEADER_NAME);
+
+        Awaitility
+            .await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(100L))
+            .untilAsserted(() -> {
+                final List<SpanData> finishedSpans = spanExporter.getFinishedSpanItems();
+
+                assertThat(finishedSpans.stream().map(SpanData::getTraceId)).contains(traceId);
+                assertThat(finishedSpans.stream().map(SpanData::getStatus)).contains(StatusData.create(StatusCode.ERROR, "saving failed"));
+                assertThat(finishedSpans.stream().map(SpanData::getName)).contains("processing-record-from-kafka");
+            });
+    }
+
+    protected void stubOkResponse(@NonNull final ParsedDateTime parsedDateTime) {
+        final String zoneName = TimeZone.getDefault().getID();
+        stubOkResponse(zoneName, parsedDateTime);
+    }
+
+    @SneakyThrows
+    private void stubOkResponse(@NonNull final String zoneName, @NonNull final ParsedDateTime parsedDateTime) {
+        final CurrentTime currentTime = new CurrentTime(parsedDateTime);
+        stubFor(get(urlPathMatching("/" + zoneName))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withBody(objectMapper.writeValueAsString(currentTime))
+            ));
+    }
+}

@@ -26,11 +26,11 @@ docker-compose --file docker/docker-compose-base.yml  --project-name="spring-boo
 ### Start applications
 
 ```shell
-./gradlew spring-boot-3-demo-app-kotlin:bootRun
+./gradlew spring-boot-demo-app-kotlin:bootRun
 ```
 
 ```shell
-./gradlew spring-boot-3-demo-app:bootRun
+./gradlew spring-boot-demo-app:bootRun
 ```
 
 ### Make http request
