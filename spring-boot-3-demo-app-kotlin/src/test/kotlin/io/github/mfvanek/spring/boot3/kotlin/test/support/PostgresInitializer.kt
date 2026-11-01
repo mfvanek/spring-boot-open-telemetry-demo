@@ -1,11 +1,18 @@
+/*
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 package io.github.mfvanek.spring.boot3.kotlin.test.support
 
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.Network
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
 class PostgresInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {

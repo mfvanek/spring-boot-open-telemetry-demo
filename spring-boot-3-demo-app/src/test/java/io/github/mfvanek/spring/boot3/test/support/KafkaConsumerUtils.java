@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -12,7 +12,8 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.jspecify.annotations.NonNull;
+import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
@@ -23,16 +24,15 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
-import javax.annotation.Nonnull;
 
 @UtilityClass
 public class KafkaConsumerUtils {
 
     public KafkaMessageListenerContainer<UUID, String> setUpKafkaConsumer(
-        @Nonnull final KafkaProperties kafkaProperties,
-        @Nonnull final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords) {
+        @NonNull final KafkaProperties kafkaProperties,
+        @NonNull final BlockingQueue<ConsumerRecord<UUID, String>> consumerRecords) {
         final var containerProperties = new ContainerProperties(kafkaProperties.getTemplate().getDefaultTopic(), "open.telemetry.sb3.queue.additional");
-        final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", "false");
+        final Map<String, Object> consumerProperties = KafkaTestUtils.consumerProps(KafkaInitializer.getBootstrapSevers(), "test-group", false);
         consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, KafkaInitializer.plainJaas());

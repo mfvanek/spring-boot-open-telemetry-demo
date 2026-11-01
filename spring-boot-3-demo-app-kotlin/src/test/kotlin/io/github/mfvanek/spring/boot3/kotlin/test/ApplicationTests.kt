@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 package io.github.mfvanek.spring.boot3.kotlin.test
 
 import io.github.mfvanek.spring.boot3.kotlin.test.support.JaegerInitializer
@@ -51,7 +58,7 @@ class ApplicationTests : TestBase() {
                             String.format(
                                 Locale.ROOT,
                                 """
-                        OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, timeoutNanos=5000000000, connectTimeoutNanos=2000000000, compressorEncoding=gzip, headers=Headers{User-Agent=OBFUSCATED}, retryPolicy=RetryPolicy{maxAttempts=2, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},
+                        OtlpGrpcSpanExporter{endpoint=http://localhost:%d, endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, timeoutNanos=5000000000, connectTimeoutNanos=2000000000, compressorEncoding=gzip, headers=Headers{User-Agent=OBFUSCATED}, retryPolicy=RetryPolicy{maxAttempts=2, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},
                                 """.trimIndent(),
                                 JaegerInitializer.getFirstMappedPort()
                             )

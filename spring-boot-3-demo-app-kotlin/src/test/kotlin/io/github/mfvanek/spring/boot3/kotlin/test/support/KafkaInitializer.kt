@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 package io.github.mfvanek.spring.boot3.kotlin.test.support
 
 import org.apache.kafka.common.security.plain.PlainLoginModule
 import org.springframework.boot.test.util.TestPropertyValues.of
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.testcontainers.containers.KafkaContainer
+import org.testcontainers.kafka.ConfluentKafkaContainer
 import org.testcontainers.utility.DockerImageName
 
 private const val KAFKA_USER_NAME = "sb-ot-demo-user"
@@ -23,8 +30,11 @@ internal class KafkaInitializer : ApplicationContextInitializer<ConfigurableAppl
 
     companion object {
         private val IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.7.1")
-        private val KAFKA_CONTAINER = KafkaContainer(IMAGE_NAME)
-            .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
+        private val KAFKA_CONTAINER = ConfluentKafkaContainer(IMAGE_NAME)
+            .withEnv(
+                "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
+                "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT"
+            )
             .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_SASL_ENABLED_MECHANISMS", "PLAIN")
             .withEnv("KAFKA_SASL_JAAS_CONFIG", plainJaas())
             .withEnv(

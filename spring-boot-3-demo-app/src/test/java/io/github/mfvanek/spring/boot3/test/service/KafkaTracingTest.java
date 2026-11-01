@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -7,7 +7,6 @@
 
 package io.github.mfvanek.spring.boot3.test.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.db.migrations.common.saver.DbSaver;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
@@ -21,22 +20,24 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
 import lombok.SneakyThrows;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.wiremock.spring.EnableWireMock;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
-import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -54,7 +55,8 @@ import static org.mockito.Mockito.doThrow;
     classes = SpanExporterConfiguration.class,
     initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class}
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
+@AutoConfigureWebTestClient
 class KafkaTracingTest {
 
     @Autowired
@@ -95,13 +97,13 @@ class KafkaTracingTest {
         assertThat(finishedSpans.stream().map(SpanData::getName)).contains("processing-record-from-kafka");
     }
 
-    protected void stubOkResponse(@Nonnull final ParsedDateTime parsedDateTime) {
+    protected void stubOkResponse(@NonNull final ParsedDateTime parsedDateTime) {
         final String zoneName = TimeZone.getDefault().getID();
         stubOkResponse(zoneName, parsedDateTime);
     }
 
     @SneakyThrows
-    private void stubOkResponse(@Nonnull final String zoneName, @Nonnull final ParsedDateTime parsedDateTime) {
+    private void stubOkResponse(@NonNull final String zoneName, @NonNull final ParsedDateTime parsedDateTime) {
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
         stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -7,19 +7,17 @@
 
 package io.github.mfvanek.spring.boot3.reactive.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot3.reactive.service.dto.CurrentTime;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,7 +35,7 @@ public class PublicApiService {
 
     public Mono<LocalDateTime> getZonedTime() {
         return getZonedTimeFromWorldTimeApi()
-            .onErrorResume(ExhaustedRetryException.class,
+            .onErrorResume(RetriesExhaustedException.class,
                 it -> {
                     log.warn("Failed to get response", it);
                     return Mono.empty();
@@ -68,11 +66,10 @@ public class PublicApiService {
             })
             .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                 log.error("Request to '/{}' failed after {} attempts.", zoneName, retrySignal.totalRetries() + 1);
-                return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
+                return new RetriesExhaustedException("Retries exhausted", retrySignal.failure());
             });
     }
 
-    @SneakyThrows
     private Mono<? extends CurrentTime> convert(String string) {
         return Mono.just(mapper.readValue(string, CurrentTime.class));
     }

@@ -2,14 +2,14 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     id("base")
-    id("com.github.ben-manes.versions") version "0.66.0"
+    id("io.github.ben-manes.versions") version "0.67.0"
 }
 
 description = "Experiments with Java"
 
 allprojects {
     group = "io.github.mfvanek"
-    version = "0.5.1"
+    version = "0.6.0"
 
     repositories {
         mavenCentral()
@@ -19,7 +19,7 @@ allprojects {
 
 tasks {
     wrapper {
-        gradleVersion = "9.4.0"
+        gradleVersion = "9.8.2"
     }
 }
 

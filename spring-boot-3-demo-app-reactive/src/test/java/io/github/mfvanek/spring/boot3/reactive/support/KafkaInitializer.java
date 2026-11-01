@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -8,16 +8,16 @@
 package io.github.mfvanek.spring.boot3.reactive.support;
 
 import org.apache.kafka.common.security.plain.PlainLoginModule;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 
 public class KafkaInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
@@ -26,19 +26,19 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
 
     private static final DockerImageName IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.7.1");
 
-    private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(IMAGE_NAME)
-        .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
+    private static final ConfluentKafkaContainer KAFKA_CONTAINER = new ConfluentKafkaContainer(IMAGE_NAME)
+        .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT")
         .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_SASL_ENABLED_MECHANISMS", "PLAIN")
         .withEnv("KAFKA_SASL_JAAS_CONFIG", plainJaas())
         .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_PLAIN_SASL_JAAS_CONFIG", plainJaas(Map.of(KAFKA_USER_NAME, KAFKA_USER_PASSWORD)));
 
-    @Nonnull
+    @NonNull
     public static String plainJaas() {
         return plainJaas(Map.of());
     }
 
-    @Nonnull
-    private static String plainJaas(@Nonnull final Map<String, String> additionalUsers) {
+    @NonNull
+    private static String plainJaas(@NonNull final Map<String, String> additionalUsers) {
         final String users = additionalUsers.entrySet()
             .stream()
             .map(e -> String.format(Locale.ROOT, "user_%s=\"%s\"", e.getKey(), e.getValue()))
@@ -55,7 +55,7 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
     }
 
     @Override
-    public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
+    public void initialize(@NonNull final ConfigurableApplicationContext applicationContext) {
         KAFKA_CONTAINER.start();
         TestPropertyValues.of(
             "spring.kafka.bootstrap-servers=" + KAFKA_CONTAINER.getBootstrapServers(),
@@ -64,7 +64,7 @@ public class KafkaInitializer implements ApplicationContextInitializer<Configura
         ).applyTo(applicationContext.getEnvironment());
     }
 
-    @Nonnull
+    @NonNull
     public static String getBootstrapSevers() {
         return KAFKA_CONTAINER.getBootstrapServers();
     }

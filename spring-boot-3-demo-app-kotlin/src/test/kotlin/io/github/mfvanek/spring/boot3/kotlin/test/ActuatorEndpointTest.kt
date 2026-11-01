@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 package io.github.mfvanek.spring.boot3.kotlin.test
 
 import io.github.mfvanek.spring.boot3.kotlin.test.support.TestBase
@@ -39,7 +46,7 @@ class ActuatorEndpointTest : TestBase() {
     @CsvSource(
         value = [
             "prometheus|jvm_threads_live_threads|text/plain",
-            "health|{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}|application/json",
+            "health|{\"groups\":[\"liveness\",\"readiness\"],\"status\":\"UP\"}|application/json",
             "health/liveness|{\"status\":\"UP\"}|application/json",
             "health/readiness|{\"status\":\"UP\"}|application/json", "info|\"version\":|application/json"
         ],

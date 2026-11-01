@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -7,25 +7,24 @@
 
 package io.github.mfvanek.spring.boot3.test.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
-import javax.annotation.Nullable;
 
 @Slf4j
 @Service
@@ -43,15 +42,15 @@ public class PublicApiService {
         try {
             final ParsedDateTime result = getZonedTimeFromWorldTimeApi().getDatetime();
             return result.toLocalDateTime();
-        } catch (ExhaustedRetryException e) {
+        } catch (RetriesExhaustedException e) {
             log.warn("Failed to get response", e);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.warn("Failed to convert response", e);
         }
         return null;
     }
 
-    private CurrentTime getZonedTimeFromWorldTimeApi() throws JsonProcessingException {
+    private CurrentTime getZonedTimeFromWorldTimeApi() {
         final String zoneName = TimeZone.getDefault().getID();
         final Mono<String> response = webClient.get()
             .uri(zoneName)
@@ -72,7 +71,7 @@ public class PublicApiService {
             })
             .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                 log.error("Request to '/{}' failed after {} attempts.", zoneName, retrySignal.totalRetries() + 1);
-                return new ExhaustedRetryException("Retries exhausted", retrySignal.failure());
+                return new RetriesExhaustedException("Retries exhausted", retrySignal.failure());
             });
     }
 }

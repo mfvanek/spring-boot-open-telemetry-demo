@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -7,17 +7,17 @@
 
 package io.github.mfvanek.spring.boot3.test.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import io.github.mfvanek.spring.boot3.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot3.test.service.dto.ParsedDateTime;
-import lombok.SneakyThrows;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
+import org.springframework.boot.micrometer.metrics.test.autoconfigure.AutoConfigureMetrics;
+import org.springframework.boot.micrometer.tracing.test.autoconfigure.AutoConfigureTracing;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,13 +25,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.wiremock.spring.EnableWireMock;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.util.TimeZone;
-import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -39,13 +40,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 @ActiveProfiles("test")
-@AutoConfigureObservability
+@AutoConfigureTracing
+@AutoConfigureMetrics
+@AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(
     classes = TestBase.CustomClockConfiguration.class,
     initializers = {KafkaInitializer.class, JaegerInitializer.class, PostgresInitializer.class}
 )
-@AutoConfigureWireMock(port = 0)
+@EnableWireMock
 public abstract class TestBase {
 
     private static final ZoneOffset FIXED_ZONE = ZoneOffset.ofHours(-1);
@@ -67,15 +70,14 @@ public abstract class TestBase {
         WireMock.resetAllRequests();
     }
 
-    @Nonnull
-    protected String stubOkResponse(@Nonnull final ParsedDateTime parsedDateTime) {
+    @NonNull
+    protected String stubOkResponse(@NonNull final ParsedDateTime parsedDateTime) {
         final String zoneName = TimeZone.getDefault().getID();
         stubOkResponse(zoneName, parsedDateTime);
         return zoneName;
     }
 
-    @SneakyThrows
-    private void stubOkResponse(@Nonnull final String zoneName, @Nonnull final ParsedDateTime parsedDateTime) {
+    private void stubOkResponse(@NonNull final String zoneName, @NonNull final ParsedDateTime parsedDateTime) {
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
         stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()
@@ -84,7 +86,7 @@ public abstract class TestBase {
             ));
     }
 
-    @Nonnull
+    @NonNull
     protected String stubErrorResponse() {
         final String zoneName = TimeZone.getDefault().getID();
         final RuntimeException exception = new RuntimeException("Retries exhausted");
@@ -98,8 +100,7 @@ public abstract class TestBase {
         return zoneName;
     }
 
-    @SneakyThrows
-    private void stubErrorResponse(@Nonnull final String zoneName, @Nonnull final RuntimeException errorForResponse) {
+    private void stubErrorResponse(@NonNull final String zoneName, @NonNull final RuntimeException errorForResponse) {
         stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()
                 .withStatus(500)
@@ -107,7 +108,6 @@ public abstract class TestBase {
             ));
     }
 
-    @SneakyThrows
     private void stubBadResponse(String zoneName) {
         stubFor(
             get(urlPathMatching("/" + zoneName))

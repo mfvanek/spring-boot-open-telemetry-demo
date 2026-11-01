@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
+ * https://github.com/mfvanek/spring-boot-open-telemetry-demo
+ *
+ * Licensed under the Apache License 2.0
+ */
+
 package io.github.mfvanek.spring.boot3.kotlin.test.support
 
 import org.springframework.boot.test.util.TestPropertyValues
@@ -12,7 +19,7 @@ class JaegerInitializer : ApplicationContextInitializer<ConfigurableApplicationC
         JAEGER.start()
         val jaegerUrl = "http://localhost:" + JAEGER.firstMappedPort
         TestPropertyValues.of(
-            "management.otlp.tracing.endpoint=$jaegerUrl"
+            "management.opentelemetry.tracing.export.otlp.endpoint=$jaegerUrl"
         ).applyTo(context.environment)
     }
 

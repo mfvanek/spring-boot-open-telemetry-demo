@@ -25,6 +25,7 @@
         <exclude name="LongVariable"/>
         <exclude name="CallSuperInConstructor"/>
         <exclude name="MethodArgumentCouldBeFinal"/> <!-- AvoidReassigningParameters is enough -->
+        <exclude name="LocalVariableDeclarationShouldBeAtStartOfBlock"/>
     </rule>
 
     <rule ref="category/java/codestyle.xml/ClassNamingConventions">
@@ -49,7 +50,7 @@
 
     <rule ref="category/java/codestyle.xml/FieldNamingConventions">
         <properties>
-            <property name="exclusions" value="serialVersionUID|logger"/>
+            <property name="exclusions" value="serialVersionUID,logger"/>
         </properties>
     </rule>
 
@@ -70,7 +71,6 @@
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
         <exclude name="AvoidCatchingGenericException"/>
-        <exclude name="UseUtilityClass"/>
         <exclude name="ExcessiveImports"/>
         <exclude name="CouplingBetweenObjects"/>
         <exclude name="AbstractClassWithoutAnyMethod"/>

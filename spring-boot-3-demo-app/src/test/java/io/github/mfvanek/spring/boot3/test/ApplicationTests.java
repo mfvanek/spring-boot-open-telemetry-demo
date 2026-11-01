@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -48,7 +48,7 @@ class ApplicationTests extends TestBase {
             .isInstanceOf(OtlpGrpcSpanExporter.class)
             .satisfies(e -> assertThat(e.toString())
                 .contains(String.format(Locale.ROOT, """
-                        OtlpGrpcSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, \
+                        OtlpGrpcSpanExporter{endpoint=http://localhost:%d, \
                         endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
                         timeoutNanos=5000000000, connectTimeoutNanos=2000000000, compressorEncoding=gzip, \
                         headers=Headers{User-Agent=OBFUSCATED}, \

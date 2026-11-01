@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -20,9 +20,9 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class KafkaSendingService(
-    @Value("\${app.tenant.name}") private val tenantName: String,
+    @param:Value("\${app.tenant.name}") private val tenantName: String,
     private val kafkaTemplate: KafkaTemplate<UUID, String>,
-    @Value("\${spring.kafka.template.additional-topic}") private val additionalTopic: String,
+    @param:Value("\${spring.kafka.template.additional-topic}") private val additionalTopic: String,
 ) {
     fun sendNotification(message: String): CompletableFuture<SendResult<UUID, String>> {
         withLoggingContext("tenant.name" to tenantName) {
