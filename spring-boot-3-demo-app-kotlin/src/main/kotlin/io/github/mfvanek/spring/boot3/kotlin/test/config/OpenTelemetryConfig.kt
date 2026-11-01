@@ -22,7 +22,7 @@ class OpenTelemetryConfig {
 
     @Bean
     fun otelJaegerGrpcSpanExporterBuilderCustomizer(
-        @Value("\${management.opentelemetry.tracing.export.otlp.retry.max-attempts:2}") maxAttempts: Int
+        @Value($$"${management.opentelemetry.tracing.export.otlp.retry.max-attempts:2}") maxAttempts: Int
     ): OtlpGrpcSpanExporterBuilderCustomizer {
         return OtlpGrpcSpanExporterBuilderCustomizer { builder: OtlpGrpcSpanExporterBuilder ->
             builder.setRetryPolicy(

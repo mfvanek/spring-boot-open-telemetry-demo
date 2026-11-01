@@ -13,7 +13,7 @@ import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.otel.bridge.OtelTracer;
-import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +43,16 @@ class ApplicationTests extends TestBase {
             .isInstanceOf(OtelTracer.class)
             .satisfies(t -> assertThat(t.currentSpan())
                 .isNotEqualTo(Span.NOOP));
-        assertThat(applicationContext.getBean("otlpHttpSpanExporter"))
+        assertThat(applicationContext.getBean("otlpGrpcSpanExporter"))
             .isNotNull()
-            .isInstanceOf(OtlpHttpSpanExporter.class)
+            .isInstanceOf(OtlpGrpcSpanExporter.class)
             .satisfies(e -> assertThat(e.toString())
                 .contains(String.format(Locale.ROOT, """
-                        OtlpHttpSpanExporter{endpoint=http://localhost:%d, \
-                        timeoutNanos=5000000000, proxyOptions=null, compressorEncoding=null, connectTimeoutNanos=10000000000, \
-                        exportAsJson=false, headers=Headers{User-Agent=OBFUSCATED}, retryPolicy=RetryPolicy{maxAttempts=2, \
-                        initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},""",
+                        OtlpGrpcSpanExporter{endpoint=http://localhost:%d, \
+                        endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
+                        timeoutNanos=5000000000, connectTimeoutNanos=2000000000, compressorEncoding=gzip, \
+                        headers=Headers{User-Agent=OBFUSCATED}, \
+                        retryPolicy=RetryPolicy{maxAttempts=2, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},""",
                     JaegerInitializer.getFirstMappedPort())));
     }
 
