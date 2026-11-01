@@ -13,7 +13,7 @@ plugins {
     id("jacoco")
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.spring")
-    id("io.gitlab.arturbosch.detekt")
+    id("dev.detekt")
     id("sb-ot-demo.forbidden-apis")
     id("sb-ot-demo.java-compile")
 }
@@ -22,7 +22,7 @@ private val libs = extensions.getByType<VersionCatalogsExtension>().named("libs"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    libs.findLibrary("detekt-formatting").ifPresent {
+    libs.findLibrary("detekt-ktlint").ifPresent {
         detektPlugins(it)
     }
     libs.findLibrary("detekt-libraries").ifPresent {

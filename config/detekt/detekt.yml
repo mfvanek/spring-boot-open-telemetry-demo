@@ -6,9 +6,21 @@ libraries:
     LibraryEntitiesShouldNotBePublic:
         active: false
 
-formatting:
+ktlint:
+    ClassSignature:
+        active: false
+    FunctionExpressionBody:
+        active: false
+    FunctionLiteral:
+        active: false
+    FunctionSignature:
+        active: false
     MaximumLineLength:
         maxLineLength: 200
+    TrailingCommaOnCallSite:
+        active: false
+    TrailingCommaOnDeclarationSite:
+        active: false
 
 style:
     MaxLineLength:
@@ -17,8 +29,9 @@ style:
         ignoreLateinitVar: true
     ForbiddenImport:
         active: true
-        imports: []
-        forbiddenPatterns: 'org\.junit\.jupiter\.api\.Assertions|org\.hamcrest'
+        forbiddenImports:
+            - 'org.junit.jupiter.api.Assertions*'
+            - 'org.hamcrest*'
     ForbiddenMethodCall:
         active: true
         methods:

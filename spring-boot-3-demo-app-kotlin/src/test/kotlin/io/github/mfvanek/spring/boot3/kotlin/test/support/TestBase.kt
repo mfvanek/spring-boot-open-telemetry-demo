@@ -19,7 +19,7 @@ import tools.jackson.databind.ObjectMapper
 import java.time.Clock
 import java.util.*
 
-@Suppress("UnnecessaryAbstractClass")
+@Suppress("AbstractClassCanBeConcreteClass")
 @ActiveProfiles("test")
 @AutoConfigureTracing
 @AutoConfigureMetrics
