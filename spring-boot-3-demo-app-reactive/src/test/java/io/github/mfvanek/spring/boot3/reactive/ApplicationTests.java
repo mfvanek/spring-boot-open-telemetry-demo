@@ -48,7 +48,7 @@ class ApplicationTests extends TestBase {
             .isInstanceOf(OtlpHttpSpanExporter.class)
             .satisfies(e -> assertThat(e.toString())
                 .contains(String.format(Locale.ROOT, """
-                        OtlpHttpSpanExporter{exporterName=otlp, type=span, endpoint=http://localhost:%d, \
+                        OtlpHttpSpanExporter{endpoint=http://localhost:%d, \
                         timeoutNanos=5000000000, proxyOptions=null, compressorEncoding=null, connectTimeoutNanos=10000000000, \
                         exportAsJson=false, headers=Headers{User-Agent=OBFUSCATED}, retryPolicy=RetryPolicy{maxAttempts=2, \
                         initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},""",

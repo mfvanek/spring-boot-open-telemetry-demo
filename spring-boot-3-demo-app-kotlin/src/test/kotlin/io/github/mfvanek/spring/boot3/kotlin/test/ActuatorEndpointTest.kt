@@ -39,7 +39,7 @@ class ActuatorEndpointTest : TestBase() {
     @CsvSource(
         value = [
             "prometheus|jvm_threads_live_threads|text/plain",
-            "health|{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}|application/json",
+            "health|{\"groups\":[\"liveness\",\"readiness\"],\"status\":\"UP\"}|application/json",
             "health/liveness|{\"status\":\"UP\"}|application/json",
             "health/readiness|{\"status\":\"UP\"}|application/json", "info|\"version\":|application/json"
         ],
