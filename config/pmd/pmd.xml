@@ -49,7 +49,7 @@
 
     <rule ref="category/java/codestyle.xml/FieldNamingConventions">
         <properties>
-            <property name="exclusions" value="serialVersionUID|logger"/>
+            <property name="exclusions" value="serialVersionUID,logger"/>
         </properties>
     </rule>
 

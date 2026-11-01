@@ -7,7 +7,12 @@
 
 package io.github.mfvanek.spring.boot3.reactive.service;
 
+import java.io.Serial;
+
 class RetriesExhaustedException extends RuntimeException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     RetriesExhaustedException(final String message, final Throwable cause) {
         super(message, cause);

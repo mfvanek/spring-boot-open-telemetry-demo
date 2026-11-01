@@ -4,7 +4,7 @@ import org.apache.kafka.common.security.plain.PlainLoginModule
 import org.springframework.boot.test.util.TestPropertyValues.of
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
-import org.testcontainers.kafka.KafkaContainer
+import org.testcontainers.kafka.ConfluentKafkaContainer
 import org.testcontainers.utility.DockerImageName
 
 private const val KAFKA_USER_NAME = "sb-ot-demo-user"
@@ -23,7 +23,7 @@ internal class KafkaInitializer : ApplicationContextInitializer<ConfigurableAppl
 
     companion object {
         private val IMAGE_NAME = DockerImageName.parse("confluentinc/cp-kafka:7.7.1")
-        private val KAFKA_CONTAINER = KafkaContainer(IMAGE_NAME)
+        private val KAFKA_CONTAINER = ConfluentKafkaContainer(IMAGE_NAME)
             .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
             .withEnv("KAFKA_LISTENER_NAME_PLAINTEXT_SASL_ENABLED_MECHANISMS", "PLAIN")
             .withEnv("KAFKA_SASL_JAAS_CONFIG", plainJaas())
