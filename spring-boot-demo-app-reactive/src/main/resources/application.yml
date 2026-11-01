@@ -24,9 +24,9 @@ spring:
         change-log: classpath:/db/changelog/db.changelog-master.yaml
     kafka:
         template:
-            default-topic: open.telemetry.sb3.queue
+            default-topic: open.telemetry.queue
             observation-enabled: true # Important!!!
-            additional-topic: open.telemetry.sb3.queue.additional
+            additional-topic: open.telemetry.queue.additional
         producer:
             key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
             batch-size: 32KB
