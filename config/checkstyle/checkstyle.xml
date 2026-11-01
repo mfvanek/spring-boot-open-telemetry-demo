@@ -323,6 +323,11 @@
             <property name="illegalClasses" value="^org\.mockito\.Mockito$"/>
             <property name="regexp" value="true"/>
         </module>
+        <module name="IllegalImport">
+            <property name="id" value="IllegalImportShadedAwaitility"/>
+            <property name="illegalClasses" value="^org\.testcontainers\.shaded\.org\.awaitility\.Awaitility"/>
+            <property name="regexp" value="true"/>
+        </module>
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceBefore"/>
         <module name="NoWhitespaceBeforeCaseDefaultColon"/>
