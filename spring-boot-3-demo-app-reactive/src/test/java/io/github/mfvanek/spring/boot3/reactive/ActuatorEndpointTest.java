@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -8,6 +8,7 @@
 package io.github.mfvanek.spring.boot3.reactive;
 
 import io.github.mfvanek.spring.boot3.reactive.support.TestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,8 +17,6 @@ import org.springframework.boot.test.web.server.LocalManagementPort;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import javax.annotation.Nonnull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,9 +49,9 @@ class ActuatorEndpointTest extends TestBase {
         "health/liveness|{\"status\":\"UP\"}|application/json",
         "health/readiness|{\"status\":\"UP\"}|application/json",
         "info|\"version\":|application/json"}, delimiter = '|')
-    void actuatorEndpointShouldReturnOk(@Nonnull final String endpointName,
-                                        @Nonnull final String expectedSubstring,
-                                        @Nonnull final String mediaType) {
+    void actuatorEndpointShouldReturnOk(@NonNull final String endpointName,
+                                        @NonNull final String expectedSubstring,
+                                        @NonNull final String mediaType) {
         final String result = actuatorClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path(endpointName)

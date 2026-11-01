@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -11,15 +11,15 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class PostgresInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     private static final DockerImageName IMAGE = DockerImageName.parse("postgres:17.4");
     private static final Network NETWORK = Network.newNetwork();
-    private static final PostgreSQLContainer<?> CONTAINER = new PostgreSQLContainer<>(IMAGE);
+    private static final PostgreSQLContainer CONTAINER = new PostgreSQLContainer(IMAGE);
 
     @Override
     public void initialize(final ConfigurableApplicationContext context) {

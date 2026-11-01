@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -13,6 +13,7 @@ import io.github.mfvanek.spring.boot3.test.support.TestBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.awaitility.Awaitility;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,6 @@ import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
 
 import static io.github.mfvanek.spring.boot3.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +74,7 @@ class TimeControllerTest extends TestBase {
 
     @Order(1)
     @Test
-    void spanShouldBeReportedInLogs(@Nonnull final CapturedOutput output) throws InterruptedException {
+    void spanShouldBeReportedInLogs(@NonNull final CapturedOutput output) throws InterruptedException {
         stubOkResponse(ParsedDateTime.from(LocalDateTime.now(clock).minusDays(1)));
 
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
@@ -110,7 +110,7 @@ class TimeControllerTest extends TestBase {
 
     @Order(2)
     @Test
-    void spanAndMdcShouldBeReportedWhenRetry(@Nonnull final CapturedOutput output) {
+    void spanAndMdcShouldBeReportedWhenRetry(@NonNull final CapturedOutput output) {
         final String zoneName = stubErrorResponse();
 
         final EntityExchangeResult<LocalDateTime> result = webTestClient.get()
@@ -144,8 +144,8 @@ class TimeControllerTest extends TestBase {
         return Objects.requireNonNullElse(queryResult, 0L);
     }
 
-    private void assertThatTraceIdPresentInKafkaHeaders(@Nonnull final ConsumerRecord<UUID, String> received,
-                                                        @Nonnull final String expectedTraceId) {
+    private void assertThatTraceIdPresentInKafkaHeaders(@NonNull final ConsumerRecord<UUID, String> received,
+                                                        @NonNull final String expectedTraceId) {
         assertThat(received.value()).startsWith("Current time = ");
         final Header[] headers = received.headers().toArray();
         final List<String> headerNames = Arrays.stream(headers)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -9,6 +9,7 @@ package io.github.mfvanek.spring.boot3.reactive.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,7 +19,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.UUID;
-import javax.annotation.Nonnull;
 
 @Slf4j
 @Service
@@ -28,9 +28,10 @@ public class KafkaSendingService {
     private final KafkaTemplate<UUID, String> kafkaTemplate;
     @Value("${app.tenant.name}")
     private String tenantName;
-    @Value("${spring.kafka.template.additional-topic}") private String additionalTopic;
+    @Value("${spring.kafka.template.additional-topic}")
+    private String additionalTopic;
 
-    public Mono<SendResult<UUID, String>> sendNotification(@Nonnull final String message) {
+    public Mono<SendResult<UUID, String>> sendNotification(@NonNull final String message) {
         return Mono.deferContextual(contextView -> {
             try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
                 log.info("Sending message \"{}\" to Kafka", message);
@@ -40,7 +41,7 @@ public class KafkaSendingService {
         });
     }
 
-    public Mono<SendResult<UUID, String>> sendNotificationToOtherTopic(@Nonnull final String message) {
+    public Mono<SendResult<UUID, String>> sendNotificationToOtherTopic(@NonNull final String message) {
         return Mono.deferContextual(contextView -> {
             try (MDC.MDCCloseable ignored = MDC.putCloseable("tenant.name", tenantName)) {
                 log.info("Sending message \"{}\" to {} of Kafka", message, additionalTopic);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -12,6 +12,7 @@ import io.github.mfvanek.spring.boot3.reactive.support.TestBase;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
@@ -41,7 +41,7 @@ class PublicApiServiceTest extends TestBase {
     private ObservationRegistry observationRegistry;
 
     @Test
-    void printTimeZoneSuccessfully(@Nonnull final CapturedOutput output) {
+    void printTimeZoneSuccessfully(@NonNull final CapturedOutput output) {
         final LocalDateTime localDateTimeNow = LocalDateTime.now(clock);
         final String zoneName = stubOkResponse(ParsedDateTime.from(localDateTimeNow));
 
@@ -63,7 +63,7 @@ class PublicApiServiceTest extends TestBase {
     }
 
     @Test
-    void retriesOnceToGetZonedTime(@Nonnull final CapturedOutput output) {
+    void retriesOnceToGetZonedTime(@NonNull final CapturedOutput output) {
         final String zoneName = stubErrorResponse();
 
         Observation.createNotStarted("test", observationRegistry).observe(() -> {
@@ -98,7 +98,7 @@ class PublicApiServiceTest extends TestBase {
     }
 
     @Test
-    void emptyResponseWhen200StatusWithBadResponseWithStepVerifier(@Nonnull final CapturedOutput output) {
+    void emptyResponseWhen200StatusWithBadResponseWithStepVerifier(@NonNull final CapturedOutput output) {
         stubOkButNotCorrectResponse();
 
         StepVerifier.create(publicApiService.getZonedTime())

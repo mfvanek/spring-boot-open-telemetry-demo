@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -7,13 +7,12 @@
 
 package io.github.mfvanek.spring.boot3.test.support;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
-
-import javax.annotation.Nonnull;
 
 @SuppressWarnings("resource")
 public class JaegerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -32,7 +31,7 @@ public class JaegerInitializer implements ApplicationContextInitializer<Configur
         ).applyTo(context.getEnvironment());
     }
 
-    @Nonnull
+    @NonNull
     public static Integer getFirstMappedPort() {
         return JAEGER.getFirstMappedPort();
     }

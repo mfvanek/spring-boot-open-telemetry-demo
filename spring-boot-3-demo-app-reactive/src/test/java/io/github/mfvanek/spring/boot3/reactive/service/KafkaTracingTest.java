@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025. Ivan Vakhrushev and others.
+ * Copyright (c) 2020-2026. Ivan Vakhrushev and others.
  * https://github.com/mfvanek/spring-boot-open-telemetry-demo
  *
  * Licensed under the Apache License 2.0
@@ -20,6 +20,7 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
 import lombok.SneakyThrows;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
-import javax.annotation.Nonnull;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -97,13 +97,13 @@ class KafkaTracingTest {
         assertThat(finishedSpans.stream().map(SpanData::getName)).contains("processing-record-from-kafka");
     }
 
-    protected void stubOkResponse(@Nonnull final ParsedDateTime parsedDateTime) {
+    protected void stubOkResponse(@NonNull final ParsedDateTime parsedDateTime) {
         final String zoneName = TimeZone.getDefault().getID();
         stubOkResponse(zoneName, parsedDateTime);
     }
 
     @SneakyThrows
-    private void stubOkResponse(@Nonnull final String zoneName, @Nonnull final ParsedDateTime parsedDateTime) {
+    private void stubOkResponse(@NonNull final String zoneName, @NonNull final ParsedDateTime parsedDateTime) {
         final CurrentTime currentTime = new CurrentTime(parsedDateTime);
         stubFor(get(urlPathMatching("/" + zoneName))
             .willReturn(aResponse()

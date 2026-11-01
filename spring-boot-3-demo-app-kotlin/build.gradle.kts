@@ -33,7 +33,7 @@ dependencies {
     implementation(libs.datasource.micrometer)
     implementation(libs.logstash)
     implementation("tools.jackson.module:jackson-module-kotlin")
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-micrometer-tracing-test")
