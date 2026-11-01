@@ -7,7 +7,7 @@
 
 package io.github.mfvanek.spring.boot.test;
 
-import io.github.mfvanek.spring.boot.test.support.JaegerInitializer;
+import io.github.mfvanek.spring.boot.initializers.JaegerInitializer;
 import io.github.mfvanek.spring.boot.test.support.TestBase;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Span;

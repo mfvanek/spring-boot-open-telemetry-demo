@@ -10,4 +10,8 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE,UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
         <Class name="~.*Test"/>
     </Match>
+    <Match>
+        <Bug pattern="OPM_OVERLY_PERMISSIVE_METHOD"/>
+        <Class name="~.*\.initializers\..*Initializer"/>
+    </Match>
 </FindBugsFilter>

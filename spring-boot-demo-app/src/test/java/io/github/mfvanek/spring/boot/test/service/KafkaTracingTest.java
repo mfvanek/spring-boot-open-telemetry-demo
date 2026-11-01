@@ -8,11 +8,11 @@
 package io.github.mfvanek.spring.boot.test.service;
 
 import io.github.mfvanek.db.migrations.common.saver.DbSaver;
+import io.github.mfvanek.spring.boot.initializers.JaegerInitializer;
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer;
+import io.github.mfvanek.spring.boot.initializers.PostgresInitializer;
 import io.github.mfvanek.spring.boot.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot.test.service.dto.ParsedDateTime;
-import io.github.mfvanek.spring.boot.test.support.JaegerInitializer;
-import io.github.mfvanek.spring.boot.test.support.KafkaInitializer;
-import io.github.mfvanek.spring.boot.test.support.PostgresInitializer;
 import io.github.mfvanek.spring.boot.test.support.SpanExporterConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.StatusCode;

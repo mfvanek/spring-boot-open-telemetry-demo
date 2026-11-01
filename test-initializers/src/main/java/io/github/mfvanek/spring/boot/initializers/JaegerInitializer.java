@@ -5,7 +5,7 @@
  * Licensed under the Apache License 2.0
  */
 
-package io.github.mfvanek.spring.boot.test.support;
+package io.github.mfvanek.spring.boot.initializers;
 
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.test.util.TestPropertyValues;

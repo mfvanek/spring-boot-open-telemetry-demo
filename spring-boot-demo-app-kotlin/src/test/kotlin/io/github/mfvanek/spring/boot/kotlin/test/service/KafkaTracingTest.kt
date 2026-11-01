@@ -9,13 +9,13 @@ package io.github.mfvanek.spring.boot.kotlin.test.service
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.github.mfvanek.db.migrations.common.saver.DbSaver
+import io.github.mfvanek.spring.boot.initializers.JaegerInitializer
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer
+import io.github.mfvanek.spring.boot.initializers.PostgresInitializer
 import io.github.mfvanek.spring.boot.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.toParsedDateTime
-import io.github.mfvanek.spring.boot.kotlin.test.support.JaegerInitializer
-import io.github.mfvanek.spring.boot.kotlin.test.support.KafkaInitializer
-import io.github.mfvanek.spring.boot.kotlin.test.support.PostgresInitializer
 import io.github.mfvanek.spring.boot.kotlin.test.support.SpanExporterConfiguration
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.trace.StatusCode

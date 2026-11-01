@@ -7,6 +7,7 @@
 
 package io.github.mfvanek.spring.boot.test.support;
 
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer;
 import lombok.experimental.UtilityClass;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

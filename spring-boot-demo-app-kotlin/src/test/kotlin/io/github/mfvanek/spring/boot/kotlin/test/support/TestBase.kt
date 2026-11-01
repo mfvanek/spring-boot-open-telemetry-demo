@@ -8,6 +8,9 @@
 package io.github.mfvanek.spring.boot.kotlin.test.support
 
 import com.github.tomakehurst.wiremock.client.WireMock
+import io.github.mfvanek.spring.boot.initializers.JaegerInitializer
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer
+import io.github.mfvanek.spring.boot.initializers.PostgresInitializer
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.ParsedDateTime
 import org.junit.jupiter.api.BeforeEach

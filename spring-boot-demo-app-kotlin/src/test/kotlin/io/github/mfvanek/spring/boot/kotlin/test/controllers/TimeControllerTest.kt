@@ -7,9 +7,9 @@
 
 package io.github.mfvanek.spring.boot.kotlin.test.controllers
 
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer
 import io.github.mfvanek.spring.boot.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.toParsedDateTime
-import io.github.mfvanek.spring.boot.kotlin.test.support.KafkaInitializer
 import io.github.mfvanek.spring.boot.kotlin.test.support.TestBase
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -18,6 +18,7 @@ import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.UUIDDeserializer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
+import org.awaitility.Awaitility
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -35,7 +36,6 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer
 import org.springframework.kafka.listener.MessageListener
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.kafka.test.utils.KafkaTestUtils
-import org.testcontainers.shaded.org.awaitility.Awaitility
 import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.time.LocalDateTime

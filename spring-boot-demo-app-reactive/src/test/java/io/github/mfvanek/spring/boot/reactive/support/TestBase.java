@@ -8,6 +8,9 @@
 package io.github.mfvanek.spring.boot.reactive.support;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import io.github.mfvanek.spring.boot.initializers.JaegerInitializer;
+import io.github.mfvanek.spring.boot.initializers.KafkaInitializer;
+import io.github.mfvanek.spring.boot.initializers.PostgresInitializer;
 import io.github.mfvanek.spring.boot.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot.reactive.service.dto.ParsedDateTime;
 import org.jspecify.annotations.NonNull;
