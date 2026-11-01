@@ -6,6 +6,7 @@
  */
 package io.github.mfvanek.spring.boot.kotlin.test.service
 
+import io.github.mfvanek.spring.boot.core.RetriesExhaustedException
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.toLocalDateTime

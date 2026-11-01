@@ -7,6 +7,7 @@
 
 package io.github.mfvanek.spring.boot.reactive.service;
 
+import io.github.mfvanek.spring.boot.core.RetriesExhaustedException;
 import io.github.mfvanek.spring.boot.reactive.service.dto.CurrentTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

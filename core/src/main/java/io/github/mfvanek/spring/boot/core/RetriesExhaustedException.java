@@ -5,16 +5,16 @@
  * Licensed under the Apache License 2.0
  */
 
-package io.github.mfvanek.spring.boot.reactive.service;
+package io.github.mfvanek.spring.boot.core;
 
 import java.io.Serial;
 
-class RetriesExhaustedException extends RuntimeException {
+public class RetriesExhaustedException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    RetriesExhaustedException(final String message, final Throwable cause) {
+    public RetriesExhaustedException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

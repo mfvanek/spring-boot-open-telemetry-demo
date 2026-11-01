@@ -7,6 +7,7 @@
 
 package io.github.mfvanek.spring.boot.test.service;
 
+import io.github.mfvanek.spring.boot.core.RetriesExhaustedException;
 import io.github.mfvanek.spring.boot.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot.test.service.dto.ParsedDateTime;
 import lombok.RequiredArgsConstructor;

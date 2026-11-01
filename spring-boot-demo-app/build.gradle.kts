@@ -27,6 +27,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.postgresql:postgresql")
     implementation("com.zaxxer:HikariCP")
+    implementation(project(":core"))
     implementation(project(":db-migrations"))
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
     implementation("com.github.blagerweij:liquibase-sessionlock")
