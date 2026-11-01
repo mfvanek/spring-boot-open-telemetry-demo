@@ -26,7 +26,7 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class PublicApiService(
-    @Value("\${app.retries}") private val retries: Int,
+    @param:Value("\${app.retries}") private val retries: Int,
     private val objectMapper: ObjectMapper,
     private val webClient: WebClient
 ) {
