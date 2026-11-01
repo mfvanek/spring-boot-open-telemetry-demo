@@ -7,7 +7,8 @@ A set of small Spring Boot applications to demonstrate OpenTelemetry capabilitie
 
 ## Spring Cloud Sleuth example
 
-If you are looking for a **Spring Boot 2.7.x** example with [Spring Cloud Sleuth](https://spring.io/projects/spring-cloud-sleuth), take a look at version [0.4.1](https://github.com/mfvanek/spring-boot-open-telemetry-demo/releases/tag/v.0.4.1)
+- If you are looking for a **Spring Boot 2.7.x** example with [Spring Cloud Sleuth](https://spring.io/projects/spring-cloud-sleuth), take a look at version [0.4.1](https://github.com/mfvanek/spring-boot-open-telemetry-demo/releases/tag/v.0.4.1)
+- If you are looking for a **Spring Boot 3.5.x** example, take a look at version [0.5.1](https://github.com/mfvanek/spring-boot-open-telemetry-demo/releases/tag/v.0.5.1)
 
 ## Local run from IDEA
 
