@@ -17,13 +17,11 @@ import io.github.mfvanek.spring.boot.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.support.SpanExporterConfiguration
-import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.data.StatusData
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
@@ -65,14 +63,6 @@ internal class KafkaTracingTest {
 
     @MockitoBean
     private lateinit var dbSaver: DbSaver
-
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun resetTelemetry() {
-            GlobalOpenTelemetry.resetForTest()
-        }
-    }
 
     @Test
     fun closeAllSpansWhenException() {

@@ -37,6 +37,6 @@ class SpanExporterConfiguration {
     fun openTelemetrySdk(tracerProvider: SdkTracerProvider): OpenTelemetrySdk {
         return OpenTelemetrySdk.builder()
             .setTracerProvider(tracerProvider)
-            .buildAndRegisterGlobal()
+            .build()
     }
 }

@@ -28,6 +28,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 class PublicApiService(
     @param:Value("\${app.retries}") private val retries: Int,
+    @param:Value("\${app.retry-delay}") private val retryDelay: Duration,
     private val objectMapper: ObjectMapper,
     private val webClient: WebClient
 ) {
@@ -55,7 +56,7 @@ class PublicApiService(
     }
 
     private fun prepareRetry(zoneName: String): Retry {
-        return Retry.fixedDelay(retries.toLong(), Duration.ofSeconds(2))
+        return Retry.fixedDelay(retries.toLong(), retryDelay)
             .doBeforeRetry { retrySignal: Retry.RetrySignal ->
                 withLoggingContext("instance_timezone" to zoneName) {
                     logger.info {

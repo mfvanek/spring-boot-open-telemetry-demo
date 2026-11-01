@@ -72,12 +72,12 @@ class PublicApiServiceTest extends TestBase {
 
             assertThat(output.getAll())
                 .containsPattern(String.format(Locale.ROOT,
-                    ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error:\"," +
+                    "\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error:\"," +
                         "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
                         "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-demo-app\"\\}%n", traceId, zoneName))
                 .containsPattern(String.format(Locale.ROOT,
-                    ".*\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
+                    "\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
                         "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-demo-app\"}%n", traceId))
                 .doesNotContain("Failed to convert response ");

@@ -74,7 +74,7 @@ class PublicApiServiceTest : TestBase() {
                 .containsPattern(
                     String.format(
                         Locale.ROOT,
-                        ".*\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error: .+?," +
+                        "\"message\":\"Retrying request to '[^']+?', attempt 1/1 due to error: .+?," +
                             "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                             "\"thread\":\"[^\"]+\",\"level\":\"INFO\"," +
                             "\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%s\",\"applicationName\":\"spring-boot-demo-app\"\\}%n",
@@ -86,7 +86,7 @@ class PublicApiServiceTest : TestBase() {
                 .containsPattern(
                     String.format(
                         Locale.ROOT,
-                        ".*\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
+                        "\"message\":\"Request to '[^']+?' failed after 2 attempts.\"," +
                             "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                             "\"thread\":\"[^\"]+\",\"level\":\"ERROR\",\"traceId\":\"%s\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-demo-app\"}%n",
                         traceId

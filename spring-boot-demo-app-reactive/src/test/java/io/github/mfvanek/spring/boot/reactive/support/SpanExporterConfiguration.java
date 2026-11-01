@@ -38,6 +38,6 @@ public class SpanExporterConfiguration {
     public OpenTelemetrySdk openTelemetrySdk(SdkTracerProvider tracerProvider) {
         return OpenTelemetrySdk.builder()
             .setTracerProvider(tracerProvider)
-            .buildAndRegisterGlobal();
+            .build();
     }
 }

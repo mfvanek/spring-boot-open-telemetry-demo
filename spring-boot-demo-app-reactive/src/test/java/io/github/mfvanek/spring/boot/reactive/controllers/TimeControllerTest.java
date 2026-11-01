@@ -127,12 +127,12 @@ class TimeControllerTest extends TestBase {
         assertThat(result.getResponseBody()).isCloseTo(LocalDateTime.now(clock), within(1, ChronoUnit.MINUTES));
         assertThat(output.getAll())
             .containsPattern(String.format(Locale.ROOT,
-                ".*\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +
+                "\"message\":\"Retrying request to '/%1$s', attempt 1/1 due to error:\"," +
                     "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.reactive\\.service\\.PublicApiService\"," +
                     "\"thread\":\"[^\"]+\",\"level\":\"INFO\",\"stack_trace\":\".+?\"," +
                     "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"instance_timezone\":\"%1$s\",\"applicationName\":\"spring-boot-demo-app-reactive\"\\}%n", zoneName))
             .containsPattern(String.format(Locale.ROOT,
-                ".*\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.reactive\\.service\\.PublicApiService\"," +
+                "\"message\":\"Request to '/%s' failed after 2 attempts.\",\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.reactive\\.service\\.PublicApiService\"," +
                     "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
                     "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-demo-app-reactive\"}%n",
                 zoneName));

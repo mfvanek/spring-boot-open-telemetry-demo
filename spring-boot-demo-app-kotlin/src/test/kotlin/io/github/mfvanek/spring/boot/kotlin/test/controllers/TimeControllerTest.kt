@@ -128,7 +128,7 @@ class TimeControllerTest : TestBase() {
             .containsPattern(
                 String.format(
                     Locale.ROOT,
-                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
+                    "\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
                         "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
                         "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-demo-app\"\\}%n",
@@ -138,7 +138,7 @@ class TimeControllerTest : TestBase() {
             .containsPattern(
                 String.format(
                     Locale.ROOT,
-                    ".*\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
+                    "\"message\":\"Request to '/%s' failed after 2 attempts.\"," +
                         "\"logger\":\"io\\.github\\.mfvanek\\.spring\\.boot\\.kotlin\\.test\\.service\\.PublicApiService\"," +
                         "\"thread\":\"[^\"]+\",\"level\":\"ERROR\"," +
                         "\"traceId\":\"38c19768104ab8ae64fabbeed65bbbdf\",\"spanId\":\"[a-f0-9]+\",\"applicationName\":\"spring-boot-demo-app\"\\}%n",

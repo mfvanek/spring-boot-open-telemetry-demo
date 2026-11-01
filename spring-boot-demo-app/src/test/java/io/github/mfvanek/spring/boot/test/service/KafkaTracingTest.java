@@ -14,14 +14,12 @@ import io.github.mfvanek.spring.boot.initializers.PostgresInitializer;
 import io.github.mfvanek.spring.boot.test.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot.test.service.dto.ParsedDateTime;
 import io.github.mfvanek.spring.boot.test.support.SpanExporterConfiguration;
-import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.data.StatusData;
 import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -69,11 +67,6 @@ class KafkaTracingTest {
     private InMemorySpanExporter spanExporter;
     @MockitoBean
     private DbSaver dbSaver;
-
-    @BeforeAll
-    static void resetTelemetry() {
-        GlobalOpenTelemetry.resetForTest();
-    }
 
     @Test
     void closeAllSpansWhenException() {

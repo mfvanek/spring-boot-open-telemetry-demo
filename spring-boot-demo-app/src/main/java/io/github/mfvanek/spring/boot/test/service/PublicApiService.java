@@ -34,6 +34,8 @@ public class PublicApiService {
 
     @Value("${app.retries}")
     private int retries;
+    @Value("${app.retry-delay}")
+    private Duration retryDelay;
 
     private final ObjectMapper mapper;
     private final WebClient webClient;
@@ -63,7 +65,7 @@ public class PublicApiService {
     }
 
     private Retry prepareRetry(final String zoneName) {
-        return Retry.fixedDelay(retries, Duration.ofSeconds(2))
+        return Retry.fixedDelay(retries, retryDelay)
             .doBeforeRetry(retrySignal -> {
                 try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneName)) {
                     log.info("Retrying request to '/{}', attempt {}/{} due to error:",

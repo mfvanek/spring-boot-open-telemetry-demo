@@ -33,6 +33,8 @@ public class PublicApiService {
     private final WebClient webClient;
     @Value("${app.retries}")
     private int retries;
+    @Value("${app.retry-delay}")
+    private Duration retryDelay;
 
     public Mono<LocalDateTime> getZonedTime() {
         return getZonedTimeFromWorldTimeApi()
@@ -58,7 +60,7 @@ public class PublicApiService {
     }
 
     private Retry prepareRetry(final String zoneName) {
-        return Retry.fixedDelay(retries, Duration.ofSeconds(2))
+        return Retry.fixedDelay(retries, retryDelay)
             .doBeforeRetry(retrySignal -> {
                 try (MDC.MDCCloseable ignored = MDC.putCloseable("instance_timezone", zoneName)) {
                     log.info("Retrying request to '/{}', attempt {}/{} due to error:",

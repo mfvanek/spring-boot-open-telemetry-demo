@@ -1,6 +1,7 @@
 app:
     external-base-url: "http://worldtimeapi.org/api/timezone/"
     retries: 3
+    retry-delay: 2s
     tenant.name: ru-a1-private
 
 server:

@@ -1,6 +1,7 @@
 app:
     external-base-url: "http://localhost:${wiremock.server.port}/"
     retries: 1
+    retry-delay: 10ms
 
 logging:
 #    appender:
