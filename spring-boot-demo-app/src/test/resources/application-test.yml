@@ -2,6 +2,9 @@ app:
     external-base-url: "http://localhost:${wiremock.server.port}/"
     retries: 1
     retry-delay: 10ms
+    scheduled-processing:
+        initial-delay: 0s
+        fixed-delay: 200ms
 
 logging:
 #    appender:
@@ -9,4 +12,5 @@ logging:
     level:
         org.testcontainers: INFO # In order to troubleshoot issues with Testcontainers, increase the logging level to DEBUG
         com.github.dockerjava: WARN
+        io.github.mfvanek.spring.boot.test.service.StorageProcessingScheduledService: TRACE
         com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire: OFF

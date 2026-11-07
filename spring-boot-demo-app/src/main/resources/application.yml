@@ -3,6 +3,10 @@ app:
     retries: 3
     retry-delay: 2s
     tenant.name: ru-a1-private
+    scheduled-processing:
+        initial-delay: 10s
+        fixed-delay: 10s
+        batch-size: 100
 
 server:
     port: 8080
