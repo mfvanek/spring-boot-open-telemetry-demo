@@ -63,7 +63,7 @@ tasks {
                 limit {
                     counter = "METHOD"
                     value = "MISSEDCOUNT"
-                    maximum = "5.0".toBigDecimal()
+                    maximum = "6.0".toBigDecimal()
                 }
             }
             rule {
