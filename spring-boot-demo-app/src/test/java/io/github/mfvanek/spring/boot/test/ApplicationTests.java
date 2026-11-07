@@ -49,7 +49,7 @@ class ApplicationTests extends TestBase {
             .satisfies(e -> assertThat(e.toString())
                 .contains(String.format(Locale.ROOT, """
                         OtlpGrpcSpanExporter{endpoint=http://localhost:%d, \
-                        endpointPath=/opentelemetry.proto.collector.trace.v1.TraceService/Export, \
+                        fullMethodName=opentelemetry.proto.collector.trace.v1.TraceService/Export, \
                         timeoutNanos=5000000000, connectTimeoutNanos=2000000000, compressorEncoding=gzip, \
                         headers=Headers{User-Agent=OBFUSCATED}, \
                         retryPolicy=RetryPolicy{maxAttempts=2, initialBackoff=PT1S, maxBackoff=PT5S, backoffMultiplier=1.5, retryExceptionPredicate=null},""",
