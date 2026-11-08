@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class TraceIdInResponseReactiveFilter implements WebFilter {
 
-    public static final String TRACE_ID_HEADER_NAME = "X-Trace-Id";
+    public static final String TRACE_ID_HEADER_NAME = "X-TraceId";
     private static final Logger LOGGER = LoggerFactory.getLogger(TraceIdInResponseReactiveFilter.class);
 
     @NonNull

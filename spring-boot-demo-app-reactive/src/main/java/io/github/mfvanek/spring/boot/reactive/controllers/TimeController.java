@@ -32,7 +32,7 @@ public class TimeController {
     private final KafkaSendingService kafkaSendingService;
     private final PublicApiService publicApiService;
 
-    // http://localhost:8081/current-time
+    // http://localhost:8086/current-time
     @GetMapping(path = "/current-time")
     public Mono<LocalDateTime> getNow() {
         log.trace("tracer {}", tracer);

@@ -33,6 +33,10 @@ docker-compose --file docker/docker-compose-base.yml  --project-name="spring-boo
 ./gradlew spring-boot-demo-app:bootRun
 ```
 
+```shell
+./gradlew spring-boot-demo-app-reactive:bootRun
+```
+
 ### Make http request
 
 ```shell
@@ -43,11 +47,17 @@ curl http://localhost:8090/current-time
 curl http://localhost:8080/current-time
 ```
 
+```shell
+curl http://localhost:8086/current-time
+```
+
 #### Other endpoints
 
-* [Swagger UI](http://localhost:8085/actuator/swagger-ui)
-* [Prometheus metrics](http://localhost:8085/actuator/prometheus)
-* [Health](http://localhost:8085/actuator/health)
+| Application                   | Swagger UI                                           | Prometheus metrics                                   | Health                                           |
+|-------------------------------|------------------------------------------------------|------------------------------------------------------|--------------------------------------------------|
+| spring-boot-demo-app          | [link](http://localhost:8085/actuator/swagger-ui) | [link](http://localhost:8085/actuator/prometheus) | [link](http://localhost:8085/actuator/health) |
+| spring-boot-demo-app-kotlin   | [link](http://localhost:8091/actuator/swagger-ui) | [link](http://localhost:8091/actuator/prometheus) | [link](http://localhost:8091/actuator/health) |
+| spring-boot-demo-app-reactive | [link](http://localhost:8087/actuator/swagger-ui) | [link](http://localhost:8087/actuator/prometheus) | [link](http://localhost:8087/actuator/health) |
 
 ## Run in Docker
 

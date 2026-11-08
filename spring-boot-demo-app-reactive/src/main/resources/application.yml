@@ -9,7 +9,7 @@ app:
         batch-size: 100
 
 server:
-    port: 8081
+    port: 8086
     # See also https://docs.spring.io/spring-boot/docs/2.7.9/reference/html/application-properties.html#appendix.application-properties.server
 
 demo:

@@ -16,7 +16,7 @@ import java.net.URI
 
 @RestController
 class RedirectController {
-    // http://localhost:8080/redirect
+    // http://localhost:8090/redirect
     @GetMapping(path = ["/redirect"])
     fun redirectToGoogle(): ResponseEntity<Any> {
         val google = URI("https://www.google.com")
