@@ -29,6 +29,7 @@ dependencies {
     implementation("org.postgresql:postgresql")
     implementation("com.zaxxer:HikariCP")
     implementation(project(":core"))
+    implementation(project(":trace-id-spring-boot-starter"))
     implementation(project(":db-migrations"))
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
     implementation("com.github.blagerweij:liquibase-sessionlock")

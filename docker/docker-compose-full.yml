@@ -41,3 +41,23 @@ services:
                     memory: 512M
         networks:
             - jaeger-example
+
+    spring-boot-demo-app-reactive:
+        container_name: spring_boot_demo_app_reactive
+        image: spring-boot-demo-app-reactive:latest
+        environment:
+            - SPRING_PROFILES_ACTIVE=docker
+        ports:
+            - "8086:8086"
+            - "8087:8087"
+        restart: unless-stopped
+        depends_on:
+            jaeger:
+                condition: service_started
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 512M
+        networks:
+            - jaeger-example

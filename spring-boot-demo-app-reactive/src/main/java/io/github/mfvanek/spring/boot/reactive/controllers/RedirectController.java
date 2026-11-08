@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 @RestController
 public class RedirectController {
 
-    // http://localhost:8080/redirect
+    // http://localhost:8086/redirect
     @GetMapping(path = "/redirect")
     public Mono<ResponseEntity<Object>> redirectToGoogle() throws URISyntaxException {
         final URI google = new URI("https://www.google.com");

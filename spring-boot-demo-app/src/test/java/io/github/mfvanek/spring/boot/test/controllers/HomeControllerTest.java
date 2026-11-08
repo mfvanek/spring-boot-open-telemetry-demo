@@ -10,7 +10,7 @@ package io.github.mfvanek.spring.boot.test.controllers;
 import io.github.mfvanek.spring.boot.test.support.TestBase;
 import org.junit.jupiter.api.Test;
 
-import static io.github.mfvanek.spring.boot.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
+import static io.github.mfvanek.spring.boot.traceid.TraceIdResponseHeaders.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class HomeControllerTest extends TestBase {

@@ -7,8 +7,8 @@
 
 package io.github.mfvanek.spring.boot.kotlin.test.controllers
 
-import io.github.mfvanek.spring.boot.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
 import io.github.mfvanek.spring.boot.kotlin.test.support.TestBase
+import io.github.mfvanek.spring.boot.traceid.TraceIdResponseHeaders.TRACE_ID_HEADER_NAME
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

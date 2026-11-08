@@ -38,6 +38,8 @@ public class KafkaConsumerUtils {
         consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, KafkaInitializer.plainJaas());
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.UUIDDeserializer.class);
+        // Read only messages produced after the consumer has started: other test classes share the same topics
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         final var consumer = new DefaultKafkaConsumerFactory<UUID, String>(consumerProperties);
         final var container = new KafkaMessageListenerContainer<>(consumer, containerProperties);
         container.setupMessageListener((MessageListener<UUID, String>) consumerRecords::add);

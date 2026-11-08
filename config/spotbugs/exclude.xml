@@ -11,6 +11,11 @@
         <Class name="~.*Test"/>
     </Match>
     <Match>
+        <!-- Assertions live inside ApplicationContextRunner lambdas -->
+        <Bug pattern="UTAO_JUNIT_ASSERTION_ODDITIES_NO_ASSERT"/>
+        <Class name="~.*AutoConfigurationTest"/>
+    </Match>
+    <Match>
         <Bug pattern="OPM_OVERLY_PERMISSIVE_METHOD"/>
         <Class name="~.*\.initializers\..*Initializer"/>
     </Match>

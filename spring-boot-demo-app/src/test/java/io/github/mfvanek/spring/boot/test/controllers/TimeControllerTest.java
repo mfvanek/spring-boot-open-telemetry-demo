@@ -41,7 +41,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static io.github.mfvanek.spring.boot.test.filters.TraceIdInResponseServletFilter.TRACE_ID_HEADER_NAME;
+import static io.github.mfvanek.spring.boot.traceid.TraceIdResponseHeaders.TRACE_ID_HEADER_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
@@ -97,7 +97,7 @@ class TimeControllerTest extends TestBase {
         assertThat(received).isNotNull();
         assertThatTraceIdPresentInKafkaHeaders(received, traceId);
 
-        awaitStoringIntoDatabase();
+        awaitStoringIntoDatabase(traceId);
 
         assertThat(output.getAll())
             .contains("Received record: " + received.value() + " with traceId " + traceId)
@@ -139,8 +139,9 @@ class TimeControllerTest extends TestBase {
                 zoneName));
     }
 
-    private long countRecordsInTable() {
-        final Long queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long.class);
+    private long countRecordsWithTraceId(@NonNull final String traceId) {
+        final Long queryResult = namedParameterJdbcTemplate.queryForObject("select count(*) from otel_demo.storage where trace_id = :traceId",
+            Map.of("traceId", traceId), Long.class);
         return Objects.requireNonNullElse(queryResult, 0L);
     }
 
@@ -163,11 +164,11 @@ class TimeControllerTest extends TestBase {
             .allSatisfy(h -> assertThat(h).contains(expectedTraceId));
     }
 
-    private void awaitStoringIntoDatabase() {
+    private void awaitStoringIntoDatabase(@NonNull final String traceId) {
         Awaitility
             .await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(Duration.ofMillis(500L))
-            .until(() -> countRecordsInTable() >= 2L);
+            .until(() -> countRecordsWithTraceId(traceId) >= 2L);
     }
 }

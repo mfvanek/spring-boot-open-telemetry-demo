@@ -8,9 +8,9 @@
 package io.github.mfvanek.spring.boot.kotlin.test.controllers
 
 import io.github.mfvanek.spring.boot.initializers.KafkaInitializer
-import io.github.mfvanek.spring.boot.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.support.TestBase
+import io.github.mfvanek.spring.boot.traceid.TraceIdResponseHeaders.TRACE_ID_HEADER_NAME
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -93,7 +93,7 @@ class TimeControllerTest : TestBase() {
         assertThat(received).isNotNull()
         assertThatTraceIdPresentInKafkaHeaders(received!!, traceId!!)
 
-        awaitStoringIntoDatabase()
+        awaitStoringIntoDatabase(traceId)
 
         assertThat(output.all)
             .contains("Received record: " + received.value() + " with traceId " + traceId)
@@ -165,8 +165,12 @@ class TimeControllerTest : TestBase() {
         assertThat(result.responseBody).isCloseTo(localDateTime, within(5, ChronoUnit.SECONDS))
     }
 
-    private fun countRecordsInTable(): Long {
-        val queryResult = jdbcTemplate.queryForObject("select count(*) from otel_demo.storage", Long::class.java)
+    private fun countRecordsWithTraceId(traceId: String): Long {
+        val queryResult = namedParameterJdbcTemplate.queryForObject(
+            "select count(*) from otel_demo.storage where trace_id = :traceId",
+            mapOf("traceId" to traceId),
+            Long::class.java
+        )
         return queryResult ?: 0L
     }
 
@@ -184,12 +188,12 @@ class TimeControllerTest : TestBase() {
             .allSatisfy { assertThat(it).contains(expectedTraceId) }
     }
 
-    private fun awaitStoringIntoDatabase() {
+    private fun awaitStoringIntoDatabase(traceId: String) {
         Awaitility
             .await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(Duration.ofMillis(500L))
-            .until { countRecordsInTable() >= 2L }
+            .until { countRecordsWithTraceId(traceId) >= 2L }
     }
 }
 
@@ -200,6 +204,8 @@ fun setUpKafkaConsumer(kafkaProperties: KafkaProperties, consumerRecords: Blocki
     consumerProperties[SaslConfigs.SASL_MECHANISM] = "PLAIN"
     consumerProperties[SaslConfigs.SASL_JAAS_CONFIG] = KafkaInitializer.plainJaas()
     consumerProperties[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = UUIDDeserializer::class.java
+    // Read only messages produced after the consumer has started: other test classes share the same topics
+    consumerProperties[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "latest"
     val consumer = DefaultKafkaConsumerFactory<UUID, String>(consumerProperties)
     val container = KafkaMessageListenerContainer(consumer, containerProperties)
     container.setupMessageListener(MessageListener { consumerRecords.add(it) })
