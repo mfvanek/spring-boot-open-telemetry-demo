@@ -51,6 +51,7 @@ Gradle multi-module build; convention plugins in `buildSrc/src/main/kotlin` (`sb
 
 Library modules:
 - `core` — shared tiny types (`RetriesExhaustedException`).
+- `trace-id-spring-boot-starter` — auto-configuration (`TraceIdInResponseAutoConfiguration`) that adds the `X-TraceId` response header via a servlet `Filter` or a reactive `WebFilter`, depending on the web application type. The servlet branch needs a `Tracer` bean, so the auto-configuration is ordered after Spring Boot's tracing auto-configurations (a test guards this). Both filters back off to user-defined beans and can be disabled with `demo.trace-id-in-response.enabled=false`. Web stacks are `compileOnly`; tests use `ApplicationContextRunner`s.
 - `db-migrations` — Liquibase changelog (`db/changelog/db.changelog-master.yaml`, schema `otel_demo`, table `storage`) plus `DbSaver`, which persists a Kafka record together with the current traceId/spanId. Used by all apps.
 - `test-initializers` — Testcontainers `ApplicationContextInitializer`s (`KafkaInitializer`, `PostgresInitializer`, `JaegerInitializer`) using static singleton containers shared across test contexts.
 
@@ -63,7 +64,7 @@ Demo flow (`GET /current-time`):
 4. `DbSaver` writes the message with trace/span ids into Postgres.
 5. `StorageProcessingScheduledService` (`@Scheduled`, observed via `SchedulingConfig`) reads new rows — each execution gets its own traceId.
 
-Other tracing pieces: `TraceIdInResponseServletFilter` / `TraceIdInResponseReactiveFilter` put the traceId in the `X-TraceId` response header (must stay the same in all apps); `OpenTelemetryConfig` customizes the OTLP gRPC exporter retry policy; propagation is configured for both B3 and W3C (`management.tracing.propagation.type`); the reactive app relies on `spring.reactor.context-propagation: auto`.
+Other tracing pieces: all apps get the `X-TraceId` response header from `trace-id-spring-boot-starter` (reference `TraceIdResponseHeaders.TRACE_ID_HEADER_NAME` in tests; don't add per-app filters); `OpenTelemetryConfig` customizes the OTLP gRPC exporter retry policy; propagation is configured for both B3 and W3C (`management.tracing.propagation.type`); the reactive app relies on `spring.reactor.context-propagation: auto`.
 
 ## Testing conventions
 

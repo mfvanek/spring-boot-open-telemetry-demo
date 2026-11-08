@@ -12,11 +12,11 @@ import io.github.mfvanek.db.migrations.common.saver.DbSaver
 import io.github.mfvanek.spring.boot.initializers.JaegerInitializer
 import io.github.mfvanek.spring.boot.initializers.KafkaInitializer
 import io.github.mfvanek.spring.boot.initializers.PostgresInitializer
-import io.github.mfvanek.spring.boot.kotlin.test.filters.TraceIdInResponseServletFilter.Companion.TRACE_ID_HEADER_NAME
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.CurrentTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.ParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.service.dto.toParsedDateTime
 import io.github.mfvanek.spring.boot.kotlin.test.support.SpanExporterConfiguration
+import io.github.mfvanek.spring.boot.traceid.TraceIdResponseHeaders.TRACE_ID_HEADER_NAME
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.data.StatusData

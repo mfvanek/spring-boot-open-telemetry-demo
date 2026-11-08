@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "demo.trace-id-in-response.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to add the traceId of the current request to the X-TraceId response header.",
+      "defaultValue": true
+    }
+  ]
+}

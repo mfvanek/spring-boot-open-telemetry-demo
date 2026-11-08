@@ -11,9 +11,9 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import io.github.mfvanek.spring.boot.initializers.JaegerInitializer;
 import io.github.mfvanek.spring.boot.initializers.KafkaInitializer;
 import io.github.mfvanek.spring.boot.initializers.PostgresInitializer;
-import io.github.mfvanek.spring.boot.reactive.filters.TraceIdInResponseReactiveFilter;
 import io.github.mfvanek.spring.boot.reactive.service.dto.CurrentTime;
 import io.github.mfvanek.spring.boot.reactive.service.dto.ParsedDateTime;
+import io.github.mfvanek.spring.boot.traceid.TraceIdResponseHeaders;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 @EnableWireMock
 public abstract class TestBase {
 
-    protected static final String TRACE_ID_HEADER_NAME = TraceIdInResponseReactiveFilter.TRACE_ID_HEADER_NAME;
+    protected static final String TRACE_ID_HEADER_NAME = TraceIdResponseHeaders.TRACE_ID_HEADER_NAME;
 
     @Autowired
     protected WebTestClient webTestClient;
