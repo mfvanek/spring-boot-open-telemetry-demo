@@ -46,7 +46,7 @@ dependencies {
     testImplementation("io.github.mfvanek:pg-index-health-test-starter")
     testImplementation(libs.wiremock.spring.boot)
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("io.projectreactor.tools:blockhound:1.0.18.RELEASE")
+    testImplementation("io.projectreactor.tools:blockhound:1.0.19.RELEASE")
 }
 
 tasks {
